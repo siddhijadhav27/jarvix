@@ -14,10 +14,11 @@ Jarvix combines modern AI capabilities with deep crypto infrastructure to delive
 
 ## Tech Stack
 
-- **Frontend:** HTML5, CSS3, Vanilla JavaScript
-- **Backend / API:** Node.js, Python
-- **AI / LLM:** OpenAI-compatible APIs
+- **Frontend:** Next.js 14, Tailwind CSS, shadcn/ui
+- **Backend / API:** Python FastAPI
+- **AI / LLM:** Kimi API (OpenAI-compatible)
 - **Blockchain:** Web3.js / Ethers.js
+- **Database:** PostgreSQL + Redis + TimescaleDB
 - **Deployment:** Docker, Vercel
 
 ## Getting Started
@@ -42,12 +43,154 @@ npm install
 npm run dev
 ```
 
+## Project Structure
+
+```
+jarvix/
+├── apps/
+│   ├── web/                 # Next.js 14 frontend
+│   │   ├── app/             # App Router
+│   │   ├── components/      # React components
+│   │   └── lib/             # Utilities
+│   └── api/                 # FastAPI backend
+│       ├── routers/         # API routes
+│       ├── models/          # Database models
+│       └── services/        # Business logic
+├── packages/
+│   └── ai/                  # Shared AI logic
+│       ├── intent.py        # NLP classifier
+│       ├── memory.py        # Context manager
+│       └── predict.py       # Price prediction
+├── docker/
+│   ├── docker-compose.yml   # All services
+│   ├── Dockerfile.web       # Frontend
+│   └── Dockerfile.api       # Backend
+├── docs/
+│   ├── api.md               # API documentation
+│   └── setup.md             # Installation guide
+├── .github/
+│   └── workflows/
+│       └── ci.yml           # GitHub Actions
+├── .gitignore
+├── LICENSE
+└── README.md
+```
+
+## Environment Variables
+
+Create a `.env` file in the root directory:
+
+```env
+# Database
+DATABASE_URL=postgresql://user:password@localhost:5432/jarvix
+REDIS_URL=redis://localhost:6379
+
+# API Keys
+KIMI_API_KEY=your_kimi_api_key
+OPENAI_API_KEY=your_openai_api_key
+
+# Blockchain
+INFURA_KEY=your_infura_key
+ETHERSCAN_API_KEY=your_etherscan_key
+
+# Security
+JWT_SECRET=your_jwt_secret
+ENCRYPTION_KEY=your_encryption_key
+
+# External Services
+BINANCE_API_KEY=your_binance_key
+BINANCE_SECRET=your_binance_secret
+```
+
+## API Endpoints
+
+### Authentication
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/auth/login` | User login |
+| POST | `/api/auth/register` | User registration |
+| POST | `/api/auth/refresh` | Refresh token |
+
+### Portfolio
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/portfolio` | Get portfolio summary |
+| GET | `/api/portfolio/assets` | List all assets |
+| POST | `/api/portfolio/rebalance` | Rebalance portfolio |
+
+### Trading
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/trade/execute` | Execute trade |
+| GET | `/api/trade/history` | Trade history |
+| GET | `/api/trade/orders` | Active orders |
+
+### AI
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/ai/chat` | Chat with Jarvix |
+| POST | `/api/ai/predict` | Price prediction |
+| GET | `/api/ai/insights` | Market insights |
+
+## Roadmap
+
+### Phase 0: Foundation (Current)
+- [x] GitHub repository setup
+- [x] Monorepo structure
+- [x] CI/CD pipeline
+- [ ] Docker setup
+- [ ] Database schema
+
+### Phase 1: Core Intelligence
+- [ ] Kimi API integration
+- [ ] Natural language commands
+- [ ] Context awareness
+- [ ] Basic predictions
+
+### Phase 2: Trading
+- [ ] Paper trading
+- [ ] DCA strategy
+- [ ] Stop-loss
+- [ ] Live trading
+
+### Phase 3: Voice
+- [ ] Whisper STT
+- [ ] Fish Speech TTS
+- [ ] Wake word
+- [ ] Voice commands
+
+### Phase 4: Security
+- [ ] Slither integration
+- [ ] Scam detection
+- [ ] OSINT
+- [ ] Incident response
+
 ## Contributing
 
-Contributions are welcome! Please open an issue or submit a pull request.
+We welcome contributions! Please follow these steps:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+Please read our [Contributing Guide](docs/setup.md) for details.
+
+## Support
+
+For support, email support@jarvix.ai or join our [Discord community](https://discord.gg/jarvix).
+
+## Acknowledgments
+
+- Built with [Kimi API](https://kimi.com) for AI capabilities
+- Powered by [FastAPI](https://fastapi.tiangolo.com) and [Next.js](https://nextjs.org)
+- Blockchain integration via [Web3.js](https://web3js.readthedocs.io)
 
 ## License
 
 This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+
+---
 
 Built with ❤️ by Siddhi Rajan Jadhav
