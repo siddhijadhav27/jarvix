@@ -1,6 +1,6 @@
 # Jarvix
 
-**Jarvix** is an AI-powered crypto command center — a unified platform for managing, analyzing, and interacting with blockchain assets through natural language and intelligent automation.
+**Jarvix** is an AI-powered crypto command center — a unified platform for managing, analyzing, and interacting with blockchain assets through natural language and intelligent automation
 
 ## Overview
 
