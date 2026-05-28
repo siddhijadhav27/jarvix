@@ -1,0 +1,86 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: jarvix-postgres
+    environment:
+      POSTGRES_USER: jarvix
+      POSTGRES_PASSWORD: jarvix_secret
+      POSTGRES_DB: jarvix
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - jarvix-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: jarvix-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - jarvix-network
+
+  # TimescaleDB (for time-series data)
+  timescaledb:
+    image: timescale/timescaledb:latest-pg16
+    container_name: jarvix-timescale
+    environment:
+      POSTGRES_USER: jarvix
+      POSTGRES_PASSWORD: jarvix_secret
+      POSTGRES_DB: jarvix_timeseries
+    ports:
+      - "5433:5432"
+    volumes:
+      - timescale_data:/var/lib/postgresql/data
+    networks:
+      - jarvix-network
+
+  # FastAPI Backend
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.api
+    container_name: jarvix-api
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://jarvix:jarvix_secret@postgres:5432/jarvix
+      - REDIS_URL=redis://redis:6379
+      - TIMESCALE_URL=postgresql://jarvix:jarvix_secret@timescaledb:5432/jarvix_timeseries
+    depends_on:
+      - postgres
+      - redis
+      - timescaledb
+    networks:
+      - jarvix-network
+
+  # Next.js Frontend
+  web:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.web
+    container_name: jarvix-web
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    depends_on:
+      - api
+    networks:
+      - jarvix-network
+
+volumes:
+  postgres_data:
+  redis_data:
+  timescale_data:
+
+networks:
+  jarvix-network:
+    driver: bridge
