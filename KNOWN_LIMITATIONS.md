@@ -22,32 +22,48 @@ When Kimi is unavailable, the router returns:
 
 **No mock fallbacks are used.** This is intentional — fake responses in a trading platform are dangerous.
 
-## Latency Targets
+## Latency — Current Reality
 
-### Fast Path (Regex-based, no LLM)
-| Request Type | Target | Current | Status |
-|-------------|--------|---------|--------|
-| Price query | < 2s | **1.1ms** | ✅ 1800x faster |
-| Portfolio | < 2s | **1.7ms** | ✅ 1200x faster |
-| Greeting | < 1s | **0.0ms** | ✅ Instant |
-| Buy/Sell | < 5s | **0.7ms** | ✅ 7100x faster |
-| Stop Loss | < 5s | **0.9ms** | ✅ 5500x faster |
-| Market Analysis | < 8s | **1.3ms** | ✅ 6100x faster |
+### End-to-End Command Execution
+| Step | Latency | Notes |
+|------|---------|-------|
+| Intent Classification | 1-2ms | Regex fast path |
+| Acknowledgment | <100ms | Immediate user feedback |
+| Cache Hit | <10ms | After first call |
+| **Full LLM Execution** | **8-10s** | **Hermes Bridge → Kimi** |
+| **End-to-End Total** | **~10s** | **Realistic baseline** |
 
-### LLM Path (Full AI reasoning)
-| Request Type | Target | Current | Status |
-|-------------|--------|---------|--------|
-| Complex advice | < 8s | **6.0s** | ✅ Under target |
-| Multi-turn T2 | < 1s | **0.5s** | ✅ Under target |
-| Ambiguous commands | < 8s | **6-7s** | ✅ Under target |
+### Root Cause
+Current architecture routes through Hermes CLI as a bridge to Kimi API. Each request incurs Hermes initialization and session management overhead.
 
-### Latency Variance
-- **Typical:** 0-2ms (fast path)
-- **LLM fallback:** 6-7s
-- **Max observed:** 10s (cold start, rare)
-- **Multi-turn total:** 6-8s for 3-turn flow
+### Mitigations In Place
+- **Response caching** (30s TTL for prices, 5min for analysis)
+- **Immediate acknowledgment** (user sees response in <100ms)
+- **Pre-warmed session pool** (eliminates cold start overhead)
+- **Fast path intent** (regex for 90%+ of commands)
 
-**Note:** Fast path handles 90%+ of trading commands instantly. LLM only used for ambiguous or complex requests.
+### Real Fix
+Direct Kimi API key will reduce latency to 2-3s. Targeted for Phase 2 before live trading is enabled.
+
+### Impact on Features
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Portfolio queries | ✅ Acceptable | Cached after first call |
+| Price queries | ✅ Acceptable | Cached, 30s TTL |
+| Trade execution | ✅ Acceptable | Confirmation flow buys time |
+| **Voice commands** | **❌ BLOCKED** | **10s too slow for voice UX** |
+
+**Voice cannot launch at 10 seconds.** Must be resolved before Phase 3 (Voice).
+
+### Honest Timing Targets
+```python
+LATENCY_TARGETS = {
+    "intent_classification":  0.005,  # 5ms — regex
+    "cached_response":        0.01,   # 10ms — cache hit
+    "full_llm_call":          12.0,   # 12s — real ceiling
+    "acknowledged_response":  0.1,    # 100ms — immediate ack
+}
+```
 
 ## When Additional Keys Are Available
 
