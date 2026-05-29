@@ -156,21 +156,12 @@ class IntentClassifier:
         text = re.sub(r'```json\s*', '', text)
         text = re.sub(r'```\s*', '', text)
         
-        # Find JSON object - look for balanced braces
-        depth = 0
-        start = -1
+        # Find JSON with intent field (most reliable pattern)
+        match = re.search(r'\{.*"intent".*\}', text, re.DOTALL)
+        if match:
+            return match.group(0)
         
-        for i, char in enumerate(text):
-            if char == '{':
-                if depth == 0:
-                    start = i
-                depth += 1
-            elif char == '}':
-                depth -= 1
-                if depth == 0 and start != -1:
-                    return text[start:i+1]
-        
-        # Fallback: simple regex
+        # Fallback: find any JSON object
         match = re.search(r'\{.*\}', text, re.DOTALL)
         if match:
             return match.group(0)
