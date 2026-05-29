@@ -1,7 +1,6 @@
 """
 JARVIX Multi-LLM Router - PRODUCTION READY
 Handles bridge failures + streaming for voice
-Includes response cleaning for clean frontend output
 """
 
 import os
@@ -11,8 +10,6 @@ from typing import Optional, Dict, Any, List, AsyncGenerator
 from enum import Enum
 import json
 import time
-
-from response_cleaner import clean_response
 
 class ModelProvider(Enum):
     KIMI = "kimi"
@@ -97,7 +94,7 @@ class LLMRouter:
                 
                 return {
                     "success": True,
-                    "response": clean_response(result["content"]),
+                    "response": result["content"],
                     "model_used": model.value,
                     "latency_ms": int(total_latency * 1000),
                     "fallback_used": model != ModelProvider.KIMI,
