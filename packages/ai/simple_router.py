@@ -6,8 +6,8 @@ import aiohttp
 import asyncio
 
 async def simple_chat(message: str) -> str:
-    """Simple chat via persistent bridge"""
-    timeout = aiohttp.ClientTimeout(total=10, connect=2)
+    """Simple chat via persistent bridge with longer timeout"""
+    timeout = aiohttp.ClientTimeout(total=20, connect=2)
     
     async with aiohttp.ClientSession(timeout=timeout) as session:
         async with session.post(
