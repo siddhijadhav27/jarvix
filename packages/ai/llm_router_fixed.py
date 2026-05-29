@@ -1,6 +1,6 @@
 """
-JARVIX Multi-LLM Router - OPTIMIZED VERSION
-Uses Persistent Bridge for sub-5-second responses
+JARVIX Multi-LLM Router - FIXED VERSION
+Optimized for low latency with proper error handling
 """
 
 import os
@@ -19,14 +19,11 @@ class ModelProvider(Enum):
 
 class LLMRouter:
     """
-    Intelligent router optimized for trading platform latency requirements:
-    - Simple queries: < 1 second
-    - Trade confirmation: < 2 seconds
-    - Complex analysis: < 5 seconds
+    Intelligent router with aggressive timeouts for trading use case
     """
     
     def __init__(self):
-        # Aggressive timeouts for trading use case
+        # Aggressive timeouts for trading platform
         self.timeouts = {
             ModelProvider.KIMI: 5,      # 5 seconds max
             ModelProvider.CLAUDE: 8,
@@ -121,21 +118,72 @@ class LLMRouter:
             return await self._call_kimi_optimized(message)
     
     async def _call_kimi_optimized(self, message: str) -> Dict[str, Any]:
-        """Optimized Kimi call via Persistent Bridge (port 8082)"""
+        """Optimized Kimi call via Hermes Gateway"""
         
-        timeout = aiohttp.ClientTimeout(total=5, connect=1)
+        # Try gateway first (fastest)
+        try:
+            return await self._call_gateway(message)
+        except Exception as e:
+            print(f"Gateway failed: {e}, trying bridge...")
+            return await self._call_bridge(message)
+    
+    async def _call_gateway(self, message: str) -> Dict[str, Any]:
+        """Call via Hermes Gateway API (port 8080)"""
+        
+        timeout = aiohttp.ClientTimeout(total=4, connect=1)
         
         async with aiohttp.ClientSession(timeout=timeout) as session:
             payload = {
-                "message": message
+                "task": message,
+                "message": message,
+                "model": "kimi-for-coding",
+                "provider": "kimi-coding",
+                "toolsets": ["terminal"]
             }
             
             async with session.post(
-                "http://localhost:8082/chat",
+                "http://localhost:8080/api/v1/execute",
+                json=payload,
+                headers={"Authorization": f"Bearer {os.getenv('HERMES_API_KEY', '')}"}
+            ) as response:
+                
+                if response.status == 401:
+                    raise Exception("Invalid API key")
+                elif response.status == 404:
+                    # Kimi API not found - key issue
+                    raise Exception("Kimi API unavailable (404)")
+                elif response.status != 200:
+                    raise Exception(f"HTTP {response.status}")
+                
+                result = await response.json()
+                
+                if not result.get("success", False):
+                    raise Exception(result.get("error", "Unknown error"))
+                
+                return {
+                    "content": result.get("result", "No result"),
+                    "raw_response": result
+                }
+    
+    async def _call_bridge(self, message: str) -> Dict[str, Any]:
+        """Fallback: Call via Jarvix Bridge (port 8081) - slower but works"""
+        
+        timeout = aiohttp.ClientTimeout(total=15, connect=2)
+        
+        async with aiohttp.ClientSession(timeout=timeout) as session:
+            payload = {
+                "message": message,
+                "model": "kimi-for-coding",
+                "provider": "kimi-coding"
+            }
+            
+            async with session.post(
+                "http://localhost:8081/chat",
                 json=payload
             ) as response:
+                
                 if response.status != 200:
-                    raise Exception(f"Persistent bridge returned {response.status}")
+                    raise Exception(f"Bridge returned {response.status}")
                 
                 result = await response.json()
                 
@@ -149,8 +197,7 @@ class LLMRouter:
 async def test_router():
     router = LLMRouter()
     
-    print("🚀 Testing OPTIMIZED Multi-LLM Router")
-    print("Target: < 5 seconds per request")
+    print("🚀 Testing FIXED Multi-LLM Router")
     print("=" * 50)
     
     test_messages = [
