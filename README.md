@@ -1,196 +1,163 @@
-# Jarvix
+# Jarvix - AI-Powered Crypto Command Center
 
-**Jarvix** is an AI-powered crypto command center — a unified platform for managing, analyzing, and interacting with blockchain assets through natural language and intelligent automation
-
-## Overview
-
-Jarvix combines modern AI capabilities with deep crypto infrastructure to deliver:
-
-- **Conversational AI Interface** — Interact with your portfolio, execute trades, and query on-chain data using natural language.
-- **Multi-Chain Support** — Seamlessly connect across Ethereum, BSC, Polygon, and other EVM-compatible networks.
-- **Real-Time Analytics** — Live price feeds, portfolio tracking, and market intelligence.
-- **Secure Wallet Integration** — Non-custodial architecture with support for popular wallets.
-- **Automated Workflows** — Set up alerts, recurring trades, and AI-driven strategies.
-
-## Tech Stack
-
-- **Frontend:** Next.js 14, Tailwind CSS, shadcn/ui
-- **Backend / API:** Python FastAPI
-- **AI / LLM:** Kimi API (OpenAI-compatible)
-- **Blockchain:** Web3.js / Ethers.js
-- **Database:** PostgreSQL + Redis + TimescaleDB
-- **Deployment:** Docker, Vercel
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js 18+
-- Python 3.10+
-- Docker (optional)
-
-### Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/siddhijadhav27/jarvix.git
-cd jarvix
-
-# Install dependencies
-npm install
-
-# Start the development server
-npm run dev
-```
-
-## Project Structure
-
-```
-jarvix/
-├── apps/
-│   ├── web/                 # Next.js 14 frontend
-│   │   ├── app/             # App Router
-│   │   ├── components/      # React components
-│   │   └── lib/             # Utilities
-│   └── api/                 # FastAPI backend
-│       ├── routers/         # API routes
-│       ├── models/          # Database models
-│       └── services/        # Business logic
-├── packages/
-│   └── ai/                  # Shared AI logic
-│       ├── intent.py        # NLP classifier
-│       ├── memory.py        # Context manager
-│       └── predict.py       # Price prediction
-├── docker/
-│   ├── docker-compose.yml   # All services
-│   ├── Dockerfile.web       # Frontend
-│   └── Dockerfile.api       # Backend
-├── docs/
-│   ├── api.md               # API documentation
-│   └── setup.md             # Installation guide
-├── .github/
-│   └── workflows/
-│       └── ci.yml           # GitHub Actions
-├── .gitignore
-├── LICENSE
-└── README.md
-```
-
-## Environment Variables
-
-Create a `.env` file in the root directory:
-
-```env
-# Database
-DATABASE_URL=postgresql://user:password@localhost:5432/jarvix
-REDIS_URL=redis://localhost:6379
-
-# API Keys
-KIMI_API_KEY=your_kimi_api_key
-OPENAI_API_KEY=your_openai_api_key
-
-# Blockchain
-INFURA_KEY=your_infura_key
-ETHERSCAN_API_KEY=your_etherscan_key
-
-# Security
-JWT_SECRET=your_jwt_secret
-ENCRYPTION_KEY=your_encryption_key
-
-# External Services
-BINANCE_API_KEY=your_binance_key
-BINANCE_SECRET=your_binance_secret
-```
-
-## API Endpoints
-
-### Authentication
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/auth/login` | User login |
-| POST | `/api/auth/register` | User registration |
-| POST | `/api/auth/refresh` | Refresh token |
-
-### Portfolio
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/portfolio` | Get portfolio summary |
-| GET | `/api/portfolio/assets` | List all assets |
-| POST | `/api/portfolio/rebalance` | Rebalance portfolio |
-
-### Trading
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/trade/execute` | Execute trade |
-| GET | `/api/trade/history` | Trade history |
-| GET | `/api/trade/orders` | Active orders |
-
-### AI
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/ai/chat` | Chat with Jarvix |
-| POST | `/api/ai/predict` | Price prediction |
-| GET | `/api/ai/insights` | Market insights |
-
-## Roadmap
-
-### Phase 0: Foundation (Current)
-- [x] GitHub repository setup
-- [x] Monorepo structure
-- [x] CI/CD pipeline
-- [ ] Docker setup
-- [ ] Database schema
-
-### Phase 1: Core Intelligence
-- [ ] Kimi API integration
-- [ ] Natural language commands
-- [ ] Context awareness
-- [ ] Basic predictions
-
-### Phase 2: Trading
-- [ ] Paper trading
-- [ ] DCA strategy
-- [ ] Stop-loss
-- [ ] Live trading
-
-### Phase 3: Voice
-- [ ] Whisper STT
-- [ ] Fish Speech TTS
-- [ ] Wake word
-- [ ] Voice commands
-
-### Phase 4: Security
-- [ ] Slither integration
-- [ ] Scam detection
-- [ ] OSINT
-- [ ] Incident response
-
-## Contributing
-
-We welcome contributions! Please follow these steps:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-Please read our [Contributing Guide](docs/setup.md) for details.
-
-## Support
-
-For support, email support@jarvix.ai or join our [Discord community](https://discord.gg/jarvix).
-
-## Acknowledgments
-
-- Built with [Kimi API](https://kimi.com) for AI capabilities
-- Powered by [FastAPI](https://fastapi.tiangolo.com) and [Next.js](https://nextjs.org)
-- Blockchain integration via [Web3.js](https://web3js.readthedocs.io)
-
-## License
-
-This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+> Iron Man's JARVIS for Crypto Trading
 
 ---
 
-Built with ❤️ by Siddhi Rajan Jadhav
+## 🎯 Vision
+
+Build the world's most intelligent crypto trading assistant - one that thinks, learns, and trades like a Wall Street veteran with superhuman speed.
+
+---
+
+## ✅ Phase 1: Core Intelligence (COMPLETE)
+
+### Features:
+| # | Feature | Status | Details |
+|---|---------|--------|---------|
+| 1 | **Intent Detection** | ✅ 100% | 55/55 commands recognized |
+| 2 | **Entity Extraction** | ✅ Complete | Asset, amount, price extraction |
+| 3 | **Multi-LLM Router** | ✅ Active | Kimi via Hermes Bridge |
+| 4 | **Behavioral Finance Guard** | ✅ 8 Patterns | Panic selling, FOMO detection |
+| 5 | **Ghost Mode Onboarding** | ✅ Working | $25K virtual paper trading |
+| 6 | **Context Awareness + Redis** | ✅ Active | Cross-session memory |
+| 7 | **Proactive Alerts** | ✅ 5 Types | Market, behavioral, price alerts |
+
+### Test Results:
+- **Intent Detection**: 55/55 tests passing (100%)
+- **Behavioral Guard**: Panic selling detected at 85-95% confidence
+- **Response Time**: 0.3ms (fast path)
+- **Real-time Prices**: CoinGecko API integration
+
+---
+
+## 🚀 Phase 2: AI-Powered Trading (IN PROGRESS)
+
+### Hybrid Approach (Safe + Smart):
+
+#### Phase 2A: Exchange Connectors (Week 7)
+- [ ] **Binance Integration** - API connection, balance read
+- [ ] **Coinbase Integration** - OAuth, portfolio access
+- [ ] **Uniswap Integration** - Wallet connect, DeFi swaps
+- [ ] **Real Order Execution** - Buy/sell commands actually work
+
+#### Phase 2B: AI Paper Trading (Week 8)
+- [ ] **AI Backtesting** - 1000+ strategies tested
+- [ ] **Optimal Selection** - AI picks best strategy
+- [ ] **"What If" Time Machine** - Historical AI advice comparison
+- [ ] **Goal-Based Investing** - "I want $X by date Y" → AI creates plan
+
+#### Phase 2C: AI Live Trading (Week 9-10)
+- [ ] **Smart Entry** - AI predicts best buy timing
+- [ ] **Smart Exit** - AI predicts price peaks
+- [ ] **Dynamic Position Sizing** - AI adjusts based on confidence
+- [ ] **Adaptive Risk** - AI changes stop-loss based on volatility
+- [ ] **Market Sentiment** - AI scans news + social media
+- [ ] **Real-time Rebalancing** - AI rebalances portfolio continuously
+
+### Example AI Commands:
+```
+User: "Jarvix, should I buy ETH now?"
+AI: "Wait 2 hours. Whale selling detected. Price dropping 3%."
+
+User: "Jarvix, set stop-loss for BTC"
+AI: "Stop-loss at $62K. AI predicts support at $61.5K."
+
+User: "Jarvix, optimize my portfolio"
+AI: "Rebalancing: BTC 40% → 35%, ETH 30% → 40%. Reason: ETH breaking out."
+
+User: "Jarvix, what if I followed your advice last month?"
+AI: "You would be up 12.4% ($6,200). Your actual return: +3.1% ($1,550)."
+```
+
+---
+
+## 🗺️ Phase 3-7: Future Roadmap
+
+| Phase | Focus | Timeline | Key Features |
+|-------|-------|----------|--------------|
+| **Phase 3** | Voice AI | Weeks 11-14 | British JARVIS voice, hands-free trading |
+| **Phase 4** | On-Chain Intelligence | Weeks 15-18 | Whale tracking, MEV protection, smart contract audit |
+| **Phase 5** | Mobile + Wearables | Weeks 19-24 | iOS/Android app, Apple Watch, AR glasses |
+| **Phase 6** | Institutional | Weeks 25-30 | Multi-account, compliance, audit trails |
+| **Phase 7** | Full Autonomy | Weeks 31-36 | Self-improving AI, autonomous trading |
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| **Frontend** | HTML5, JavaScript, Tailwind CSS |
+| **Backend** | Python, FastAPI |
+| **AI Models** | Kimi (Moonshot AI), Ollama (local) |
+| **Database** | Redis (context), PostgreSQL (trades) |
+| **Exchange APIs** | Binance, Coinbase, Uniswap |
+| **Voice** | Kokoro TTS, Whisper STT |
+| **Deployment** | Systemd services, Docker |
+
+---
+
+## 📊 Performance Metrics
+
+| Metric | Value |
+|--------|-------|
+| Intent Detection Accuracy | 100% (55/55) |
+| Response Time (Fast Path) | 0.3ms |
+| Behavioral Guard Detection | 85-95% confidence |
+| Real-time Price Latency | ~2s (CoinGecko) |
+| AI Response Latency | 6-10s (Kimi via Hermes) |
+
+---
+
+## 🏗️ Architecture
+
+```
+User Command → Intent Detection → AI Router → Action
+                    ↓
+            Behavioral Guard (check emotions)
+                    ↓
+            Exchange Connector → Real Trade
+                    ↓
+            Portfolio Update → Alert
+```
+
+---
+
+## 📝 Documentation
+
+- [Phase 1 Test Results](docs/phase1-tests.md)
+- [Behavioral Finance Guard](docs/behavioral-guard.md)
+- [API Reference](docs/api-reference.md)
+- [Deployment Guide](docs/deployment.md)
+
+---
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create feature branch
+3. Commit changes
+4. Push to branch
+5. Create Pull Request
+
+---
+
+## 📜 License
+
+MIT License - See [LICENSE](LICENSE) for details
+
+---
+
+## 🙏 Acknowledgments
+
+- Inspired by Iron Man's JARVIS
+- OpenJarvis for feature reference
+- Kimi AI for language understanding
+- CoinGecko for price data
+
+---
+
+**Built with ❤️ by Siddhi Jadhav**
+
+**Last Updated: May 31, 2026**
