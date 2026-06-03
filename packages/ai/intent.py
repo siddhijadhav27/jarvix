@@ -8,13 +8,27 @@ from typing import Dict, Any, Optional
 from .llm_client import classify_intent_llm
 
 # Fast regex patterns for common commands
+# Latin scripts
 BUY_PATTERNS = [
-    r'\b(buy|purchase|get|acquire|add|don\'t miss|dont miss|grab|pick up|moon|lambo|rocket|time to buy|buying time|thinking about buying|considering buying|possibly get|kharido|lena hai)\b'
+    r'\b(buy|purchase|get|acquire|add|don\'t miss|dont miss|grab|pick up|moon|lambo|rocket|time to buy|buying time|thinking about buying|considering buying|possibly get|kharido|lena hai|comprar|acheter|kaufen|사기|شراء|Купить|comprare|kopen|al|mua|ซื้อ|beli|kupić|köp|Αγορά)\b'
 ]
 SELL_PATTERNS = [
-    r'\b(sell|dump|cash out|liquidate|get rid of|unload|offload|exit|crash|panic|time to sell|selling time|thinking about selling|considering selling|becho|dena hai)\b'
+    r'\b(sell|dump|cash out|liquidate|get rid of|unload|offload|exit|crash|panic|time to sell|selling time|thinking about selling|considering selling|becho|dena hai|vender|vendre|verkaufen|팔기|بيع|Продать|vendere|verkopen|sat|bán|ขาย|jual|sprzedać|sälj|Πώληση)\b'
 ]
-PRICE_PATTERNS = [r'\b(price|cost|value|how much|worth|rate|chart|kitna|rate)\b']
+PRICE_PATTERNS = [
+    r'\b(price|cost|value|how much|worth|rate|chart|kitna|rate|precio|prix|preis|가격|سعر|Цена|prezzo|prijs|fiyat|giá|ราคา|harga|cena|pris|Τιμή)\b'
+]
+
+# Non-Latin scripts (Chinese, Japanese, Russian) - no word boundaries
+BUY_PATTERNS_NONLATIN = [
+    r'购买|買う|买入|買入|購入|Купить',
+]
+SELL_PATTERNS_NONLATIN = [
+    r'出售|売る|卖出|売出|売却|Продать',
+]
+PRICE_PATTERNS_NONLATIN = [
+    r'价格|価格|價格|料金|Цена',
+]
 PORTFOLIO_PATTERNS = [r'\b(portfolio|balance|holdings|net worth|what do i own|assets|p\u0026l|profit|loss|kitna paisa|mere paas)\b']
 STOP_LOSS_PATTERNS = [r'\b(stop.loss|stoploss|protect|stop loss)\b']
 ADVICE_PATTERNS = [r'\b(should i|advice|recommend|what do you think|analysis|help|understand|confused)\b']
@@ -48,11 +62,20 @@ def detect_intent_regex(message: str) -> Optional[Dict[str, Any]]:
     # Check sell BEFORE buy (to catch "get rid of")
     elif any(re.search(p, message_lower) for p in SELL_PATTERNS):
         intent = "sell"
+    # Check non-Latin sell patterns
+    elif any(re.search(p, message_lower) for p in SELL_PATTERNS_NONLATIN):
+        intent = "sell"
     # Check buy
     elif any(re.search(p, message_lower) for p in BUY_PATTERNS):
         intent = "buy"
+    # Check non-Latin buy patterns
+    elif any(re.search(p, message_lower) for p in BUY_PATTERNS_NONLATIN):
+        intent = "buy"
     # Check price
     elif any(re.search(p, message_lower) for p in PRICE_PATTERNS):
+        intent = "price"
+    # Check non-Latin price patterns
+    elif any(re.search(p, message_lower) for p in PRICE_PATTERNS_NONLATIN):
         intent = "price"
     # Check stop loss
     elif any(re.search(p, message_lower) for p in STOP_LOSS_PATTERNS):
