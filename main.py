@@ -10,6 +10,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'packages'))
 
 from ai.personality import personality_engine
 from ai.llm_client import generate_jarvis_response
+from ai.openrouter_client import call_openrouter
 from ai.mock_llm import generate_mock_response
 from ai.intent import detect_intent_hybrid
 from ai.memory import get_memory, format_context_for_llm
@@ -60,17 +61,27 @@ async def chat(request: ChatRequest):
     # Format context for LLM
     context_str = format_context_for_llm(memory)
     
-    # Generate JARVIS-style response using LLM with context
-    response_text = await generate_jarvis_response(
-        request.message, 
-        intent_data, 
-        context_str,
-        emotion=emotion
-    )
+    # Generate JARVIS-style response using OpenRouter
+    prompt = f"""You are Jarvix, Tony Stark's personal AI assistant for cryptocurrency trading.
+
+User message: "{request.message}"
+Intent: {intent_data['intent']}
+Asset: {intent_data.get('asset', 'not specified')}
+Amount: {intent_data.get('amount', 'not specified')}
+
+Context: {context_str}
+
+Respond like JARVIS from Iron Man:
+- Call user "sir"
+- Be witty, sarcastic, loyal
+- Include relevant portfolio data
+- Keep it to 2-3 sentences
+- Ask for confirmation on trades"""
+    
+    response_text = await call_openrouter(prompt)
     
     # Clean response before storing in memory
-    from ai.llm_client import clean_response
-    cleaned_response = clean_response(response_text)
+    cleaned_response = response_text.strip()
     
     # Fallback if response is empty
     if not cleaned_response.strip():
