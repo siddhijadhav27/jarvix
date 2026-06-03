@@ -146,13 +146,13 @@ class JarvixPersonality:
         message_lower = message.lower()
         
         emotions = {
-            "panic": ["panic", "crash", "sell everything", "going to zero", "scared", "afraid", "terrified", "worried", "anxious", "fear", "lost everything", "paper hands"],
-            "fomo": ["fomo", "don't miss", "moon", "before too late", "everyone buying", "pump", "to the moon", "lambo", "ape in", "yolo", "wagmi", "buy the dip"],
+            "panic": ["panic", "crash", "sell everything", "going to zero", "scared", "afraid", "terrified", "worried", "anxious", "fear", "lost everything", "paper hands", "oh no", "everything is down"],
             "anger": ["angry", "pissed", "stupid", "hate", "frustrated", "ridiculous", "damn", "wtf", "hell", "scam", "fraud", "ngmi", "revenge", "fud"],
-            "excitement": ["excited", "pumped", "let's go", "moon", "lambo", "woohoo", "amazing", "awesome", "great"],
-            "confusion": ["confused", "don't understand", "help", "what", "how", "why", "explain"],
+            "excitement": ["excited", "pumped", "let's go", "woohoo", "amazing", "awesome", "great", "to the moon"],
+            "fomo": ["fomo", "dont miss", "don't miss", "before too late", "before its too late", "before it's too late", "everyone buying", "pump", "lambo", "ape in", "yolo", "wagmi", "buy the dip", "opportunity"],
+            "confusion": ["confused", "don't understand", "dont understand", "help", "what", "how", "why", "explain"],
             "sadness": ["sad", "depressed", "lost money", "down bad", "regret", "crying", "tears", "devastated"],
-            "overconfidence": ["best trader", "can't lose", "genius", "always right", "diamond hands", "hodl", "all in", "double down", "trust me"]
+            "overconfidence": ["best trader", "can't lose", "cant lose", "genius", "always right", "diamond hands", "hodl", "all in", "double down", "trust me"]
         }
         
         for emotion, keywords in emotions.items():
