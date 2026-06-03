@@ -44,7 +44,14 @@ def detect_intent_regex(message: str) -> Optional[Dict[str, Any]]:
     Fast regex-based intent detection
     Returns None if no match (fall back to LLM)
     """
-    message_lower = message.lower().strip()
+    # Don't lowercase for non-Latin scripts (Cyrillic, Chinese, etc.)
+    # Check if message contains non-Latin characters
+    has_nonlatin = any(ord(c) > 127 for c in message)
+    
+    if has_nonlatin:
+        message_lower = message.strip()  # Keep original case
+    else:
+        message_lower = message.lower().strip()
     
     # Check for empty message
     if not message_lower:
