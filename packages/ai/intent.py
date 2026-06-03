@@ -8,8 +8,12 @@ from typing import Dict, Any, Optional
 from .llm_client import classify_intent_llm
 
 # Fast regex patterns for common commands
-BUY_PATTERNS = [r'\b(buy|purchase|get|acquire|add|don\'t miss|dont miss|grab|pick up|moon|lambo|rocket)\b']
-SELL_PATTERNS = [r'\b(sell|dump|cash out|liquidate|get rid of|unload|offload|exit|crash|panic)\b']
+BUY_PATTERNS = [
+    r'\b(buy|purchase|get|acquire|add|don\'t miss|dont miss|grab|pick up|moon|lambo|rocket|time to buy|buying time|thinking about buying|considering buying|possibly get|kharido|lena hai)\b'
+]
+SELL_PATTERNS = [
+    r'\b(sell|dump|cash out|liquidate|get rid of|unload|offload|exit|crash|panic|time to sell|selling time|thinking about selling|considering selling|becho|dena hai)\b'
+]
 PRICE_PATTERNS = [r'\b(price|cost|value|how much|worth|rate|chart|kitna|rate)\b']
 PORTFOLIO_PATTERNS = [r'\b(portfolio|balance|holdings|net worth|what do i own|assets|p\u0026l|profit|loss|kitna paisa|mere paas)\b']
 STOP_LOSS_PATTERNS = [r'\b(stop.loss|stoploss|protect|stop loss)\b']
