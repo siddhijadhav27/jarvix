@@ -4,6 +4,7 @@ from pydantic import BaseModel
 import uvicorn
 import sys
 import os
+import time
 
 # Add packages to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'packages'))
@@ -18,6 +19,10 @@ from ai.ghost_mode import get_ghost_mode
 from ai.proactive_alerts import get_alert_manager
 
 app = FastAPI(title="Jarvix AI Backend", version="1.0.0")
+
+# Rate limiting - track last request time
+last_request_time = 0
+MIN_REQUEST_INTERVAL = 5  # 5 seconds between requests
 
 # CORS for frontend connection
 app.add_middleware(
@@ -38,14 +43,31 @@ class ChatResponse(BaseModel):
     asset: str | None = None
     amount: float | None = None
     price: float | None = None
+    confidence: float = 0.95
     behavioral_warning: dict | None = None
     status: str = "complete"
 
-@app.post("/api/ai/chat", response_model=ChatResponse)
+@app.post("/api/ai/chat")
 async def chat(request: ChatRequest):
     """
     Main chat endpoint - handles all user commands with JARVIS personality via LLM
     """
+    global last_request_time
+    
+    # Rate limiting check
+    current_time = time.time()
+    time_since_last = current_time - last_request_time
+    if time_since_last < MIN_REQUEST_INTERVAL:
+        wait_time = MIN_REQUEST_INTERVAL - time_since_last
+        return ChatResponse(
+            response=f"Sir, please wait {wait_time:.1f} seconds before sending another command.",
+            intent="rate_limited",
+            confidence=0.95,
+            status="rate_limited"
+        )
+    
+    last_request_time = current_time
+    
     # Get user's memory
     memory = get_memory(request.user_id)
     
@@ -97,7 +119,8 @@ Respond like JARVIS from Iron Man:
         asset=intent_data.get("asset"),
         amount=intent_data.get("amount"),
         price=intent_data.get("price"),
-        behavioral_warning={"detected_emotion": emotion} if emotion != "neutral" else None,
+        confidence=intent_data.get("confidence", 0.95),
+        behavioral_warning={"detected_emotion": emotion, "secondary_intent": intent_data.get("secondary_intent")} if intent_data.get("secondary_intent") else {"detected_emotion": emotion} if emotion != "neutral" else None,
         status="complete"
     )
 

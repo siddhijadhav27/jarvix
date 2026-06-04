@@ -146,7 +146,7 @@ class JarvixPersonality:
         message_lower = message.lower()
         
         emotions = {
-            "panic": ["panic", "crash", "sell everything", "going to zero", "scared", "afraid", "terrified", "worried", "anxious", "fear", "lost everything", "paper hands", "oh no", "everything is down"],
+            "panic": ["panic", "crash", "sell everything", "going to zero", "scared", "afraid", "terrified", "worried", "anxious", "fear", "lost everything", "paper hands", "oh no", "everything is down", "stop loss", "stoploss", "emergency", "urgent"],
             "anger": ["angry", "pissed", "stupid", "hate", "frustrated", "ridiculous", "damn", "wtf", "hell", "scam", "fraud", "ngmi", "revenge", "fud"],
             "excitement": ["excited", "pumped", "let's go", "woohoo", "amazing", "awesome", "great", "to the moon"],
             "fomo": ["fomo", "dont miss", "don't miss", "before too late", "before its too late", "before it's too late", "everyone buying", "pump", "lambo", "ape in", "yolo", "wagmi", "buy the dip", "opportunity"],
