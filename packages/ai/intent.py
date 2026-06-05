@@ -29,14 +29,14 @@ SELL_PATTERNS_NONLATIN = [
 PRICE_PATTERNS_NONLATIN = [
     r'价格|価格|價格|料金|Цена',
 ]
-PORTFOLIO_PATTERNS = [r'\b(portfolio|balance|holdings|net worth|what do i have|what do i own|show my|my assets|kitna paisa|mere paas|hold)\b']
+PORTFOLIO_PATTERNS = [r'\b(portfolio|balance|holdings|net worth|what do i have|what do i own|show my|my assets|kitna paisa|mere paas|hold|assets|show assets|how am i doing|doing|p\u0026l|profit.*loss|summary|gains|do i have|do i own|amount)\b']
 STOP_LOSS_PATTERNS = [r'\b(stop.loss|stoploss|protect|stop loss)\b']
 
 # Add stop loss as sell intent - when triggered, sell
 STOP_LOSS_SELL_PATTERNS = [r'\b(stop loss triggered|stoploss triggered|stop loss hit|stoploss hit)\b']
-ADVICE_PATTERNS = [r'\b(should i|advice|recommend|what do you think|analysis|help|understand|confused)\b']
+ADVICE_PATTERNS = [r'\b(should i|advice|recommend|what do you think|analysis|help|understand|confused|is.*good investment|what about|advise on|market analysis|good time to|what do you recommend|crypto advice|help me understand|should i diversify|should i hold|should i sell|is it time to)\b']
 ALERT_PATTERNS = [r'\b(alert|notify|tell me when)\b']
-GREETING_PATTERNS = [r'\b(hello|hi|hey|good morning|good afternoon|good evening|what is up|hii|hiii|namaste|hola|ciao|jarvix|you there|wake up|yo)\b']
+GREETING_PATTERNS = [r'\b(hello|hi|hey|good morning|good afternoon|good evening|what is up|whats up|what\'s up|how are you|how do you do|hii|hiii|namaste|salam|hola|ciao|jarvix|you there|wake up|yo|sup|howdy|g\'day|bonjour|guten tag|konnichiwa|annyeong|salaam|marhaba|shalom|sawubona|jambo)\b']
 
 ASSET_PATTERN = r'\b(btc|bitcoin|eth|ethereum|sol|solana|ada|cardano|doge|dogecoin|xrp|ripple|dot|polkadot|link|chainlink|avax|avalanche|matic|polygon|bnb|binance)\b'
 AMOUNT_PATTERN = r'(\d+(?:\.\d+)?)'
@@ -67,8 +67,14 @@ def detect_intent_regex(message: str) -> Optional[Dict[str, Any]]:
     # Check for multiple intents
     detected_intents = []
     
-    # Check price patterns FIRST (before sell/buy to catch "dump ho raha hai")
-    if any(re.search(p, message_lower) for p in PRICE_PATTERNS):
+    # Check advice patterns FIRST (before buy/sell to catch "Should I buy")
+    if any(re.search(p, message_lower) for p in ADVICE_PATTERNS):
+        detected_intents.append("advice")
+    # Check portfolio patterns FIRST (before price to catch "portfolio value")
+    elif any(re.search(p, message_lower) for p in PORTFOLIO_PATTERNS):
+        detected_intents.append("portfolio")
+    # Check price patterns (but not if portfolio context detected)
+    elif any(re.search(p, message_lower) for p in PRICE_PATTERNS):
         detected_intents.append("price")
     # Check sell patterns (but not if price context detected)
     elif any(re.search(p, message_lower) for p in SELL_PATTERNS):
@@ -76,9 +82,6 @@ def detect_intent_regex(message: str) -> Optional[Dict[str, Any]]:
     # Check buy patterns
     elif any(re.search(p, message_lower) for p in BUY_PATTERNS):
         detected_intents.append("buy")
-    # Check portfolio patterns
-    elif any(re.search(p, message_lower) for p in PORTFOLIO_PATTERNS):
-        detected_intents.append("portfolio")
     
     # If multiple intents detected, use the first one but add secondary_intent
     if len(detected_intents) > 0:
