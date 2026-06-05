@@ -35,7 +35,12 @@ STOP_LOSS_PATTERNS = [r'\b(stop.loss|stoploss|protect|stop loss)\b']
 # Add stop loss as sell intent - when triggered, sell
 STOP_LOSS_SELL_PATTERNS = [r'\b(stop loss triggered|stoploss triggered|stop loss hit|stoploss hit)\b']
 ADVICE_PATTERNS = [r'\b(should i|advice|recommend|what do you think|analysis|help|understand|confused|is.*good investment|what about|advise on|market analysis|good time to|what do you recommend|crypto advice|help me understand|should i diversify|should i hold|should i sell|is it time to)\b']
-ALERT_PATTERNS = [r'\b(alert|notify|tell me when)\b']
+ALERT_PATTERNS = [r'\b(alert|notify|tell me when|warn me|set alert|set notification)\b']
+
+# Alert-specific patterns for price threshold extraction
+ALERT_PRICE_PATTERN = r'(?:hits|reaches|goes above|above|drops below|below|falls to|at)\s+(\d+(?:,\d{3})*(?:\.\d+)?)(?:k|K)?'
+ALERT_DIRECTION_ABOVE = r'\b(hits|reaches|goes above|above|pumps|moons)\b'
+ALERT_DIRECTION_BELOW = r'\b(drops below|below|falls to|dump|crashes)\b'
 GREETING_PATTERNS = [r'\b(hello|hi|hey|good morning|good afternoon|good evening|what is up|whats up|what\'s up|how are you|how do you do|hii|hiii|namaste|salam|hola|ciao|jarvix|you there|wake up|yo|sup|howdy|g\'day|bonjour|guten tag|konnichiwa|annyeong|salaam|marhaba|shalom|sawubona|jambo)\b']
 
 ASSET_PATTERN = r'\b(btc|bitcoin|eth|ethereum|sol|solana|ada|cardano|doge|dogecoin|xrp|ripple|dot|polkadot|link|chainlink|avax|avalanche|matic|polygon|bnb|binance)\b'
@@ -148,13 +153,39 @@ def detect_intent_regex(message: str) -> Optional[Dict[str, Any]]:
         else:
             asset = None
         
-        # Extract amount
-        amount_match = re.search(AMOUNT_PATTERN, message_lower)
-        amount = float(amount_match.group(1)) if amount_match else None
-        
-        # Extract price (e.g., "at 2000", "for $2000", "@ 2000")
-        price_match = re.search(PRICE_PATTERN, message_lower)
-        price = float(price_match.group(1).replace(',', '')) if price_match else None
+        # Special handling for ALERT intent
+        if intent == "alert":
+            # Extract price threshold (e.g., "hits 100k", "drops below 1500", "at 200")
+            alert_price_match = re.search(ALERT_PRICE_PATTERN, message_lower)
+            if alert_price_match:
+                price_str = alert_price_match.group(1).replace(',', '')
+                # Handle 'k' suffix (100k = 100000)
+                if 'k' in message_lower[alert_price_match.end()-2:alert_price_match.end()]:
+                    price = float(price_str) * 1000
+                else:
+                    price = float(price_str)
+            else:
+                price = None
+            
+            # Extract direction (above/below)
+            if re.search(ALERT_DIRECTION_ABOVE, message_lower):
+                direction = "above"
+            elif re.search(ALERT_DIRECTION_BELOW, message_lower):
+                direction = "below"
+            else:
+                direction = "above"  # Default direction
+            
+            # For alerts, amount should be null (price threshold is not an amount)
+            amount = None
+        else:
+            # Extract amount (for buy/sell)
+            amount_match = re.search(AMOUNT_PATTERN, message_lower)
+            amount = float(amount_match.group(1)) if amount_match else None
+            
+            # Extract price (e.g., "at 2000", "for $2000", "@ 2000")
+            price_match = re.search(PRICE_PATTERN, message_lower)
+            price = float(price_match.group(1).replace(',', '')) if price_match else None
+            direction = None
         
         result = {
             "intent": intent,
@@ -164,6 +195,10 @@ def detect_intent_regex(message: str) -> Optional[Dict[str, Any]]:
             "confidence": confidence,
             "source": "regex"
         }
+        
+        # Add direction for alerts
+        if direction:
+            result["direction"] = direction
         
         # Add secondary intent if detected
         if secondary_intent:
