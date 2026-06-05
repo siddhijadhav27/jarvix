@@ -39,6 +39,7 @@ ALERT_PATTERNS = [r'\b(alert|notify|tell me when|warn me|set alert|set notificat
 
 # Alert-specific patterns for price threshold extraction
 ALERT_PRICE_PATTERN = r'(?:hits|reaches|goes above|above|drops below|below|falls to|at)\s+(\d+(?:,\d{3})*(?:\.\d+)?)(?:k|K)?'
+ALERT_PRICE_PATTERN_SPACE = r'(?:btc|eth|sol|ada|doge|xrp|dot|link|avax|matic|bnb)\s+(\d+(?:,\d{3})*(?:\.\d+)?)(?:k|K)?'
 ALERT_DIRECTION_ABOVE = r'\b(hits|reaches|goes above|above|pumps|moons)\b'
 ALERT_DIRECTION_BELOW = r'\b(drops below|below|falls to|dump|crashes)\b'
 GREETING_PATTERNS = [r'\b(hello|hi|hey|good morning|good afternoon|good evening|what is up|whats up|what\'s up|how are you|how do you do|hii|hiii|namaste|salam|hola|ciao|jarvix|you there|wake up|yo|sup|howdy|g\'day|bonjour|guten tag|konnichiwa|annyeong|salaam|marhaba|shalom|sawubona|jambo)\b']
@@ -75,6 +76,9 @@ def detect_intent_regex(message: str) -> Optional[Dict[str, Any]]:
     # Check advice patterns FIRST (before buy/sell to catch "Should I buy")
     if any(re.search(p, message_lower) for p in ADVICE_PATTERNS):
         detected_intents.append("advice")
+    # Check alert patterns BEFORE price (to catch "Price alert")
+    elif any(re.search(p, message_lower) for p in ALERT_PATTERNS):
+        detected_intents.append("alert")
     # Check portfolio patterns FIRST (before price to catch "portfolio value")
     elif any(re.search(p, message_lower) for p in PORTFOLIO_PATTERNS):
         detected_intents.append("portfolio")
@@ -157,6 +161,9 @@ def detect_intent_regex(message: str) -> Optional[Dict[str, Any]]:
         if intent == "alert":
             # Extract price threshold (e.g., "hits 100k", "drops below 1500", "at 200")
             alert_price_match = re.search(ALERT_PRICE_PATTERN, message_lower)
+            if not alert_price_match:
+                # Try space-separated format: "Price alert BTC 75000"
+                alert_price_match = re.search(ALERT_PRICE_PATTERN_SPACE, message_lower)
             if alert_price_match:
                 price_str = alert_price_match.group(1).replace(',', '')
                 # Handle 'k' suffix (100k = 100000)
