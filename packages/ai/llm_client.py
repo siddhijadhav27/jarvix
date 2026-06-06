@@ -270,6 +270,9 @@ Examples:
 "Sell everything!!!" -> {{"intent": "sell", "asset": null, "amount": null, "price": null, "confidence": 0.90}}
 "Good morning" -> {{"intent": "greeting", "asset": null, "amount": null, "price": null, "confidence": 0.95}}
 "I want to buy some SOL" -> {{"intent": "buy", "asset": "SOL", "amount": null, "price": null, "confidence": 0.90}}
+"ETH" -> {{"intent": "price", "asset": "ETH", "amount": null, "price": null, "confidence": 0.90}}
+"BUY" -> {{"intent": "buy", "asset": null, "amount": null, "price": null, "confidence": 0.85}}
+"Sell" -> {{"intent": "sell", "asset": null, "amount": null, "price": null, "confidence": 0.85}}
 
 Return ONLY the JSON object, no other text."""
 
