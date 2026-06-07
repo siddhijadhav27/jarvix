@@ -50,7 +50,7 @@ STOP_LOSS_PATTERNS = [r'\b(stop.loss|stoploss|protect|stop loss)\b']
 
 # Add stop loss as sell intent - when triggered, sell
 STOP_LOSS_SELL_PATTERNS = [r'\b(stop loss triggered|stoploss triggered|stop loss hit|stoploss hit)\b']
-ADVICE_PATTERNS = [r'\b(should i|advice|recommend|what do you think|analysis|help|understand|confused|is.*good investment|what about|advise on|market analysis|good time to|what do you recommend|crypto advice|help me understand|should i diversify|should i hold|should i sell|is it time to)\b']
+ADVICE_PATTERNS = [r'\b(should i|advice|recommend|what do you think|analysis|help|understand|confused|is.*good investment|what about|advise on|market analysis|good time to|what do you recommend|crypto advice|help me understand|should i diversify|should i hold|should i sell|is it time to|is it good to|which crypto to|what to invest in|is.*a good buy|is it worth|worth buying)\b']
 ALERT_PATTERNS = [r'\b(alert|notify|tell me when|warn me|set alert|set notification)\b']
 
 # Alert-specific patterns for price threshold extraction

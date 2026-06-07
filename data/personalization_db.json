@@ -2014,7 +2014,207 @@
         }
       ],
       "suggestions_enabled": true
+    },
+    "advice_test_user": {
+      "user_id": "advice_test_user",
+      "created_at": "2026-06-08T00:15:30.961933",
+      "preferences": {
+        "risk_level": "low",
+        "preferred_assets": [
+          "ETH",
+          "BTC",
+          "SOL"
+        ],
+        "auto_confirm": false,
+        "notifications": true,
+        "response_style": "detailed",
+        "detail_level": "standard"
+      },
+      "behavior": {
+        "total_commands": 18,
+        "intent_counts": {
+          "advice": 13,
+          "buy": 4,
+          "price": 1
+        },
+        "asset_counts": {
+          "ETH": 4,
+          "BTC": 3,
+          "SOL": 2,
+          "ADA": 1
+        },
+        "time_distribution": {
+          "0": 18
+        },
+        "avg_trade_size": 0,
+        "last_active": "2026-06-08T00:15:31.360608"
+      },
+      "portfolio_history": [],
+      "favorite_commands": [
+        {
+          "message": "Should I buy ETH",
+          "count": 1,
+          "first_used": "2026-06-08T00:15:30.971823",
+          "last_used": "2026-06-08T00:15:30.971829"
+        },
+        {
+          "message": "Should I sell BTC",
+          "count": 1,
+          "first_used": "2026-06-08T00:15:31.010435",
+          "last_used": "2026-06-08T00:15:31.010441"
+        },
+        {
+          "message": "Is it good to buy SOL",
+          "count": 1,
+          "first_used": "2026-06-08T00:15:31.035283",
+          "last_used": "2026-06-08T00:15:31.035291"
+        },
+        {
+          "message": "Is it time to sell ADA",
+          "count": 1,
+          "first_used": "2026-06-08T00:15:31.056760",
+          "last_used": "2026-06-08T00:15:31.056768"
+        },
+        {
+          "message": "Should I invest in ETH",
+          "count": 1,
+          "first_used": "2026-06-08T00:15:31.079994",
+          "last_used": "2026-06-08T00:15:31.080001"
+        }
+      ],
+      "suggestions_enabled": true
+    },
+    "advice_fix": {
+      "user_id": "advice_fix",
+      "created_at": "2026-06-08T00:19:50.907219",
+      "preferences": {
+        "risk_level": "low",
+        "preferred_assets": [
+          "SOL",
+          "ETH"
+        ],
+        "auto_confirm": false,
+        "notifications": true,
+        "response_style": "detailed",
+        "detail_level": "standard"
+      },
+      "behavior": {
+        "total_commands": 5,
+        "intent_counts": {
+          "advice": 5
+        },
+        "asset_counts": {
+          "SOL": 2,
+          "ETH": 1
+        },
+        "time_distribution": {
+          "0": 5
+        },
+        "avg_trade_size": 0,
+        "last_active": "2026-06-08T00:19:51.319989"
+      },
+      "portfolio_history": [],
+      "favorite_commands": [
+        {
+          "message": "Is it good to buy SOL",
+          "count": 1,
+          "first_used": "2026-06-08T00:19:50.913826",
+          "last_used": "2026-06-08T00:19:50.913830"
+        },
+        {
+          "message": "Which crypto to buy",
+          "count": 1,
+          "first_used": "2026-06-08T00:19:51.024182",
+          "last_used": "2026-06-08T00:19:51.024186"
+        },
+        {
+          "message": "What to invest in",
+          "count": 1,
+          "first_used": "2026-06-08T00:19:51.122437",
+          "last_used": "2026-06-08T00:19:51.122441"
+        },
+        {
+          "message": "Is ETH a good buy",
+          "count": 1,
+          "first_used": "2026-06-08T00:19:51.216673",
+          "last_used": "2026-06-08T00:19:51.216679"
+        },
+        {
+          "message": "Is it worth buying SOL",
+          "count": 1,
+          "first_used": "2026-06-08T00:19:51.320011",
+          "last_used": "2026-06-08T00:19:51.320018"
+        }
+      ],
+      "suggestions_enabled": true
+    },
+    "advice_perfect": {
+      "user_id": "advice_perfect",
+      "created_at": "2026-06-08T00:19:51.694478",
+      "preferences": {
+        "risk_level": "low",
+        "preferred_assets": [
+          "ETH",
+          "BTC",
+          "SOL"
+        ],
+        "auto_confirm": false,
+        "notifications": true,
+        "response_style": "detailed",
+        "detail_level": "standard"
+      },
+      "behavior": {
+        "total_commands": 18,
+        "intent_counts": {
+          "advice": 18
+        },
+        "asset_counts": {
+          "ETH": 4,
+          "BTC": 3,
+          "SOL": 2,
+          "ADA": 1
+        },
+        "time_distribution": {
+          "0": 18
+        },
+        "avg_trade_size": 0,
+        "last_active": "2026-06-08T00:19:51.966643"
+      },
+      "portfolio_history": [],
+      "favorite_commands": [
+        {
+          "message": "Should I buy ETH",
+          "count": 1,
+          "first_used": "2026-06-08T00:19:51.701931",
+          "last_used": "2026-06-08T00:19:51.701937"
+        },
+        {
+          "message": "Should I sell BTC",
+          "count": 1,
+          "first_used": "2026-06-08T00:19:51.725500",
+          "last_used": "2026-06-08T00:19:51.725504"
+        },
+        {
+          "message": "Is it good to buy SOL",
+          "count": 1,
+          "first_used": "2026-06-08T00:19:51.741480",
+          "last_used": "2026-06-08T00:19:51.741484"
+        },
+        {
+          "message": "Is it time to sell ADA",
+          "count": 1,
+          "first_used": "2026-06-08T00:19:51.757170",
+          "last_used": "2026-06-08T00:19:51.757174"
+        },
+        {
+          "message": "Should I invest in ETH",
+          "count": 1,
+          "first_used": "2026-06-08T00:19:51.776265",
+          "last_used": "2026-06-08T00:19:51.776272"
+        }
+      ],
+      "suggestions_enabled": true
     }
   },
-  "last_updated": "2026-06-08T00:11:23.028867"
+  "last_updated": "2026-06-08T00:19:51.966899"
 }

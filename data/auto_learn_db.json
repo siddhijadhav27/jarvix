@@ -494,6 +494,102 @@
       },
       "good morning jarvix": {
         "greeting": 1
+      },
+      "hey jarvix how are you": {
+        "greeting": 1
+      }
+    },
+    "advice_test_user": {
+      "should i buy {asset}": {
+        "advice": 1
+      },
+      "should i sell {asset}": {
+        "advice": 1
+      },
+      "is it good to buy {asset}": {
+        "buy": 1
+      },
+      "is it time to sell {asset}": {
+        "advice": 1
+      },
+      "should i invest in {asset}": {
+        "advice": 1
+      },
+      "should i exit {asset}": {
+        "advice": 1
+      },
+      "what should i buy": {
+        "advice": 1
+      },
+      "what should i sell": {
+        "advice": 1
+      },
+      "recommend me a coin": {
+        "advice": 1
+      }
+    },
+    "advice_fix": {
+      "is it good to buy {asset}": {
+        "advice": 1
+      },
+      "which crypto to buy": {
+        "advice": 1
+      },
+      "what to invest in": {
+        "advice": 1
+      },
+      "is {asset} a good buy": {
+        "advice": 1
+      },
+      "is it worth buying {asset}": {
+        "advice": 1
+      }
+    },
+    "advice_perfect": {
+      "should i buy {asset}": {
+        "advice": 1
+      },
+      "should i sell {asset}": {
+        "advice": 1
+      },
+      "is it good to buy {asset}": {
+        "advice": 1
+      },
+      "is it time to sell {asset}": {
+        "advice": 1
+      },
+      "should i invest in {asset}": {
+        "advice": 1
+      },
+      "should i exit {asset}": {
+        "advice": 1
+      },
+      "what should i buy": {
+        "advice": 1
+      },
+      "what should i sell": {
+        "advice": 1
+      },
+      "recommend me a coin": {
+        "advice": 1
+      },
+      "which crypto to buy": {
+        "advice": 1
+      },
+      "what to invest in": {
+        "advice": 1
+      },
+      "give me advice": {
+        "advice": 1
+      },
+      "help me decide": {
+        "advice": 1
+      },
+      "i need advice": {
+        "advice": 1
+      },
+      "what do you think about {asset}": {
+        "advice": 1
       }
     }
   },
@@ -808,7 +904,62 @@
     },
     "good morning jarvix": {
       "greeting": 1
+    },
+    "hey jarvix how are you": {
+      "greeting": 1
+    },
+    "should i buy {asset}": {
+      "advice": 2
+    },
+    "should i sell {asset}": {
+      "advice": 2
+    },
+    "is it good to buy {asset}": {
+      "buy": 1,
+      "advice": 2
+    },
+    "is it time to sell {asset}": {
+      "advice": 2
+    },
+    "should i invest in {asset}": {
+      "advice": 2
+    },
+    "should i exit {asset}": {
+      "advice": 2
+    },
+    "what should i buy": {
+      "advice": 2
+    },
+    "what should i sell": {
+      "advice": 2
+    },
+    "recommend me a coin": {
+      "advice": 2
+    },
+    "which crypto to buy": {
+      "advice": 2
+    },
+    "what to invest in": {
+      "advice": 2
+    },
+    "is {asset} a good buy": {
+      "advice": 1
+    },
+    "is it worth buying {asset}": {
+      "advice": 1
+    },
+    "give me advice": {
+      "advice": 1
+    },
+    "help me decide": {
+      "advice": 1
+    },
+    "i need advice": {
+      "advice": 1
+    },
+    "what do you think about {asset}": {
+      "advice": 1
     }
   },
-  "last_updated": "2026-06-08T00:11:23.010554"
+  "last_updated": "2026-06-08T00:19:51.921020"
 }
