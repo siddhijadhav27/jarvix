@@ -60,6 +60,26 @@ ALERT_DIRECTION_ABOVE = r'\b(hits|reaches|goes above|above|pumps|moons)\b'
 ALERT_DIRECTION_BELOW = r'\b(drops below|below|falls to|dump|crashes)\b'
 GREETING_PATTERNS = [r'\b(hello|hi|hey|good morning|good afternoon|good evening|good night|greetings|welcome|what is up|whats up|what\'s up|how are you|how do you do|how is it going|how\'s it going|what\'s going on|whats going on|nice to meet you|pleased to meet you|hii|hiii|namaste|salam|hola|ciao|jarvix|you there|wake up|yo|sup|howdy|g\'day|bonjour|guten tag|konnichiwa|annyeong|salaam|marhaba|shalom|sawubona|jambo)\b']
 
+# Emotional patterns for sentiment detection
+EMOTIONAL_PATTERNS = [
+    r"\b(i am|i\'m|feeling|so|very|really|extremely|quite|pretty|too|so)\s+(happy|sad|angry|excited|thrilled|frustrated|scared|worried|nervous|anxious|confused|disappointed|stressed|overwhelmed|shocked|surprised|grateful|hopeful|confident|bullish|bearish|terrified|ecstatic|depressed|furious|delighted|content|peaceful|calm|relaxed|tense|uneasy|restless|impatient|satisfied|unsatisfied)\b",
+    r"\b(i|this|that|it)\s+(is|was|has been|will be)\s+(amazing|awesome|terrible|great|best|worst|horrible|fantastic|wonderful|awful|incredible|disgusting|beautiful|ugly|perfect|disastrous|magnificent|brilliant|dreadful|excellent|pathetic|outstanding|unacceptable|remarkable|shocking|surprising|disappointing|frustrating|confusing|overwhelming|stressful|worrying|concerning|terrifying|exhilarating|depressing|uplifting|heartbreaking|heartwarming)\b",
+    r"\b(i|we)\s+(love|hate|like|dislike|adore|despise|enjoy|detest|appreciate|resent|admire|loathe|cherish|abhor|treasure|dread|relish|fear|distrust|trust|value|disregard)\s+(this|that|it|the|crypto|market|bitcoin|eth|btc|sol|trading|investing|you|jarvix)\b",
+    r"\b(feeling|feel)\s+(good|bad|better|worse|fine|okay|ok|not good|not well|sick|tired|energetic|lazy|motivated|unmotivated|inspired|uninspired|lost|found|empty|full|broken|healed|strong|weak|powerless|empowered|vulnerable|protected|alone|connected|loved|unloved|accepted|rejected|understood|misunderstood|seen|unseen|heard|ignored|valued|worthless)\b",
+    r"\b(mood|vibe|energy|spirit|soul|heart|mind|head|gut|instinct|intuition)\s+(is|feels|seems|looks|sounds|tastes|smells)\b",
+]
+
+
+
+
+
+
+
+
+
+
+
+
 ASSET_PATTERN = r'\b(btc|bitcoin|eth|ethereum|sol|solana|ada|cardano|doge|dogecoin|xrp|ripple|dot|polkadot|link|chainlink|avax|avalanche|matic|polygon|bnb|binance)\b'
 AMOUNT_PATTERN = r'(\d+(?:\.\d+)?)'
 PRICE_PATTERN = r'(?:at|for|@)\s*(\d+(?:,\d{3})*(?:\.\d+)?)'
@@ -168,6 +188,9 @@ def detect_intent_regex(message: str) -> Optional[Dict[str, Any]]:
         # Check greeting first (short messages)
         elif any(re.search(p, message_lower) for p in GREETING_PATTERNS):
             intent = "greeting"
+        # Check emotional patterns
+        elif any(re.search(p, message_lower) for p in EMOTIONAL_PATTERNS):
+            intent = "emotional"
         # Check buy with "add" explicitly (before portfolio to catch "add BTC to portfolio")
         elif re.search(r'\badd\s+(btc|eth|sol|ada|doge|xrp|dot|link|avax|matic|bnb)\b', message_lower):
             intent = "buy"
