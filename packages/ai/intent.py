@@ -128,8 +128,11 @@ def detect_intent_regex(message: str) -> Optional[Dict[str, Any]]:
     # Check for multiple intents
     detected_intents = []
     
+    # Check "get rid of" FIRST (SELL, not BUY)
+    if re.search(r'\bget rid of\b', message_lower):
+        detected_intents.append("sell")
     # Check advice patterns FIRST (before buy/sell to catch "Should I buy")
-    if any(re.search(p, message_lower) for p in ADVICE_PATTERNS):
+    elif any(re.search(p, message_lower) for p in ADVICE_PATTERNS):
         detected_intents.append("advice")
     # Check alert patterns BEFORE price (to catch "Price alert")
     elif any(re.search(p, message_lower) for p in ALERT_PATTERNS):
