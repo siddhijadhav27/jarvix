@@ -37,15 +37,18 @@ PRICE_PATTERNS = [
 
 # Non-Latin scripts (Chinese, Japanese, Russian) - no word boundaries
 BUY_PATTERNS_NONLATIN = [
-    r'购买|買う|买入|買入|購入|Купить',
+    r'购买|買う|买入|買入|購入|Купить|購入',
 ]
 SELL_PATTERNS_NONLATIN = [
-    r'出售|売る|卖出|売出|売却|Продать',
+    r'出售|売る|卖出|売出|売却|Продать|販売',
 ]
 PRICE_PATTERNS_NONLATIN = [
     r'价格|価格|價格|料金|Цена',
 ]
 PORTFOLIO_PATTERNS = [r'\b(portfolio|balance|holdings|net worth|what do i have|what do i own|show my|my assets|kitna paisa|mere paas|hold|assets|show assets|how am i doing|p\u0026l|profit.*loss|summary|gains|do i have|do i own|amount|positions|allocation|total value|ポートフォリオ)\b']
+PORTFOLIO_PATTERNS_NONLATIN = [
+    r'ポートフォリオ',
+]
 STOP_LOSS_PATTERNS = [r'\b(stop.loss|stoploss|protect|stop loss)\b']
 
 # Add stop loss as sell intent - when triggered, sell
@@ -140,6 +143,18 @@ def detect_intent_regex(message: str) -> Optional[Dict[str, Any]]:
     
     if has_nonlatin:
         message_lower = message.strip()  # Keep original case
+        # Check non-Latin buy patterns first
+        if any(re.search(p, message) for p in BUY_PATTERNS_NONLATIN):
+            return {"intent": "buy", "asset": None, "amount": None, "price": None, "confidence": 0.95, "source": "regex"}
+        # Check non-Latin sell patterns
+        if any(re.search(p, message) for p in SELL_PATTERNS_NONLATIN):
+            return {"intent": "sell", "asset": None, "amount": None, "price": None, "confidence": 0.95, "source": "regex"}
+        # Check non-Latin price patterns
+        if any(re.search(p, message) for p in PRICE_PATTERNS_NONLATIN):
+            return {"intent": "price", "asset": None, "amount": None, "price": None, "confidence": 0.95, "source": "regex"}
+        # Check non-Latin portfolio patterns
+        if 'PORTFOLIO_PATTERNS_NONLATIN' in globals() and any(re.search(p, message) for p in PORTFOLIO_PATTERNS_NONLATIN):
+            return {"intent": "portfolio", "asset": None, "amount": None, "price": None, "confidence": 0.95, "source": "regex"}
     else:
         message_lower = message.lower().strip()
     
