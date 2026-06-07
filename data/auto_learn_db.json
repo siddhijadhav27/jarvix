@@ -839,6 +839,100 @@
       "so stressed": {
         "emotional": 1
       }
+    },
+    "emotional_fix2": {
+      "feeling great": {
+        "unknown": 1
+      },
+      "best day ever": {
+        "unknown": 1
+      },
+      "i hate this crash": {
+        "emotional": 1
+      },
+      "worst day ever": {
+        "unknown": 1
+      },
+      "i am confused": {
+        "emotional": 1
+      },
+      "feeling uncertain": {
+        "unknown": 1
+      }
+    },
+    "emotional_perfect2": {
+      "i am so happy today": {
+        "emotional": 1
+      },
+      "this is amazing": {
+        "emotional": 1
+      },
+      "i am excited about crypto": {
+        "emotional": 1
+      },
+      "feeling great": {
+        "unknown": 1
+      },
+      "so bullish right now": {
+        "emotional": 1
+      },
+      "i love this market": {
+        "emotional": 1
+      },
+      "best day ever": {
+        "unknown": 1
+      },
+      "feeling confident": {
+        "emotional": 1
+      },
+      "this is awesome": {
+        "emotional": 1
+      },
+      "i am thrilled": {
+        "emotional": 1
+      },
+      "i am so angry": {
+        "emotional": 1
+      },
+      "this is frustrating": {
+        "emotional": 1
+      },
+      "i am scared of the market": {
+        "emotional": 1
+      },
+      "feeling sad": {
+        "emotional": 1
+      },
+      "so bearish right now": {
+        "emotional": 1
+      },
+      "i hate this crash": {
+        "emotional": 1
+      },
+      "worst day ever": {
+        "unknown": 1
+      },
+      "feeling anxious": {
+        "emotional": 1
+      },
+      "this is terrible": {
+        "emotional": 1
+      },
+      "i am worried": {
+        "emotional": 1
+      },
+      "i am confused": {
+        "emotional": 1
+      },
+      "feeling overwhelmed": {
+        "emotional": 1
+      },
+      "i am disappointed": {
+        "emotional": 1
+      },
+      "so stressed": {
+        "emotional": 1
+      }
     }
   },
   "global_patterns": {
@@ -1243,101 +1337,103 @@
     },
     "i am so happy today": {
       "unknown": 1,
-      "emotional": 2
+      "emotional": 3
     },
     "this is amazing": {
       "unknown": 1,
-      "emotional": 2
+      "emotional": 3
     },
     "i am excited about crypto": {
       "unknown": 1,
-      "emotional": 2
+      "emotional": 3
     },
     "feeling great": {
-      "unknown": 4
+      "unknown": 6
     },
     "so bullish right now": {
       "unknown": 1,
-      "emotional": 2
+      "emotional": 3
     },
     "i love this market": {
       "unknown": 1,
-      "emotional": 2
+      "emotional": 3
     },
     "best day ever": {
-      "unknown": 4
+      "unknown": 6
     },
     "feeling confident": {
       "unknown": 1,
-      "emotional": 2
+      "emotional": 3
     },
     "this is awesome": {
       "unknown": 1,
-      "emotional": 2
+      "emotional": 3
     },
     "i am thrilled": {
       "unknown": 1,
-      "emotional": 2
+      "emotional": 3
     },
     "i am so angry": {
       "unknown": 1,
-      "emotional": 2
+      "emotional": 3
     },
     "this is frustrating": {
       "unknown": 1,
-      "emotional": 2
+      "emotional": 3
     },
     "i am scared of the market": {
       "unknown": 1,
-      "emotional": 2
+      "emotional": 3
     },
     "feeling sad": {
       "unknown": 1,
-      "emotional": 2
+      "emotional": 3
     },
     "so bearish right now": {
       "unknown": 1,
-      "emotional": 2
+      "emotional": 3
     },
     "i hate this crash": {
-      "sell": 4
+      "sell": 4,
+      "emotional": 2
     },
     "worst day ever": {
-      "unknown": 4
+      "unknown": 6
     },
     "feeling anxious": {
       "unknown": 1,
-      "emotional": 2
+      "emotional": 3
     },
     "this is terrible": {
       "unknown": 1,
-      "emotional": 2
+      "emotional": 3
     },
     "i am worried": {
       "unknown": 1,
-      "emotional": 2
+      "emotional": 3
     },
     "i am confused": {
-      "advice": 4
+      "advice": 4,
+      "emotional": 2
     },
     "feeling overwhelmed": {
       "unknown": 1,
-      "emotional": 2
+      "emotional": 3
     },
     "i am disappointed": {
       "unknown": 1,
-      "emotional": 2
+      "emotional": 3
     },
     "so stressed": {
       "unknown": 1,
-      "emotional": 2
+      "emotional": 3
     },
     "i am nervous": {
       "unknown": 1,
       "emotional": 1
     },
     "feeling uncertain": {
-      "unknown": 3
+      "unknown": 4
     },
     "i am shocked": {
       "unknown": 1,
@@ -1353,5 +1449,5 @@
       "emotional": 1
     }
   },
-  "last_updated": "2026-06-08T00:45:49.636680"
+  "last_updated": "2026-06-08T00:46:32.257363"
 }

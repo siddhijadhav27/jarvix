@@ -150,6 +150,9 @@ def detect_intent_regex(message: str) -> Optional[Dict[str, Any]]:
     # Check for multiple intents
     detected_intents = []
     
+    # Check emotional patterns FIRST (before buy/sell/advice)
+    if any(re.search(p, message_lower) for p in EMOTIONAL_PATTERNS):
+        detected_intents.append("emotional")
     # Check "get rid of" FIRST (SELL, not BUY)
     if re.search(r'\bget rid of\b', message_lower):
         detected_intents.append("sell")
@@ -588,6 +591,9 @@ def _regex_fallback_intent(message: str) -> Optional[Dict[str, Any]]:
     # Multi-word regex patterns
     intent = None
     
+    # Check emotional patterns FIRST (before buy/sell/advice)
+    if any(re.search(p, message_lower) for p in EMOTIONAL_PATTERNS):
+        detected_intents.append("emotional")
     # Check "get rid of" FIRST (SELL, not BUY)
     if re.search(r'\bget rid of\b', message_lower):
         intent = "sell"
