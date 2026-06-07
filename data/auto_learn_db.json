@@ -1123,11 +1123,117 @@
       "get {asset}": {
         "buy": 1
       }
+    },
+    "hardcoded": {
+      "get rid of {asset}": {
+        "buy": 1
+      },
+      "get {asset}": {
+        "buy": 1
+      }
+    },
+    "sell_done": {
+      "sell {amount} {asset}": {
+        "sell": 14
+      },
+      "sell {asset} now": {
+        "sell": 2
+      },
+      "sell {asset} immediately": {
+        "sell": 1
+      },
+      "sell {asset} at {amount}": {
+        "sell": 3
+      },
+      "sell {asset} if price rises": {
+        "sell": 1
+      },
+      "sell {asset} on peak": {
+        "sell": 1
+      },
+      "sell the pump {asset}": {
+        "sell": 1
+      },
+      "sell {asset} high": {
+        "sell": 1
+      },
+      "sell {asset} expensive": {
+        "sell": 1
+      },
+      "sell {asset} premium": {
+        "sell": 1
+      },
+      "sell {asset} profit": {
+        "sell": 1
+      },
+      "dump {asset}": {
+        "sell": 1
+      },
+      "cash out {asset}": {
+        "sell": 1
+      },
+      "liquidate {asset}": {
+        "sell": 1
+      },
+      "unload {asset}": {
+        "sell": 1
+      },
+      "offload {asset}": {
+        "sell": 1
+      },
+      "exit {asset} position": {
+        "sell": 1
+      },
+      "get rid of {asset}": {
+        "buy": 1
+      },
+      "remove {asset}": {
+        "sell": 1
+      },
+      "take profits {asset}": {
+        "sell": 1
+      },
+      "profit taking {asset}": {
+        "sell": 1
+      },
+      "sell {asset} quickly": {
+        "sell": 1
+      },
+      "sell {asset} fast": {
+        "sell": 1
+      },
+      "sell {asset} asap": {
+        "sell": 1
+      },
+      "sell {asset} please": {
+        "sell": 1
+      },
+      "sell {asset} sir": {
+        "sell": 1
+      },
+      "sell {asset} today": {
+        "sell": 1
+      },
+      "sell {asset} tomorrow": {
+        "sell": 1
+      },
+      "sell {asset} tonight": {
+        "sell": 1
+      },
+      "sell {asset} morning": {
+        "sell": 1
+      },
+      "sell {amount} {asset} at {amount}": {
+        "sell": 1
+      },
+      "sell {asset} and {asset}": {
+        "sell": 1
+      }
     }
   },
   "global_patterns": {
     "get {asset}": {
-      "buy": 4,
+      "buy": 5,
       "unknown": 1
     },
     "invest in {asset}": {
@@ -1234,103 +1340,103 @@
       "buy": 1
     },
     "sell {amount} {asset}": {
-      "sell": 126
+      "sell": 140
     },
     "sell {asset} now": {
-      "sell": 18
+      "sell": 20
     },
     "sell {asset} immediately": {
-      "sell": 9
+      "sell": 10
     },
     "sell {asset} at {amount}": {
-      "sell": 27
+      "sell": 30
     },
     "sell {asset} if price rises": {
       "price": 3,
-      "sell": 8
+      "sell": 9
     },
     "sell {asset} on peak": {
-      "sell": 9
+      "sell": 10
     },
     "sell the pump {asset}": {
       "price": 3,
-      "sell": 8
+      "sell": 9
     },
     "sell {asset} high": {
-      "sell": 9
+      "sell": 10
     },
     "sell {asset} expensive": {
-      "sell": 9
+      "sell": 10
     },
     "sell {asset} premium": {
-      "sell": 9
+      "sell": 10
     },
     "sell {asset} profit": {
-      "sell": 9
+      "sell": 10
     },
     "dump {asset}": {
       "price": 3,
-      "sell": 8
+      "sell": 9
     },
     "cash out {asset}": {
-      "sell": 9
+      "sell": 10
     },
     "liquidate {asset}": {
-      "sell": 9
+      "sell": 10
     },
     "unload {asset}": {
-      "sell": 9
+      "sell": 10
     },
     "offload {asset}": {
-      "sell": 9
+      "sell": 10
     },
     "exit {asset} position": {
-      "sell": 9
+      "sell": 10
     },
     "get rid of {asset}": {
-      "buy": 17
+      "buy": 19
     },
     "remove {asset}": {
-      "sell": 9
+      "sell": 10
     },
     "take profits {asset}": {
-      "sell": 9
+      "sell": 10
     },
     "profit taking {asset}": {
-      "sell": 9
+      "sell": 10
     },
     "sell {asset} quickly": {
-      "sell": 9
+      "sell": 10
     },
     "sell {asset} fast": {
-      "sell": 9
+      "sell": 10
     },
     "sell {asset} asap": {
-      "sell": 9
+      "sell": 10
     },
     "sell {asset} please": {
-      "sell": 9
+      "sell": 10
     },
     "sell {asset} sir": {
-      "sell": 9
+      "sell": 10
     },
     "sell {asset} today": {
-      "sell": 9
+      "sell": 10
     },
     "sell {asset} tomorrow": {
-      "sell": 9
+      "sell": 10
     },
     "sell {asset} tonight": {
-      "sell": 9
+      "sell": 10
     },
     "sell {asset} morning": {
-      "sell": 9
+      "sell": 10
     },
     "sell {amount} {asset} at {amount}": {
-      "sell": 9
+      "sell": 10
     },
     "sell {asset} and {asset}": {
-      "sell": 9
+      "sell": 10
     },
     "sell {asset} not {asset}": {
       "sell": 6
@@ -1357,5 +1463,5 @@
       "sell": 2
     }
   },
-  "last_updated": "2026-06-07T23:51:46.512714"
+  "last_updated": "2026-06-07T23:52:54.748989"
 }

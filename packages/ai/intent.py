@@ -299,6 +299,20 @@ async def detect_intent_hybrid(message: str, context: Optional[Dict[str, Any]] =
     clean_message = emoji_pattern.sub(r'', message).strip()
     message_lower = clean_message.lower().strip()
     
+    # SPECIAL HANDLING: "get rid of" is SELL, not BUY
+    if re.search(r'\bget rid of\b', message_lower):
+        # Extract asset
+        asset_matches = re.findall(ASSET_PATTERN, message_lower)
+        asset = asset_matches[0].upper() if asset_matches else None
+        return {
+            "intent": "sell",
+            "asset": asset,
+            "amount": None,
+            "price": None,
+            "confidence": 0.95,
+            "source": "regex"
+        }
+    
     # SPECIAL HANDLING: Single word commands
     words = message_lower.split()
     if len(words) == 1:
