@@ -104,6 +104,114 @@
       },
       "sell {asset} not {asset}": {
         "sell": 1
+      },
+      "sell {asset} instead of {asset}": {
+        "sell": 1
+      },
+      "sell {amount} {asset} {amount} {asset}": {
+        "sell": 1
+      },
+      "panic sell {asset}": {
+        "sell": 1
+      },
+      "crash sell {asset}": {
+        "sell": 1
+      },
+      "emergency sell {asset}": {
+        "sell": 1
+      },
+      "stop loss sell {asset}": {
+        "sell": 1
+      },
+      "limit sell {asset}": {
+        "sell": 1
+      }
+    },
+    "price_test_user": {
+      "{asset} price": {
+        "price": 4
+      },
+      "how much is {asset}": {
+        "price": 1
+      },
+      "what is {asset} price": {
+        "price": 1
+      },
+      "{asset} value": {
+        "price": 1
+      },
+      "{asset} cost": {
+        "price": 1
+      },
+      "{asset} worth": {
+        "price": 1
+      },
+      "check {asset} price": {
+        "price": 1
+      },
+      "show {asset} price": {
+        "price": 1
+      },
+      "get {asset} price": {
+        "buy": 1
+      },
+      "{asset} going up": {
+        "price": 1
+      }
+    },
+    "price_fix": {
+      "get {asset} price": {
+        "price": 1
+      }
+    },
+    "price_perfect": {
+      "{asset} price": {
+        "price": 4
+      },
+      "how much is {asset}": {
+        "price": 1
+      },
+      "what is {asset} price": {
+        "price": 1
+      },
+      "{asset} value": {
+        "price": 1
+      },
+      "{asset} cost": {
+        "price": 1
+      },
+      "{asset} worth": {
+        "price": 1
+      },
+      "check {asset} price": {
+        "price": 1
+      },
+      "show {asset} price": {
+        "price": 1
+      },
+      "get {asset} price": {
+        "price": 1
+      },
+      "{asset} going up": {
+        "price": 1
+      },
+      "{asset} going down": {
+        "price": 1
+      },
+      "{asset} vs {asset} price": {
+        "price": 1
+      },
+      "{asset} all time high": {
+        "price": 1
+      },
+      "{asset} support level": {
+        "price": 1
+      },
+      "{asset} resistance": {
+        "price": 1
+      },
+      "{asset} chart": {
+        "price": 1
       }
     }
   },
@@ -206,7 +314,77 @@
     },
     "sell {asset} not {asset}": {
       "sell": 1
+    },
+    "sell {asset} instead of {asset}": {
+      "sell": 1
+    },
+    "sell {amount} {asset} {amount} {asset}": {
+      "sell": 1
+    },
+    "panic sell {asset}": {
+      "sell": 1
+    },
+    "crash sell {asset}": {
+      "sell": 1
+    },
+    "emergency sell {asset}": {
+      "sell": 1
+    },
+    "stop loss sell {asset}": {
+      "sell": 1
+    },
+    "limit sell {asset}": {
+      "sell": 1
+    },
+    "{asset} price": {
+      "price": 8
+    },
+    "how much is {asset}": {
+      "price": 2
+    },
+    "what is {asset} price": {
+      "price": 2
+    },
+    "{asset} value": {
+      "price": 2
+    },
+    "{asset} cost": {
+      "price": 2
+    },
+    "{asset} worth": {
+      "price": 2
+    },
+    "check {asset} price": {
+      "price": 2
+    },
+    "show {asset} price": {
+      "price": 2
+    },
+    "get {asset} price": {
+      "buy": 1,
+      "price": 2
+    },
+    "{asset} going up": {
+      "price": 2
+    },
+    "{asset} going down": {
+      "price": 1
+    },
+    "{asset} vs {asset} price": {
+      "price": 1
+    },
+    "{asset} all time high": {
+      "price": 1
+    },
+    "{asset} support level": {
+      "price": 1
+    },
+    "{asset} resistance": {
+      "price": 1
+    },
+    "{asset} chart": {
+      "price": 1
     }
   },
-  "last_updated": "2026-06-07T23:54:35.960654"
+  "last_updated": "2026-06-08T00:00:49.299765"
 }

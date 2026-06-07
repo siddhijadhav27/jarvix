@@ -1488,7 +1488,182 @@
         }
       ],
       "suggestions_enabled": true
+    },
+    "price_test_user": {
+      "user_id": "price_test_user",
+      "created_at": "2026-06-07T23:59:55.353363",
+      "preferences": {
+        "risk_level": "low",
+        "preferred_assets": [
+          "ETH",
+          "BTC",
+          "SOL"
+        ],
+        "auto_confirm": false,
+        "notifications": true,
+        "response_style": "witty",
+        "detail_level": "standard"
+      },
+      "behavior": {
+        "total_commands": 22,
+        "intent_counts": {
+          "price": 21,
+          "buy": 1
+        },
+        "asset_counts": {
+          "ETH": 7,
+          "BTC": 5,
+          "SOL": 4,
+          "ADA": 3,
+          "ETH, BTC": 1
+        },
+        "time_distribution": {
+          "23": 22
+        },
+        "avg_trade_size": 0,
+        "last_active": "2026-06-07T23:59:55.740761"
+      },
+      "portfolio_history": [],
+      "favorite_commands": [
+        {
+          "message": "ETH price",
+          "count": 1,
+          "first_used": "2026-06-07T23:59:55.361165",
+          "last_used": "2026-06-07T23:59:55.361172"
+        },
+        {
+          "message": "BTC price",
+          "count": 1,
+          "first_used": "2026-06-07T23:59:55.391637",
+          "last_used": "2026-06-07T23:59:55.391644"
+        },
+        {
+          "message": "SOL price",
+          "count": 1,
+          "first_used": "2026-06-07T23:59:55.407145",
+          "last_used": "2026-06-07T23:59:55.407149"
+        },
+        {
+          "message": "ADA price",
+          "count": 1,
+          "first_used": "2026-06-07T23:59:55.424901",
+          "last_used": "2026-06-07T23:59:55.424908"
+        },
+        {
+          "message": "ETH",
+          "count": 1,
+          "first_used": "2026-06-07T23:59:55.440472",
+          "last_used": "2026-06-07T23:59:55.440475"
+        }
+      ],
+      "suggestions_enabled": true
+    },
+    "price_fix": {
+      "user_id": "price_fix",
+      "created_at": "2026-06-08T00:00:48.686338",
+      "preferences": {
+        "risk_level": "low",
+        "preferred_assets": [
+          "SOL"
+        ],
+        "auto_confirm": false,
+        "notifications": true,
+        "response_style": "detailed",
+        "detail_level": "standard"
+      },
+      "behavior": {
+        "total_commands": 1,
+        "intent_counts": {
+          "price": 1
+        },
+        "asset_counts": {
+          "SOL": 1
+        },
+        "time_distribution": {
+          "0": 1
+        },
+        "avg_trade_size": 0,
+        "last_active": "2026-06-08T00:00:48.691600"
+      },
+      "portfolio_history": [],
+      "favorite_commands": [
+        {
+          "message": "Get SOL price",
+          "count": 1,
+          "first_used": "2026-06-08T00:00:48.691621",
+          "last_used": "2026-06-08T00:00:48.691626"
+        }
+      ],
+      "suggestions_enabled": true
+    },
+    "price_perfect": {
+      "user_id": "price_perfect",
+      "created_at": "2026-06-08T00:00:49.033588",
+      "preferences": {
+        "risk_level": "low",
+        "preferred_assets": [
+          "ETH",
+          "BTC",
+          "SOL"
+        ],
+        "auto_confirm": false,
+        "notifications": true,
+        "response_style": "witty",
+        "detail_level": "standard"
+      },
+      "behavior": {
+        "total_commands": 22,
+        "intent_counts": {
+          "price": 22
+        },
+        "asset_counts": {
+          "ETH": 7,
+          "BTC": 5,
+          "SOL": 4,
+          "ADA": 3,
+          "ETH, BTC": 1
+        },
+        "time_distribution": {
+          "0": 22
+        },
+        "avg_trade_size": 0,
+        "last_active": "2026-06-08T00:00:49.328451"
+      },
+      "portfolio_history": [],
+      "favorite_commands": [
+        {
+          "message": "ETH price",
+          "count": 1,
+          "first_used": "2026-06-08T00:00:49.037742",
+          "last_used": "2026-06-08T00:00:49.037746"
+        },
+        {
+          "message": "BTC price",
+          "count": 1,
+          "first_used": "2026-06-08T00:00:49.056383",
+          "last_used": "2026-06-08T00:00:49.056387"
+        },
+        {
+          "message": "SOL price",
+          "count": 1,
+          "first_used": "2026-06-08T00:00:49.070710",
+          "last_used": "2026-06-08T00:00:49.070714"
+        },
+        {
+          "message": "ADA price",
+          "count": 1,
+          "first_used": "2026-06-08T00:00:49.085285",
+          "last_used": "2026-06-08T00:00:49.085289"
+        },
+        {
+          "message": "ETH",
+          "count": 1,
+          "first_used": "2026-06-08T00:00:49.098341",
+          "last_used": "2026-06-08T00:00:49.098346"
+        }
+      ],
+      "suggestions_enabled": true
     }
   },
-  "last_updated": "2026-06-07T23:54:36.058443"
+  "last_updated": "2026-06-08T00:00:49.328662"
 }
