@@ -17,7 +17,15 @@ BUY_PATTERNS = [
     r'\bbuy\s+.*\s+(?:dip|low|cheap|discount|bargain)\b',
 ]
 SELL_PATTERNS = [
-    r'\b(sell|sale|dump|cash out|liquidate|get rid of|unload|offload|exit|crash|panic|time to sell|selling time|thinking about selling|thinking of selling|thinking of dumping|considering selling|possibly unload|remove from portfolio|remove.*portfolio|get out|take profits|profit taking|becho|bech do|dena hai|nikal do|nikat do|vender|vendre|verkaufen|팔기|بيع|Продать|vendere|verkopen|sat|bán|ขาย|jual|sprzedać|sälj|Πώληση)\b'
+    r'\b(sell|sale|dump|cash out|liquidate|get rid of|unload|offload|exit|crash|panic|emergency|stop loss|limit sell|time to sell|selling time|thinking about selling|thinking of selling|thinking of dumping|considering selling|possibly unload|remove from portfolio|remove.*portfolio|get out|take profits|profit taking|becho|bech do|dena hai|nikal do|nikat do|vender|vendre|verkaufen|팔기|بيع|Продать|vendere|verkopen|sat|bán|ขาย|jual|sprzedać|sälj|Πώληση)\b',
+    # Conditional sell patterns
+    r'\bsell\s+(?:if|when|at)\b',
+    r'\bsell\s+.*\s+(?:pump|high|expensive|premium|profit|rises)\b',
+    r'\bpanic\s+sell\b',
+    r'\bcrash\s+sell\b',
+    r'\bemergency\s+sell\b',
+    r'\bstop loss\s+sell\b',
+    r'\blimit\s+sell\b',
 ]
 PRICE_PATTERNS = [
     r'\b(price|prices|cost|value|how much|worth|rate|chart|kitna|kya chal raha hai|kya scene hai|ka bhav|ka rate|precio|prix|preis|가격|سعر|Цена|prezzo|prijs|fiyat|giá|ราคา|harga|cena|pris|Τιμή|going up|going down|pump|dump|mooning|crashing|support|resistance|all time high|ath)\b'
@@ -130,12 +138,12 @@ def detect_intent_regex(message: str) -> Optional[Dict[str, Any]]:
     # Check buy patterns BEFORE price (to catch "Buy if price drops")
     elif any(re.search(p, message_lower) for p in BUY_PATTERNS):
         detected_intents.append("buy")
-    # Check price patterns (but not if buy context detected)
-    elif any(re.search(p, message_lower) for p in PRICE_PATTERNS):
-        detected_intents.append("price")
-    # Check sell patterns (but not if price context detected)
+    # Check sell patterns BEFORE price (to catch "Sell if price rises")
     elif any(re.search(p, message_lower) for p in SELL_PATTERNS):
         detected_intents.append("sell")
+    # Check price patterns (but not if buy/sell context detected)
+    elif any(re.search(p, message_lower) for p in PRICE_PATTERNS):
+        detected_intents.append("price")
     
     # If multiple intents detected, use the first one but add secondary_intent
     if len(detected_intents) > 0:
@@ -147,8 +155,11 @@ def detect_intent_regex(message: str) -> Optional[Dict[str, Any]]:
     
     # Fallback to old logic if no intents detected
     if not intent:
+        # Check "get rid of" explicitly (SELL, not BUY)
+        if re.search(r'\bget rid of\b', message_lower):
+            intent = "sell"
         # Check greeting first (short messages)
-        if any(re.search(p, message_lower) for p in GREETING_PATTERNS):
+        elif any(re.search(p, message_lower) for p in GREETING_PATTERNS):
             intent = "greeting"
         # Check buy with "add" explicitly (before portfolio to catch "add BTC to portfolio")
         elif re.search(r'\badd\s+(btc|eth|sol|ada|doge|xrp|dot|link|avax|matic|bnb)\b', message_lower):

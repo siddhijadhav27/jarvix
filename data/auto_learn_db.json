@@ -210,6 +210,486 @@
       },
       "buy {asset} not {asset}": {
         "buy": 1
+      },
+      "buy {asset} instead of {asset}": {
+        "buy": 1
+      },
+      "buy {amount} {asset} {amount} {asset}": {
+        "buy": 1
+      },
+      "get rid of {asset}": {
+        "buy": 1
+      }
+    },
+    "sell_test_user": {
+      "sell {amount} {asset}": {
+        "sell": 14
+      },
+      "sell {asset} now": {
+        "sell": 2
+      },
+      "sell {asset} immediately": {
+        "sell": 1
+      },
+      "sell {asset} at {amount}": {
+        "sell": 3
+      },
+      "sell {asset} if price rises": {
+        "price": 1
+      },
+      "sell {asset} on peak": {
+        "sell": 1
+      },
+      "sell the pump {asset}": {
+        "price": 1
+      },
+      "sell {asset} high": {
+        "sell": 1
+      },
+      "sell {asset} expensive": {
+        "sell": 1
+      },
+      "sell {asset} premium": {
+        "sell": 1
+      },
+      "sell {asset} profit": {
+        "sell": 1
+      },
+      "dump {asset}": {
+        "price": 1
+      },
+      "cash out {asset}": {
+        "sell": 1
+      },
+      "liquidate {asset}": {
+        "sell": 1
+      },
+      "unload {asset}": {
+        "sell": 1
+      },
+      "offload {asset}": {
+        "sell": 1
+      },
+      "exit {asset} position": {
+        "sell": 1
+      },
+      "get rid of {asset}": {
+        "buy": 1
+      },
+      "remove {asset}": {
+        "sell": 1
+      },
+      "take profits {asset}": {
+        "sell": 1
+      },
+      "profit taking {asset}": {
+        "sell": 1
+      },
+      "sell {asset} quickly": {
+        "sell": 1
+      },
+      "sell {asset} fast": {
+        "sell": 1
+      },
+      "sell {asset} asap": {
+        "sell": 1
+      },
+      "sell {asset} please": {
+        "sell": 1
+      },
+      "sell {asset} sir": {
+        "sell": 1
+      },
+      "sell {asset} today": {
+        "sell": 1
+      },
+      "sell {asset} tomorrow": {
+        "sell": 1
+      },
+      "sell {asset} tonight": {
+        "sell": 1
+      },
+      "sell {asset} morning": {
+        "sell": 1
+      },
+      "sell {amount} {asset} at {amount}": {
+        "sell": 1
+      },
+      "sell {asset} and {asset}": {
+        "sell": 1
+      }
+    },
+    "sell_fix_test": {
+      "sell {asset} if price rises": {
+        "price": 1
+      },
+      "sell the pump {asset}": {
+        "price": 1
+      },
+      "dump {asset}": {
+        "price": 1
+      },
+      "get rid of {asset}": {
+        "buy": 1
+      }
+    },
+    "sell_retest": {
+      "sell {amount} {asset}": {
+        "sell": 14
+      },
+      "sell {asset} now": {
+        "sell": 2
+      },
+      "sell {asset} immediately": {
+        "sell": 1
+      },
+      "sell {asset} at {amount}": {
+        "sell": 3
+      },
+      "sell {asset} if price rises": {
+        "price": 1
+      },
+      "sell {asset} on peak": {
+        "sell": 1
+      },
+      "sell the pump {asset}": {
+        "price": 1
+      },
+      "sell {asset} high": {
+        "sell": 1
+      },
+      "sell {asset} expensive": {
+        "sell": 1
+      },
+      "sell {asset} premium": {
+        "sell": 1
+      },
+      "sell {asset} profit": {
+        "sell": 1
+      },
+      "dump {asset}": {
+        "price": 1
+      },
+      "cash out {asset}": {
+        "sell": 1
+      },
+      "liquidate {asset}": {
+        "sell": 1
+      },
+      "unload {asset}": {
+        "sell": 1
+      },
+      "offload {asset}": {
+        "sell": 1
+      },
+      "exit {asset} position": {
+        "sell": 1
+      },
+      "get rid of {asset}": {
+        "buy": 1
+      },
+      "remove {asset}": {
+        "sell": 1
+      },
+      "take profits {asset}": {
+        "sell": 1
+      },
+      "profit taking {asset}": {
+        "sell": 1
+      },
+      "sell {asset} quickly": {
+        "sell": 1
+      },
+      "sell {asset} fast": {
+        "sell": 1
+      },
+      "sell {asset} asap": {
+        "sell": 1
+      },
+      "sell {asset} please": {
+        "sell": 1
+      },
+      "sell {asset} sir": {
+        "sell": 1
+      },
+      "sell {asset} today": {
+        "sell": 1
+      },
+      "sell {asset} tomorrow": {
+        "sell": 1
+      },
+      "sell {asset} tonight": {
+        "sell": 1
+      },
+      "sell {asset} morning": {
+        "sell": 1
+      },
+      "sell {amount} {asset} at {amount}": {
+        "sell": 1
+      },
+      "sell {asset} and {asset}": {
+        "sell": 1
+      },
+      "sell {asset} not {asset}": {
+        "sell": 1
+      },
+      "sell {asset} instead of {asset}": {
+        "sell": 1
+      },
+      "sell {amount} {asset} {amount} {asset}": {
+        "sell": 1
+      },
+      "panic sell {asset}": {
+        "sell": 1
+      },
+      "crash sell {asset}": {
+        "sell": 1
+      },
+      "emergency sell {asset}": {
+        "sell": 1
+      },
+      "stop loss sell {asset}": {
+        "sell": 1
+      },
+      "limit sell {asset}": {
+        "sell": 1
+      }
+    },
+    "priority_fix_test": {
+      "sell {asset} if price rises": {
+        "sell": 1
+      },
+      "sell the pump {asset}": {
+        "sell": 1
+      },
+      "dump {asset}": {
+        "sell": 1
+      },
+      "get rid of {asset}": {
+        "buy": 1
+      }
+    },
+    "final_sell_test": {
+      "sell {amount} {asset}": {
+        "sell": 14
+      },
+      "sell {asset} now": {
+        "sell": 2
+      },
+      "sell {asset} immediately": {
+        "sell": 1
+      },
+      "sell {asset} at {amount}": {
+        "sell": 3
+      },
+      "sell {asset} if price rises": {
+        "sell": 1
+      },
+      "sell {asset} on peak": {
+        "sell": 1
+      },
+      "sell the pump {asset}": {
+        "sell": 1
+      },
+      "sell {asset} high": {
+        "sell": 1
+      },
+      "sell {asset} expensive": {
+        "sell": 1
+      },
+      "sell {asset} premium": {
+        "sell": 1
+      },
+      "sell {asset} profit": {
+        "sell": 1
+      },
+      "dump {asset}": {
+        "sell": 1
+      },
+      "cash out {asset}": {
+        "sell": 1
+      },
+      "liquidate {asset}": {
+        "sell": 1
+      },
+      "unload {asset}": {
+        "sell": 1
+      },
+      "offload {asset}": {
+        "sell": 1
+      },
+      "exit {asset} position": {
+        "sell": 1
+      },
+      "get rid of {asset}": {
+        "buy": 1
+      },
+      "remove {asset}": {
+        "sell": 1
+      },
+      "take profits {asset}": {
+        "sell": 1
+      },
+      "profit taking {asset}": {
+        "sell": 1
+      },
+      "sell {asset} quickly": {
+        "sell": 1
+      },
+      "sell {asset} fast": {
+        "sell": 1
+      },
+      "sell {asset} asap": {
+        "sell": 1
+      },
+      "sell {asset} please": {
+        "sell": 1
+      },
+      "sell {asset} sir": {
+        "sell": 1
+      },
+      "sell {asset} today": {
+        "sell": 1
+      },
+      "sell {asset} tomorrow": {
+        "sell": 1
+      },
+      "sell {asset} tonight": {
+        "sell": 1
+      },
+      "sell {asset} morning": {
+        "sell": 1
+      },
+      "sell {amount} {asset} at {amount}": {
+        "sell": 1
+      },
+      "sell {asset} and {asset}": {
+        "sell": 1
+      },
+      "sell {asset} not {asset}": {
+        "sell": 1
+      },
+      "sell {asset} instead of {asset}": {
+        "sell": 1
+      },
+      "sell {amount} {asset} {amount} {asset}": {
+        "sell": 1
+      },
+      "panic sell {asset}": {
+        "sell": 1
+      },
+      "crash sell {asset}": {
+        "sell": 1
+      },
+      "emergency sell {asset}": {
+        "sell": 1
+      },
+      "stop loss sell {asset}": {
+        "sell": 1
+      },
+      "limit sell {asset}": {
+        "sell": 1
+      }
+    },
+    "sell_final": {
+      "sell {amount} {asset}": {
+        "sell": 14
+      },
+      "sell {asset} now": {
+        "sell": 2
+      },
+      "sell {asset} immediately": {
+        "sell": 1
+      },
+      "sell {asset} at {amount}": {
+        "sell": 3
+      },
+      "sell {asset} if price rises": {
+        "sell": 1
+      },
+      "sell {asset} on peak": {
+        "sell": 1
+      },
+      "sell the pump {asset}": {
+        "sell": 1
+      },
+      "sell {asset} high": {
+        "sell": 1
+      },
+      "sell {asset} expensive": {
+        "sell": 1
+      },
+      "sell {asset} premium": {
+        "sell": 1
+      },
+      "sell {asset} profit": {
+        "sell": 1
+      },
+      "dump {asset}": {
+        "sell": 1
+      },
+      "cash out {asset}": {
+        "sell": 1
+      },
+      "liquidate {asset}": {
+        "sell": 1
+      },
+      "unload {asset}": {
+        "sell": 1
+      },
+      "offload {asset}": {
+        "sell": 1
+      },
+      "exit {asset} position": {
+        "sell": 1
+      },
+      "get rid of {asset}": {
+        "buy": 1
+      },
+      "remove {asset}": {
+        "sell": 1
+      },
+      "take profits {asset}": {
+        "sell": 1
+      },
+      "profit taking {asset}": {
+        "sell": 1
+      },
+      "sell {asset} quickly": {
+        "sell": 1
+      },
+      "sell {asset} fast": {
+        "sell": 1
+      },
+      "sell {asset} asap": {
+        "sell": 1
+      },
+      "sell {asset} please": {
+        "sell": 1
+      },
+      "sell {asset} sir": {
+        "sell": 1
+      },
+      "sell {asset} today": {
+        "sell": 1
+      },
+      "sell {asset} tomorrow": {
+        "sell": 1
+      },
+      "sell {asset} tonight": {
+        "sell": 1
+      },
+      "sell {asset} morning": {
+        "sell": 1
+      },
+      "sell {amount} {asset} at {amount}": {
+        "sell": 1
+      },
+      "sell {asset} and {asset}": {
+        "sell": 1
+      },
+      "sell {asset} not {asset}": {
+        "sell": 1
       }
     }
   },
@@ -313,7 +793,136 @@
     },
     "buy {asset} not {asset}": {
       "buy": 1
+    },
+    "buy {asset} instead of {asset}": {
+      "buy": 1
+    },
+    "buy {amount} {asset} {amount} {asset}": {
+      "buy": 1
+    },
+    "sell {amount} {asset}": {
+      "sell": 56
+    },
+    "sell {asset} now": {
+      "sell": 8
+    },
+    "sell {asset} immediately": {
+      "sell": 4
+    },
+    "sell {asset} at {amount}": {
+      "sell": 12
+    },
+    "sell {asset} if price rises": {
+      "price": 3,
+      "sell": 3
+    },
+    "sell {asset} on peak": {
+      "sell": 4
+    },
+    "sell the pump {asset}": {
+      "price": 3,
+      "sell": 3
+    },
+    "sell {asset} high": {
+      "sell": 4
+    },
+    "sell {asset} expensive": {
+      "sell": 4
+    },
+    "sell {asset} premium": {
+      "sell": 4
+    },
+    "sell {asset} profit": {
+      "sell": 4
+    },
+    "dump {asset}": {
+      "price": 3,
+      "sell": 3
+    },
+    "cash out {asset}": {
+      "sell": 4
+    },
+    "liquidate {asset}": {
+      "sell": 4
+    },
+    "unload {asset}": {
+      "sell": 4
+    },
+    "offload {asset}": {
+      "sell": 4
+    },
+    "exit {asset} position": {
+      "sell": 4
+    },
+    "get rid of {asset}": {
+      "buy": 7
+    },
+    "remove {asset}": {
+      "sell": 4
+    },
+    "take profits {asset}": {
+      "sell": 4
+    },
+    "profit taking {asset}": {
+      "sell": 4
+    },
+    "sell {asset} quickly": {
+      "sell": 4
+    },
+    "sell {asset} fast": {
+      "sell": 4
+    },
+    "sell {asset} asap": {
+      "sell": 4
+    },
+    "sell {asset} please": {
+      "sell": 4
+    },
+    "sell {asset} sir": {
+      "sell": 4
+    },
+    "sell {asset} today": {
+      "sell": 4
+    },
+    "sell {asset} tomorrow": {
+      "sell": 4
+    },
+    "sell {asset} tonight": {
+      "sell": 4
+    },
+    "sell {asset} morning": {
+      "sell": 4
+    },
+    "sell {amount} {asset} at {amount}": {
+      "sell": 4
+    },
+    "sell {asset} and {asset}": {
+      "sell": 4
+    },
+    "sell {asset} not {asset}": {
+      "sell": 3
+    },
+    "sell {asset} instead of {asset}": {
+      "sell": 2
+    },
+    "sell {amount} {asset} {amount} {asset}": {
+      "sell": 2
+    },
+    "panic sell {asset}": {
+      "sell": 2
+    },
+    "crash sell {asset}": {
+      "sell": 2
+    },
+    "emergency sell {asset}": {
+      "sell": 2
+    },
+    "stop loss sell {asset}": {
+      "sell": 2
+    },
+    "limit sell {asset}": {
+      "sell": 2
     }
   },
-  "last_updated": "2026-06-07T23:39:15.324672"
+  "last_updated": "2026-06-07T23:45:16.962038"
 }
