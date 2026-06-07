@@ -57,18 +57,16 @@ def clean_response(response: str) -> str:
         if not line:
             continue
         
-        # Skip lines starting with TUI artifacts
+        # Skip TUI artifact lines (expanded list)
         if line.startswith('⚕'):
             continue
         if line.startswith('─'):
             continue
-        if line.startswith('╭'):
-            continue
-        if line.startswith('╰'):
+        if line.startswith('╭') or line.startswith('╰') or line.startswith('│'):
             continue
         if line.startswith('❯'):
             continue
-        if '⏲' in line:
+        if '⏲' in line and len(line) < 50:
             continue
         if line.startswith('⏱'):
             continue
@@ -78,27 +76,13 @@ def clean_response(response: str) -> str:
             continue
         if line.startswith('msg='):
             continue
-        if 'synthesizing...' in line:
+        if 'synthesizing...' in line or 'brainstorming...' in line or 'pondering...' in line:
             continue
-        if 'brainstorming...' in line:
+        if 'deliberating...' in line or 'musing...' in line or 'contemplating...' in line:
             continue
-        if 'pondering...' in line:
+        if 'reflecting...' in line or 'analyzing...' in line or 'formulating...' in line:
             continue
-        if 'deliberating...' in line:
-            continue
-        if 'musing...' in line:
-            continue
-        if 'contemplating...' in line:
-            continue
-        if 'reflecting...' in line:
-            continue
-        if 'analyzing...' in line:
-            continue
-        if 'formulating...' in line:
-            continue
-        if 'computing...' in line:
-            continue
-        if 'Interrupted' in line:
+        if 'computing...' in line or 'Interrupted' in line:
             continue
         if 'interrupt' in line.lower() and 'queue' in line.lower():
             continue
@@ -217,6 +201,16 @@ def clean_response(response: str) -> str:
         if line.startswith('"confidence":'):
             continue
         if line.startswith('null,') or line.startswith('}') or line.startswith('{'):
+            continue
+        
+        # NEW: Skip TUI progress bars and status lines
+        if '│' in line and ('K' in line or 'h' in line or 'm' in line or 's' in line):
+            continue
+        if '░' in line or '█' in line:
+            continue
+        if '⏲' in line or '⏱' in line:
+            continue
+        if '⚕' in line:
             continue
         
         cleaned_lines.append(line)

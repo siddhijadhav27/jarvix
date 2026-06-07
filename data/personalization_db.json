@@ -1,0 +1,212 @@
+{
+  "user_profiles": {
+    "clean_test": {
+      "user_id": "clean_test",
+      "created_at": "2026-06-07T23:30:06.048113",
+      "preferences": {
+        "risk_level": "low",
+        "preferred_assets": [
+          "ETH",
+          "BTC"
+        ],
+        "auto_confirm": false,
+        "notifications": true,
+        "response_style": "detailed",
+        "detail_level": "standard"
+      },
+      "behavior": {
+        "total_commands": 5,
+        "intent_counts": {
+          "buy": 2,
+          "unknown": 3
+        },
+        "asset_counts": {
+          "ETH": 1,
+          "BTC": 1
+        },
+        "time_distribution": {
+          "23": 5
+        },
+        "avg_trade_size": 0,
+        "last_active": "2026-06-07T23:30:06.422880"
+      },
+      "portfolio_history": [],
+      "favorite_commands": [
+        {
+          "message": "Buy ETH",
+          "count": 1,
+          "first_used": "2026-06-07T23:30:06.048486",
+          "last_used": "2026-06-07T23:30:06.048489"
+        },
+        {
+          "message": "Buy BTC",
+          "count": 1,
+          "first_used": "2026-06-07T23:30:06.151524",
+          "last_used": "2026-06-07T23:30:06.151528"
+        },
+        {
+          "message": "Get BTC",
+          "count": 1,
+          "first_used": "2026-06-07T23:30:06.246540",
+          "last_used": "2026-06-07T23:30:06.246544"
+        },
+        {
+          "message": "Invest in SOL",
+          "count": 1,
+          "first_used": "2026-06-07T23:30:06.333718",
+          "last_used": "2026-06-07T23:30:06.333722"
+        },
+        {
+          "message": "Stack SOL",
+          "count": 1,
+          "first_used": "2026-06-07T23:30:06.422895",
+          "last_used": "2026-06-07T23:30:06.422899"
+        }
+      ],
+      "suggestions_enabled": true
+    },
+    "fix_test": {
+      "user_id": "fix_test",
+      "created_at": "2026-06-07T23:30:56.763047",
+      "preferences": {
+        "risk_level": "low",
+        "preferred_assets": [
+          "ETH",
+          "BTC",
+          "SOL"
+        ],
+        "auto_confirm": false,
+        "notifications": true,
+        "response_style": "detailed",
+        "detail_level": "standard"
+      },
+      "behavior": {
+        "total_commands": 6,
+        "intent_counts": {
+          "buy": 6
+        },
+        "asset_counts": {
+          "ETH": 2,
+          "BTC": 2,
+          "SOL": 2
+        },
+        "time_distribution": {
+          "23": 6
+        },
+        "avg_trade_size": 0,
+        "last_active": "2026-06-07T23:30:57.591203"
+      },
+      "portfolio_history": [],
+      "favorite_commands": [
+        {
+          "message": "Buy ETH",
+          "count": 1,
+          "first_used": "2026-06-07T23:30:56.763644",
+          "last_used": "2026-06-07T23:30:56.763648"
+        },
+        {
+          "message": "Get BTC",
+          "count": 1,
+          "first_used": "2026-06-07T23:30:56.931564",
+          "last_used": "2026-06-07T23:30:56.931568"
+        },
+        {
+          "message": "Invest in SOL",
+          "count": 1,
+          "first_used": "2026-06-07T23:30:57.098655",
+          "last_used": "2026-06-07T23:30:57.098659"
+        },
+        {
+          "message": "Stack SOL",
+          "count": 1,
+          "first_used": "2026-06-07T23:30:57.262286",
+          "last_used": "2026-06-07T23:30:57.262291"
+        },
+        {
+          "message": "Enter BTC position",
+          "count": 1,
+          "first_used": "2026-06-07T23:30:57.428681",
+          "last_used": "2026-06-07T23:30:57.428685"
+        }
+      ],
+      "suggestions_enabled": true
+    },
+    "buy_retest": {
+      "user_id": "buy_retest",
+      "created_at": "2026-06-07T23:31:28.518094",
+      "preferences": {
+        "risk_level": "high",
+        "preferred_assets": [
+          "ETH",
+          "BTC",
+          "SOL"
+        ],
+        "auto_confirm": false,
+        "notifications": true,
+        "response_style": "concise",
+        "detail_level": "standard"
+      },
+      "behavior": {
+        "total_commands": 55,
+        "intent_counts": {
+          "buy": 54,
+          "price": 1
+        },
+        "asset_counts": {
+          "ETH": 17,
+          "BTC": 14,
+          "SOL": 11,
+          "ADA": 5,
+          "DOGE": 1,
+          "LINK": 1,
+          "MATIC": 1,
+          "DOT": 1,
+          "BTC, SOL": 1,
+          "ETH, BTC": 1,
+          "SOL, ADA": 1,
+          "ETH, SOL": 1
+        },
+        "time_distribution": {
+          "23": 55
+        },
+        "avg_trade_size": 2326.0939316438044,
+        "last_active": "2026-06-07T23:31:29.036794"
+      },
+      "portfolio_history": [],
+      "favorite_commands": [
+        {
+          "message": "Buy ETH",
+          "count": 1,
+          "first_used": "2026-06-07T23:31:28.519002",
+          "last_used": "2026-06-07T23:31:28.519006"
+        },
+        {
+          "message": "Buy BTC",
+          "count": 1,
+          "first_used": "2026-06-07T23:31:28.537281",
+          "last_used": "2026-06-07T23:31:28.537285"
+        },
+        {
+          "message": "Buy SOL",
+          "count": 1,
+          "first_used": "2026-06-07T23:31:28.545509",
+          "last_used": "2026-06-07T23:31:28.545516"
+        },
+        {
+          "message": "Buy ADA",
+          "count": 1,
+          "first_used": "2026-06-07T23:31:28.554903",
+          "last_used": "2026-06-07T23:31:28.554907"
+        },
+        {
+          "message": "Buy 100 ETH",
+          "count": 1,
+          "first_used": "2026-06-07T23:31:28.562071",
+          "last_used": "2026-06-07T23:31:28.562075"
+        }
+      ],
+      "suggestions_enabled": true
+    }
+  },
+  "last_updated": "2026-06-07T23:31:29.036992"
+}

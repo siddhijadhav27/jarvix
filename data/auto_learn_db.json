@@ -1,0 +1,200 @@
+{
+  "user_patterns": {
+    "fix_test": {
+      "get {asset}": {
+        "buy": 1
+      },
+      "invest in {asset}": {
+        "buy": 1
+      },
+      "stack {asset}": {
+        "buy": 1
+      },
+      "enter {asset} position": {
+        "buy": 1
+      },
+      "long {asset}": {
+        "buy": 1
+      }
+    },
+    "buy_retest": {
+      "buy {amount} {asset}": {
+        "buy": 14
+      },
+      "buy {asset} now": {
+        "buy": 2
+      },
+      "buy {asset} immediately": {
+        "buy": 1
+      },
+      "buy {asset} at {amount}": {
+        "buy": 3
+      },
+      "buy {asset} if price drops": {
+        "price": 1
+      },
+      "buy {asset} on dip": {
+        "buy": 1
+      },
+      "buy the dip {asset}": {
+        "buy": 1
+      },
+      "buy {asset} low": {
+        "buy": 1
+      },
+      "buy {asset} cheap": {
+        "buy": 1
+      },
+      "buy {asset} discount": {
+        "buy": 1
+      },
+      "buy {asset} bargain": {
+        "buy": 1
+      },
+      "purchase {asset}": {
+        "buy": 1
+      },
+      "get {asset}": {
+        "buy": 1
+      },
+      "acquire {asset}": {
+        "buy": 1
+      },
+      "pick up {asset}": {
+        "buy": 1
+      },
+      "grab {asset}": {
+        "buy": 1
+      },
+      "add {asset}": {
+        "buy": 1
+      },
+      "invest in {asset}": {
+        "buy": 1
+      },
+      "long {asset}": {
+        "buy": 1
+      },
+      "enter {asset} position": {
+        "buy": 1
+      },
+      "stack {asset}": {
+        "buy": 1
+      },
+      "buy {asset} quickly": {
+        "buy": 1
+      },
+      "buy {asset} fast": {
+        "buy": 1
+      },
+      "buy {asset} asap": {
+        "buy": 1
+      },
+      "buy {asset} please": {
+        "buy": 1
+      },
+      "buy {asset} sir": {
+        "buy": 1
+      },
+      "buy {asset} today": {
+        "buy": 1
+      },
+      "buy {asset} tomorrow": {
+        "buy": 1
+      },
+      "buy {asset} tonight": {
+        "buy": 1
+      }
+    }
+  },
+  "global_patterns": {
+    "get {asset}": {
+      "buy": 2
+    },
+    "invest in {asset}": {
+      "buy": 2
+    },
+    "stack {asset}": {
+      "buy": 2
+    },
+    "enter {asset} position": {
+      "buy": 2
+    },
+    "long {asset}": {
+      "buy": 2
+    },
+    "buy {amount} {asset}": {
+      "buy": 14
+    },
+    "buy {asset} now": {
+      "buy": 2
+    },
+    "buy {asset} immediately": {
+      "buy": 1
+    },
+    "buy {asset} at {amount}": {
+      "buy": 3
+    },
+    "buy {asset} if price drops": {
+      "price": 1
+    },
+    "buy {asset} on dip": {
+      "buy": 1
+    },
+    "buy the dip {asset}": {
+      "buy": 1
+    },
+    "buy {asset} low": {
+      "buy": 1
+    },
+    "buy {asset} cheap": {
+      "buy": 1
+    },
+    "buy {asset} discount": {
+      "buy": 1
+    },
+    "buy {asset} bargain": {
+      "buy": 1
+    },
+    "purchase {asset}": {
+      "buy": 1
+    },
+    "acquire {asset}": {
+      "buy": 1
+    },
+    "pick up {asset}": {
+      "buy": 1
+    },
+    "grab {asset}": {
+      "buy": 1
+    },
+    "add {asset}": {
+      "buy": 1
+    },
+    "buy {asset} quickly": {
+      "buy": 1
+    },
+    "buy {asset} fast": {
+      "buy": 1
+    },
+    "buy {asset} asap": {
+      "buy": 1
+    },
+    "buy {asset} please": {
+      "buy": 1
+    },
+    "buy {asset} sir": {
+      "buy": 1
+    },
+    "buy {asset} today": {
+      "buy": 1
+    },
+    "buy {asset} tomorrow": {
+      "buy": 1
+    },
+    "buy {asset} tonight": {
+      "buy": 1
+    }
+  },
+  "last_updated": "2026-06-07T23:31:28.972004"
+}

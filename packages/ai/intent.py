@@ -4,13 +4,14 @@ Fast regex for common commands, LLM fallback for complex ones
 """
 
 import re
+import json
 from typing import Dict, Any, Optional
-from .llm_client import classify_intent_llm
+from .openrouter_client import call_openrouter
 
 # Fast regex patterns for common commands
 # Latin scripts
 BUY_PATTERNS = [
-    r'\b(buy|purchase|acquire|add|don\'t miss|dont miss|grab|pick up|moon|lambo|rocket|time to buy|buying time|thinking about buying|considering buying|possibly get|kharido|lena hai|comprar|acheter|kaufen|사기|شراء|Купить|comprare|kopen|al|mua|ซื้อ|beli|kupić|köp|Αγορά)\b'
+    r'\b(buy|purchase|acquire|add|get|invest in|stack|enter.*position|long|don\'t miss|dont miss|grab|pick up|moon|lambo|rocket|time to buy|buying time|thinking about buying|considering buying|possibly get|kharido|lena hai|comprar|acheter|kaufen|사기|شراء|Купить|comprare|kopen|al|mua|ซื้อ|beli|kupić|köp|Αγορά)\b'
 ]
 SELL_PATTERNS = [
     r'\b(sell|sale|dump|cash out|liquidate|get rid of|unload|offload|exit|crash|panic|time to sell|selling time|thinking about selling|thinking of selling|thinking of dumping|considering selling|possibly unload|remove from portfolio|remove.*portfolio|get out|take profits|profit taking|becho|bech do|dena hai|nikal do|nikat do|vender|vendre|verkaufen|팔기|بيع|Продать|vendere|verkopen|sat|bán|ขาย|jual|sprzedać|sälj|Πώληση)\b'
@@ -47,6 +48,47 @@ GREETING_PATTERNS = [r'\b(hello|hi|hey|good morning|good afternoon|good evening|
 ASSET_PATTERN = r'\b(btc|bitcoin|eth|ethereum|sol|solana|ada|cardano|doge|dogecoin|xrp|ripple|dot|polkadot|link|chainlink|avax|avalanche|matic|polygon|bnb|binance)\b'
 AMOUNT_PATTERN = r'(\d+(?:\.\d+)?)'
 PRICE_PATTERN = r'(?:at|for|@)\s*(\d+(?:,\d{3})*(?:\.\d+)?)'
+
+# Single asset words that should trigger price intent
+SINGLE_ASSET_WORDS = {'btc', 'bitcoin', 'eth', 'ethereum', 'sol', 'solana', 'ada', 'cardano', 'doge', 'dogecoin', 'xrp', 'ripple', 'dot', 'polkadot', 'link', 'chainlink', 'avax', 'avalanche', 'matic', 'polygon', 'bnb', 'binance'}
+SINGLE_ACTION_WORDS = {'buy', 'sell'}
+
+# Single word intent mapping
+SINGLE_WORD_INTENTS = {
+    'buy': 'buy',
+    'sell': 'sell',
+    'price': 'price',
+    'portfolio': 'portfolio',
+    'alert': 'alert',
+    'help': 'advice',
+    'advice': 'advice',
+}
+
+# Asset normalization mapping
+ASSET_ALIASES = {
+    'bitcoin': 'BTC',
+    'btc': 'BTC',
+    'ethereum': 'ETH',
+    'eth': 'ETH',
+    'solana': 'SOL',
+    'sol': 'SOL',
+    'cardano': 'ADA',
+    'ada': 'ADA',
+    'dogecoin': 'DOGE',
+    'doge': 'DOGE',
+    'ripple': 'XRP',
+    'xrp': 'XRP',
+    'polkadot': 'DOT',
+    'dot': 'DOT',
+    'chainlink': 'LINK',
+    'link': 'LINK',
+    'avalanche': 'AVAX',
+    'avax': 'AVAX',
+    'polygon': 'MATIC',
+    'matic': 'MATIC',
+    'binance': 'BNB',
+    'bnb': 'BNB',
+}
 
 
 def detect_intent_regex(message: str) -> Optional[Dict[str, Any]]:
@@ -220,7 +262,8 @@ async def detect_intent_hybrid(message: str, context: Optional[Dict[str, Any]] =
     """
     Hybrid intent detection:
     1. Try regex first (fast, reliable)
-    2. Fall back to LLM (smart, slow)
+    2. Fall back to OpenRouter LLM (clean JSON, no TUI artifacts)
+    3. Single word handling (ETH, BUY, SELL)
     """
     # Remove emojis before detection
     import re
@@ -233,13 +276,291 @@ async def detect_intent_hybrid(message: str, context: Optional[Dict[str, Any]] =
         u"\U000024C2-\U0001F251"
         "]+", flags=re.UNICODE)
     clean_message = emoji_pattern.sub(r'', message).strip()
+    message_lower = clean_message.lower().strip()
     
-    # Fast path: regex
+    # SPECIAL HANDLING: Single word commands
+    words = message_lower.split()
+    if len(words) == 1:
+        word = words[0]
+        
+        # Single asset word (ETH, BTC, SOL) → price intent
+        if word in SINGLE_ASSET_WORDS:
+            return {
+                "intent": "price",
+                "asset": ASSET_ALIASES.get(word, word.upper()),
+                "amount": None,
+                "price": None,
+                "confidence": 0.95,
+                "source": "regex"
+            }
+        
+        # Single action word (BUY, SELL) → action intent
+        if word in SINGLE_ACTION_WORDS:
+            return {
+                "intent": word,
+                "asset": None,
+                "amount": None,
+                "price": None,
+                "confidence": 0.90,
+                "source": "regex"
+            }
+        
+        # Single word intent mapping
+        if word in SINGLE_WORD_INTENTS:
+            return {
+                "intent": SINGLE_WORD_INTENTS[word],
+                "asset": None,
+                "amount": None,
+                "price": None,
+                "confidence": 0.90,
+                "source": "regex"
+            }
+    
+    # Fast path: regex for multi-word commands
     regex_result = detect_intent_regex(clean_message)
     if regex_result:
         return regex_result
     
-    # Slow path: LLM for complex commands
-    llm_result = await classify_intent_llm(clean_message, context)
-    llm_result["source"] = "llm"
-    return llm_result
+    # Fallback: _regex_fallback_intent for single word and simple commands
+    regex_fallback = _regex_fallback_intent(clean_message)
+    if regex_fallback:
+        return regex_fallback
+    
+    # Slow path: OpenRouter LLM for complex commands (clean JSON, no TUI)
+    # NOTE: Disabled due to OpenRouter rate limits on free tier
+    # Using regex fallback for ALL commands to ensure reliability
+    # TODO: Re-enable LLM when OpenRouter credits added
+    
+    # Use regex fallback for all commands (no rate limits, instant)
+    regex_result = _regex_fallback_intent(clean_message)
+    if regex_result:
+        return regex_result
+    
+    # Fallback for truly unknown commands
+    return {
+        "intent": "unknown",
+        "asset": None,
+        "amount": None,
+        "price": None,
+        "confidence": 0.0,
+        "source": "fallback"
+    }
+
+
+async def classify_intent_openrouter(message: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    """
+    Use OpenRouter API for intent classification (clean JSON, no TUI artifacts)
+    """
+    
+    # First try regex fallback for common patterns (fast, no API call)
+    regex_fallback = _regex_fallback_intent(message)
+    if regex_fallback and regex_fallback["intent"] != "unknown":
+        return regex_fallback
+    
+    context_str = ""
+    if context:
+        context_str = f"""
+Context:
+- Previous messages: {json.dumps(context.get('messages', []))}
+- Portfolio: {json.dumps(context.get('portfolio', {}))}
+"""
+    
+    prompt = f"""You are Jarvix, an AI crypto assistant. Parse this command and return ONLY JSON.
+
+User message: "{message}"
+{context_str}
+
+Return ONLY a JSON object with this exact structure:
+{{
+    "intent": "buy|sell|price|portfolio|stop_loss|advice|alert|greeting|unknown",
+    "asset": "BTC|ETH|SOL|ADA|DOGE|XRP|DOT|LINK|AVAX|MATIC|null",
+    "amount": number or null,
+    "price": number or null,
+    "confidence": 0.0 to 1.0
+}}
+
+Rules:
+- intent: The user's primary intention
+- asset: The cryptocurrency mentioned (uppercase), null if not specified
+- amount: Numeric amount mentioned, null if not specified
+- price: Price target mentioned, null if not specified
+- confidence: How certain you are (1.0 = very certain)
+
+Examples:
+"Buy 100 ETH" -> {{"intent": "buy", "asset": "ETH", "amount": 100, "price": null, "confidence": 0.95}}
+"What's BTC price?" -> {{"intent": "price", "asset": "BTC", "amount": null, "price": null, "confidence": 0.95}}
+"ETH" -> {{"intent": "price", "asset": "ETH", "amount": null, "price": null, "confidence": 0.90}}
+"BUY" -> {{"intent": "buy", "asset": null, "amount": null, "price": null, "confidence": 0.85}}
+"Sell" -> {{"intent": "sell", "asset": null, "amount": null, "price": null, "confidence": 0.85}}
+"Sell everything!!!" -> {{"intent": "sell", "asset": null, "amount": null, "price": null, "confidence": 0.90}}
+"Good morning" -> {{"intent": "greeting", "asset": null, "amount": null, "price": null, "confidence": 0.95}}
+"I want to buy some SOL" -> {{"intent": "buy", "asset": "SOL", "amount": null, "price": null, "confidence": 0.90}}
+
+Return ONLY the JSON object, no other text."""
+
+    response = await call_openrouter(prompt)
+    
+    # Check if rate limited or error
+    if "rate_limited" in response.lower() or "rate limit" in response.lower() or response.startswith("Error:"):
+        print(f"[RATE LIMIT] OpenRouter rate limited, using regex fallback for: {message[:50]}...")
+        return _regex_fallback_intent(message) or {
+            "intent": "unknown",
+            "asset": None,
+            "amount": None,
+            "price": None,
+            "confidence": 0.0
+        }
+    
+    # Extract JSON from response
+    try:
+        # Find JSON object with intent field
+        json_pattern = r'\{[^{}]*"intent"[^{}]*\}'
+        json_matches = re.findall(json_pattern, response, re.DOTALL)
+        if json_matches:
+            # Take the first valid JSON
+            for match in json_matches:
+                try:
+                    result = json.loads(match)
+                    if "intent" in result:
+                        return {
+                            "intent": result.get("intent", "unknown"),
+                            "asset": result.get("asset"),
+                            "amount": result.get("amount"),
+                            "price": result.get("price"),
+                            "confidence": result.get("confidence", 0.5)
+                        }
+                except json.JSONDecodeError:
+                    continue
+    except (json.JSONDecodeError, AttributeError):
+        pass
+    
+    # Try to find any JSON object
+    try:
+        json_match = re.search(r'\{.*\}', response, re.DOTALL)
+        if json_match:
+            result = json.loads(json_match.group())
+            return {
+                "intent": result.get("intent", "unknown"),
+                "asset": result.get("asset"),
+                "amount": result.get("amount"),
+                "price": result.get("price"),
+                "confidence": result.get("confidence", 0.5)
+            }
+    except (json.JSONDecodeError, AttributeError):
+        pass
+    
+    # Fallback to regex
+    fallback = _regex_fallback_intent(message)
+    if fallback:
+        return fallback
+    
+    # Final fallback to unknown
+    return {
+        "intent": "unknown",
+        "asset": None,
+        "amount": None,
+        "price": None,
+        "confidence": 0.0
+    }
+
+
+def _regex_fallback_intent(message: str) -> Optional[Dict[str, Any]]:
+    """
+    Fallback intent detection using regex when LLM fails
+    Returns None if no pattern matches
+    """
+    message_lower = message.lower().strip()
+    
+    # Check for empty message
+    if not message_lower:
+        return None
+    
+    # Single word handling
+    words = message_lower.split()
+    if len(words) == 1:
+        word = words[0]
+        
+        # Single asset word (ETH, BTC, SOL) → price intent
+        if word in SINGLE_ASSET_WORDS:
+            return {
+                "intent": "price",
+                "asset": ASSET_ALIASES.get(word, word.upper()),
+                "amount": None,
+                "price": None,
+                "confidence": 0.95,
+                "source": "regex_fallback"
+            }
+        
+        # Single action word (BUY, SELL) → action intent
+        if word in SINGLE_ACTION_WORDS:
+            return {
+                "intent": word,
+                "asset": None,
+                "amount": None,
+                "price": None,
+                "confidence": 0.90,
+                "source": "regex_fallback"
+            }
+        
+        # Single word intent mapping
+        if word in SINGLE_WORD_INTENTS:
+            return {
+                "intent": SINGLE_WORD_INTENTS[word],
+                "asset": None,
+                "amount": None,
+                "price": None,
+                "confidence": 0.90,
+                "source": "regex_fallback"
+            }
+    
+    # Multi-word regex patterns
+    intent = None
+    
+    # Check advice patterns FIRST
+    if any(re.search(p, message_lower) for p in ADVICE_PATTERNS):
+        intent = "advice"
+    # Check alert patterns BEFORE price
+    elif any(re.search(p, message_lower) for p in ALERT_PATTERNS):
+        intent = "alert"
+    # Check portfolio patterns FIRST
+    elif any(re.search(p, message_lower) for p in PORTFOLIO_PATTERNS):
+        intent = "portfolio"
+    # Check price patterns
+    elif any(re.search(p, message_lower) for p in PRICE_PATTERNS):
+        intent = "price"
+    # Check sell patterns
+    elif any(re.search(p, message_lower) for p in SELL_PATTERNS):
+        intent = "sell"
+    # Check buy patterns
+    elif any(re.search(p, message_lower) for p in BUY_PATTERNS):
+        intent = "buy"
+    # Check greeting
+    elif any(re.search(p, message_lower) for p in GREETING_PATTERNS):
+        intent = "greeting"
+    # Check stop loss
+    elif any(re.search(p, message_lower) for p in STOP_LOSS_PATTERNS):
+        intent = "stop_loss"
+    
+    if intent:
+        # Extract asset
+        asset_matches = re.findall(ASSET_PATTERN, message_lower)
+        asset = asset_matches[0].upper() if asset_matches else None
+        
+        # Extract amount
+        amount_match = re.search(AMOUNT_PATTERN, message_lower)
+        amount = float(amount_match.group(1)) if amount_match else None
+        
+        # Extract price
+        price_match = re.search(PRICE_PATTERN, message_lower)
+        price = float(price_match.group(1).replace(',', '')) if price_match else None
+        
+        return {
+            "intent": intent,
+            "asset": asset,
+            "amount": amount,
+            "price": price,
+            "confidence": 0.85,
+            "source": "regex_fallback"
+        }
+    
+    return None
