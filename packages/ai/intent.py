@@ -58,7 +58,7 @@ ALERT_PRICE_PATTERN = r'(?:hits|reaches|goes above|above|drops below|below|falls
 ALERT_PRICE_PATTERN_SPACE = r'(?:btc|eth|sol|ada|doge|xrp|dot|link|avax|matic|bnb)\s+(\d+(?:,\d{3})*(?:\.\d+)?)(?:k|K)?'
 ALERT_DIRECTION_ABOVE = r'\b(hits|reaches|goes above|above|pumps|moons)\b'
 ALERT_DIRECTION_BELOW = r'\b(drops below|below|falls to|dump|crashes)\b'
-GREETING_PATTERNS = [r'\b(hello|hi|hey|good morning|good afternoon|good evening|what is up|whats up|what\'s up|how are you|how do you do|hii|hiii|namaste|salam|hola|ciao|jarvix|you there|wake up|yo|sup|howdy|g\'day|bonjour|guten tag|konnichiwa|annyeong|salaam|marhaba|shalom|sawubona|jambo)\b']
+GREETING_PATTERNS = [r'\b(hello|hi|hey|good morning|good afternoon|good evening|good night|greetings|welcome|what is up|whats up|what\'s up|how are you|how do you do|how is it going|how\'s it going|what\'s going on|whats going on|nice to meet you|pleased to meet you|hii|hiii|namaste|salam|hola|ciao|jarvix|you there|wake up|yo|sup|howdy|g\'day|bonjour|guten tag|konnichiwa|annyeong|salaam|marhaba|shalom|sawubona|jambo)\b']
 
 ASSET_PATTERN = r'\b(btc|bitcoin|eth|ethereum|sol|solana|ada|cardano|doge|dogecoin|xrp|ripple|dot|polkadot|link|chainlink|avax|avalanche|matic|polygon|bnb|binance)\b'
 AMOUNT_PATTERN = r'(\d+(?:\.\d+)?)'

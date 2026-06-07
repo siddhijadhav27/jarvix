@@ -1839,7 +1839,182 @@
         }
       ],
       "suggestions_enabled": true
+    },
+    "greeting_test_user": {
+      "user_id": "greeting_test_user",
+      "created_at": "2026-06-08T00:10:12.143935",
+      "preferences": {
+        "risk_level": "low",
+        "preferred_assets": [],
+        "auto_confirm": false,
+        "notifications": true,
+        "response_style": "witty",
+        "detail_level": "standard"
+      },
+      "behavior": {
+        "total_commands": 25,
+        "intent_counts": {
+          "greeting": 19,
+          "unknown": 6
+        },
+        "asset_counts": {},
+        "time_distribution": {
+          "0": 25
+        },
+        "avg_trade_size": 0,
+        "last_active": "2026-06-08T00:10:12.678320"
+      },
+      "portfolio_history": [],
+      "favorite_commands": [
+        {
+          "message": "Hello",
+          "count": 1,
+          "first_used": "2026-06-08T00:10:12.153284",
+          "last_used": "2026-06-08T00:10:12.153291"
+        },
+        {
+          "message": "Hi",
+          "count": 1,
+          "first_used": "2026-06-08T00:10:12.193527",
+          "last_used": "2026-06-08T00:10:12.193534"
+        },
+        {
+          "message": "Hey",
+          "count": 1,
+          "first_used": "2026-06-08T00:10:12.212769",
+          "last_used": "2026-06-08T00:10:12.212777"
+        },
+        {
+          "message": "Good morning",
+          "count": 1,
+          "first_used": "2026-06-08T00:10:12.232280",
+          "last_used": "2026-06-08T00:10:12.232286"
+        },
+        {
+          "message": "Good afternoon",
+          "count": 1,
+          "first_used": "2026-06-08T00:10:12.252224",
+          "last_used": "2026-06-08T00:10:12.252230"
+        }
+      ],
+      "suggestions_enabled": true
+    },
+    "greeting_fix": {
+      "user_id": "greeting_fix",
+      "created_at": "2026-06-08T00:11:21.787636",
+      "preferences": {
+        "risk_level": "low",
+        "preferred_assets": [],
+        "auto_confirm": false,
+        "notifications": true,
+        "response_style": "detailed",
+        "detail_level": "standard"
+      },
+      "behavior": {
+        "total_commands": 6,
+        "intent_counts": {
+          "greeting": 6
+        },
+        "asset_counts": {},
+        "time_distribution": {
+          "0": 6
+        },
+        "avg_trade_size": 0,
+        "last_active": "2026-06-08T00:11:22.284543"
+      },
+      "portfolio_history": [],
+      "favorite_commands": [
+        {
+          "message": "Good night",
+          "count": 1,
+          "first_used": "2026-06-08T00:11:21.794836",
+          "last_used": "2026-06-08T00:11:21.794840"
+        },
+        {
+          "message": "Greetings",
+          "count": 1,
+          "first_used": "2026-06-08T00:11:21.892571",
+          "last_used": "2026-06-08T00:11:21.892579"
+        },
+        {
+          "message": "Welcome",
+          "count": 1,
+          "first_used": "2026-06-08T00:11:21.986933",
+          "last_used": "2026-06-08T00:11:21.986937"
+        },
+        {
+          "message": "How is it going",
+          "count": 1,
+          "first_used": "2026-06-08T00:11:22.089581",
+          "last_used": "2026-06-08T00:11:22.089589"
+        },
+        {
+          "message": "What's going on",
+          "count": 1,
+          "first_used": "2026-06-08T00:11:22.184808",
+          "last_used": "2026-06-08T00:11:22.184812"
+        }
+      ],
+      "suggestions_enabled": true
+    },
+    "greeting_perfect": {
+      "user_id": "greeting_perfect",
+      "created_at": "2026-06-08T00:11:22.664926",
+      "preferences": {
+        "risk_level": "low",
+        "preferred_assets": [],
+        "auto_confirm": false,
+        "notifications": true,
+        "response_style": "witty",
+        "detail_level": "standard"
+      },
+      "behavior": {
+        "total_commands": 25,
+        "intent_counts": {
+          "greeting": 25
+        },
+        "asset_counts": {},
+        "time_distribution": {
+          "0": 25
+        },
+        "avg_trade_size": 0,
+        "last_active": "2026-06-08T00:11:23.028672"
+      },
+      "portfolio_history": [],
+      "favorite_commands": [
+        {
+          "message": "Hello",
+          "count": 1,
+          "first_used": "2026-06-08T00:11:22.669672",
+          "last_used": "2026-06-08T00:11:22.669675"
+        },
+        {
+          "message": "Hi",
+          "count": 1,
+          "first_used": "2026-06-08T00:11:22.693609",
+          "last_used": "2026-06-08T00:11:22.693615"
+        },
+        {
+          "message": "Hey",
+          "count": 1,
+          "first_used": "2026-06-08T00:11:22.706757",
+          "last_used": "2026-06-08T00:11:22.706762"
+        },
+        {
+          "message": "Good morning",
+          "count": 1,
+          "first_used": "2026-06-08T00:11:22.726055",
+          "last_used": "2026-06-08T00:11:22.726058"
+        },
+        {
+          "message": "Good afternoon",
+          "count": 1,
+          "first_used": "2026-06-08T00:11:22.738770",
+          "last_used": "2026-06-08T00:11:22.738778"
+        }
+      ],
+      "suggestions_enabled": true
     }
   },
-  "last_updated": "2026-06-08T00:06:07.325948"
+  "last_updated": "2026-06-08T00:11:23.028867"
 }

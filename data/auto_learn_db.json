@@ -338,6 +338,162 @@
       },
       "my {asset} amount": {
         "portfolio": 1
+      },
+      "portfolio summary": {
+        "portfolio": 1
+      },
+      "asset allocation": {
+        "portfolio": 1
+      }
+    },
+    "greeting_test_user": {
+      "hello": {
+        "greeting": 1
+      },
+      "hi": {
+        "greeting": 1
+      },
+      "hey": {
+        "greeting": 1
+      },
+      "good morning": {
+        "greeting": 1
+      },
+      "good afternoon": {
+        "greeting": 1
+      },
+      "good evening": {
+        "greeting": 1
+      },
+      "good night": {
+        "unknown": 1
+      },
+      "greetings": {
+        "unknown": 1
+      },
+      "welcome": {
+        "unknown": 1
+      },
+      "hello there": {
+        "greeting": 1
+      },
+      "hey there": {
+        "greeting": 1
+      },
+      "hi there": {
+        "greeting": 1
+      },
+      "yo": {
+        "greeting": 1
+      },
+      "what's up": {
+        "greeting": 1
+      },
+      "howdy": {
+        "greeting": 1
+      },
+      "how are you": {
+        "greeting": 1
+      },
+      "how is it going": {
+        "unknown": 1
+      },
+      "what's going on": {
+        "unknown": 1
+      }
+    },
+    "greeting_fix": {
+      "good night": {
+        "greeting": 1
+      },
+      "greetings": {
+        "greeting": 1
+      },
+      "welcome": {
+        "greeting": 1
+      },
+      "how is it going": {
+        "greeting": 1
+      },
+      "what's going on": {
+        "greeting": 1
+      },
+      "nice to meet you": {
+        "greeting": 1
+      }
+    },
+    "greeting_perfect": {
+      "hello": {
+        "greeting": 1
+      },
+      "hi": {
+        "greeting": 1
+      },
+      "hey": {
+        "greeting": 1
+      },
+      "good morning": {
+        "greeting": 1
+      },
+      "good afternoon": {
+        "greeting": 1
+      },
+      "good evening": {
+        "greeting": 1
+      },
+      "good night": {
+        "greeting": 1
+      },
+      "greetings": {
+        "greeting": 1
+      },
+      "welcome": {
+        "greeting": 1
+      },
+      "hello there": {
+        "greeting": 1
+      },
+      "hey there": {
+        "greeting": 1
+      },
+      "hi there": {
+        "greeting": 1
+      },
+      "yo": {
+        "greeting": 1
+      },
+      "what's up": {
+        "greeting": 1
+      },
+      "howdy": {
+        "greeting": 1
+      },
+      "how are you": {
+        "greeting": 1
+      },
+      "how is it going": {
+        "greeting": 1
+      },
+      "what's going on": {
+        "greeting": 1
+      },
+      "how do you do": {
+        "greeting": 1
+      },
+      "nice to meet you": {
+        "greeting": 1
+      },
+      "hey jarvix": {
+        "greeting": 1
+      },
+      "hello jarvix": {
+        "greeting": 1
+      },
+      "hi jarvix": {
+        "greeting": 1
+      },
+      "good morning jarvix": {
+        "greeting": 1
       }
     }
   },
@@ -571,11 +727,88 @@
       "portfolio": 2
     },
     "portfolio summary": {
-      "portfolio": 1
+      "portfolio": 2
     },
     "asset allocation": {
-      "portfolio": 1
+      "portfolio": 2
+    },
+    "hello": {
+      "greeting": 2
+    },
+    "hi": {
+      "greeting": 2
+    },
+    "hey": {
+      "greeting": 2
+    },
+    "good morning": {
+      "greeting": 2
+    },
+    "good afternoon": {
+      "greeting": 2
+    },
+    "good evening": {
+      "greeting": 2
+    },
+    "good night": {
+      "unknown": 1,
+      "greeting": 2
+    },
+    "greetings": {
+      "unknown": 1,
+      "greeting": 2
+    },
+    "welcome": {
+      "unknown": 1,
+      "greeting": 2
+    },
+    "hello there": {
+      "greeting": 2
+    },
+    "hey there": {
+      "greeting": 2
+    },
+    "hi there": {
+      "greeting": 2
+    },
+    "yo": {
+      "greeting": 2
+    },
+    "what's up": {
+      "greeting": 2
+    },
+    "howdy": {
+      "greeting": 2
+    },
+    "how are you": {
+      "greeting": 2
+    },
+    "how is it going": {
+      "unknown": 1,
+      "greeting": 2
+    },
+    "what's going on": {
+      "unknown": 1,
+      "greeting": 2
+    },
+    "nice to meet you": {
+      "greeting": 2
+    },
+    "how do you do": {
+      "greeting": 1
+    },
+    "hey jarvix": {
+      "greeting": 1
+    },
+    "hello jarvix": {
+      "greeting": 1
+    },
+    "hi jarvix": {
+      "greeting": 1
+    },
+    "good morning jarvix": {
+      "greeting": 1
     }
   },
-  "last_updated": "2026-06-08T00:06:07.275866"
+  "last_updated": "2026-06-08T00:11:23.010554"
 }
