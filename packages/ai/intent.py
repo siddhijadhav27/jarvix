@@ -153,8 +153,11 @@ def detect_intent_regex(message: str) -> Optional[Dict[str, Any]]:
         if any(re.search(p, message) for p in PRICE_PATTERNS_NONLATIN):
             return {"intent": "price", "asset": None, "amount": None, "price": None, "confidence": 0.95, "source": "regex"}
         # Check non-Latin portfolio patterns
-        if 'PORTFOLIO_PATTERNS_NONLATIN' in globals() and any(re.search(p, message) for p in PORTFOLIO_PATTERNS_NONLATIN):
-            return {"intent": "portfolio", "asset": None, "amount": None, "price": None, "confidence": 0.95, "source": "regex"}
+        try:
+            if any(re.search(p, message) for p in PORTFOLIO_PATTERNS_NONLATIN):
+                return {"intent": "portfolio", "asset": None, "amount": None, "price": None, "confidence": 0.95, "source": "regex"}
+        except NameError:
+            pass
     else:
         message_lower = message.lower().strip()
     
