@@ -45,7 +45,7 @@ SELL_PATTERNS_NONLATIN = [
 PRICE_PATTERNS_NONLATIN = [
     r'价格|価格|價格|料金|Цена',
 ]
-PORTFOLIO_PATTERNS = [r'\b(portfolio|balance|holdings|net worth|what do i have|what do i own|show my|my assets|kitna paisa|mere paas|hold|assets|show assets|how am i doing|doing|p\u0026l|profit.*loss|summary|gains|do i have|do i own|amount|positions|allocation|total value)\b']
+PORTFOLIO_PATTERNS = [r'\b(portfolio|balance|holdings|net worth|what do i have|what do i own|show my|my assets|kitna paisa|mere paas|hold|assets|show assets|how am i doing|p\u0026l|profit.*loss|summary|gains|do i have|do i own|amount|positions|allocation|total value)\b']
 STOP_LOSS_PATTERNS = [r'\b(stop.loss|stoploss|protect|stop loss)\b']
 
 # Add stop loss as sell intent - when triggered, sell
