@@ -2214,7 +2214,73 @@
         }
       ],
       "suggestions_enabled": true
+    },
+    "alert_test_user": {
+      "user_id": "alert_test_user",
+      "created_at": "2026-06-08T00:23:42.366855",
+      "preferences": {
+        "risk_level": "low",
+        "preferred_assets": [
+          "ETH",
+          "BTC",
+          "SOL"
+        ],
+        "auto_confirm": false,
+        "notifications": true,
+        "response_style": "detailed",
+        "detail_level": "standard"
+      },
+      "behavior": {
+        "total_commands": 10,
+        "intent_counts": {
+          "alert": 10
+        },
+        "asset_counts": {
+          "ETH": 4,
+          "BTC": 4,
+          "SOL": 2
+        },
+        "time_distribution": {
+          "0": 10
+        },
+        "avg_trade_size": 0,
+        "last_active": "2026-06-08T00:23:42.583173"
+      },
+      "portfolio_history": [],
+      "favorite_commands": [
+        {
+          "message": "Alert me when ETH hits 5000",
+          "count": 1,
+          "first_used": "2026-06-08T00:23:42.375046",
+          "last_used": "2026-06-08T00:23:42.375052"
+        },
+        {
+          "message": "Notify me when BTC drops below 30000",
+          "count": 1,
+          "first_used": "2026-06-08T00:23:42.403941",
+          "last_used": "2026-06-08T00:23:42.403948"
+        },
+        {
+          "message": "Tell me when SOL reaches 200",
+          "count": 1,
+          "first_used": "2026-06-08T00:23:42.427802",
+          "last_used": "2026-06-08T00:23:42.427809"
+        },
+        {
+          "message": "Set alert for ETH at 4000",
+          "count": 1,
+          "first_used": "2026-06-08T00:23:42.448955",
+          "last_used": "2026-06-08T00:23:42.448959"
+        },
+        {
+          "message": "Warn me if BTC dumps",
+          "count": 1,
+          "first_used": "2026-06-08T00:23:42.472856",
+          "last_used": "2026-06-08T00:23:42.472860"
+        }
+      ],
+      "suggestions_enabled": true
     }
   },
-  "last_updated": "2026-06-08T00:19:51.966899"
+  "last_updated": "2026-06-08T00:23:42.583355"
 }

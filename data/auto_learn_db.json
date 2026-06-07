@@ -590,6 +590,38 @@
       },
       "what do you think about {asset}": {
         "advice": 1
+      },
+      "is {asset} a good buy": {
+        "advice": 1
+      },
+      "should i hold {asset}": {
+        "advice": 1
+      },
+      "is it worth buying {asset}": {
+        "advice": 1
+      }
+    },
+    "alert_test_user": {
+      "alert me when {asset} hits {amount}": {
+        "alert": 1
+      },
+      "notify me when {asset} drops below {amount}": {
+        "alert": 1
+      },
+      "tell me when {asset} reaches {amount}": {
+        "alert": 1
+      },
+      "set alert for {asset} at {amount}": {
+        "alert": 1
+      },
+      "warn me if {asset} dumps": {
+        "alert": 1
+      },
+      "alert when {asset} goes above {amount}": {
+        "alert": 1
+      },
+      "notify when {asset} falls to {amount}": {
+        "alert": 1
       }
     }
   },
@@ -943,10 +975,10 @@
       "advice": 2
     },
     "is {asset} a good buy": {
-      "advice": 1
+      "advice": 2
     },
     "is it worth buying {asset}": {
-      "advice": 1
+      "advice": 2
     },
     "give me advice": {
       "advice": 1
@@ -959,7 +991,31 @@
     },
     "what do you think about {asset}": {
       "advice": 1
+    },
+    "should i hold {asset}": {
+      "advice": 1
+    },
+    "alert me when {asset} hits {amount}": {
+      "alert": 1
+    },
+    "notify me when {asset} drops below {amount}": {
+      "alert": 1
+    },
+    "tell me when {asset} reaches {amount}": {
+      "alert": 1
+    },
+    "set alert for {asset} at {amount}": {
+      "alert": 1
+    },
+    "warn me if {asset} dumps": {
+      "alert": 1
+    },
+    "alert when {asset} goes above {amount}": {
+      "alert": 1
+    },
+    "notify when {asset} falls to {amount}": {
+      "alert": 1
     }
   },
-  "last_updated": "2026-06-08T00:19:51.921020"
+  "last_updated": "2026-06-08T00:23:42.521690"
 }
