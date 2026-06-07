@@ -157,7 +157,7 @@ def detect_intent_regex(message: str) -> Optional[Dict[str, Any]]:
     if any(re.search(p, message_lower) for p in EMOTIONAL_PATTERNS):
         detected_intents.append("emotional")
     # Check "get rid of" FIRST (SELL, not BUY)
-    if re.search(r'\bget rid of\b', message_lower):
+    elif re.search(r'\bget rid of\b', message_lower):
         detected_intents.append("sell")
     # Check advice patterns FIRST (before buy/sell to catch "Should I buy")
     elif any(re.search(p, message_lower) for p in ADVICE_PATTERNS):
@@ -598,7 +598,7 @@ def _regex_fallback_intent(message: str) -> Optional[Dict[str, Any]]:
     if any(re.search(p, message_lower) for p in EMOTIONAL_PATTERNS):
         detected_intents.append("emotional")
     # Check "get rid of" FIRST (SELL, not BUY)
-    if re.search(r'\bget rid of\b', message_lower):
+    elif re.search(r'\bget rid of\b', message_lower):
         intent = "sell"
     # Check advice patterns FIRST
     elif any(re.search(p, message_lower) for p in ADVICE_PATTERNS):
