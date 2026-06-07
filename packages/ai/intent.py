@@ -67,6 +67,9 @@ EMOTIONAL_PATTERNS = [
     r"\b(i|we)\s+(love|hate|like|dislike|adore|despise|enjoy|detest|appreciate|resent|admire|loathe|cherish|abhor|treasure|dread|relish|fear|distrust|trust|value|disregard)\s+(this|that|it|the|crypto|market|bitcoin|eth|btc|sol|trading|investing|you|jarvix)\b",
     r"\b(feeling|feel)\s+(good|bad|better|worse|fine|okay|ok|not good|not well|sick|tired|energetic|lazy|motivated|unmotivated|inspired|uninspired|lost|found|empty|full|broken|healed|strong|weak|powerless|empowered|vulnerable|protected|alone|connected|loved|unloved|accepted|rejected|understood|misunderstood|seen|unseen|heard|ignored|valued|worthless)\b",
     r"\b(mood|vibe|energy|spirit|soul|heart|mind|head|gut|instinct|intuition)\s+(is|feels|seems|looks|sounds|tastes|smells)\b",
+    r"\b(feeling|feel)\s+(great|good|bad|awesome|terrible|amazing|wonderful|awful|fantastic|excellent|pathetic|outstanding|unacceptable|remarkable|shocking|surprising|disappointing|frustrating|confusing|overwhelming|stressful|worrying|concerning|terrifying|exhilarating|depressing|uplifting|heartbreaking|heartwarming)\b",
+    r"\b(best|worst)\s+(day|week|month|year|time|moment|experience|memory|decision|choice|option|alternative|result|outcome|performance|showing|effort|attempt|try|shot|guess|estimate|prediction|forecast|projection|expectation|hope|dream|wish|desire|want|need|requirement|demand|request|suggestion|recommendation|advice|tip|hint|clue|idea|thought|thinking|feeling|emotion|mood|vibe|energy|spirit|soul|heart|mind|head|gut|instinct|intuition)\b",
+
 ]
 
 
