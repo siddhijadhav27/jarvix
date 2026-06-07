@@ -358,6 +358,12 @@ async def detect_intent_hybrid(message: str, context: Optional[Dict[str, Any]] =
         # Check non-Latin price patterns
         if any(re.search(p, message) for p in PRICE_PATTERNS_NONLATIN):
             return {"intent": "price", "asset": None, "amount": None, "price": None, "confidence": 0.95, "source": "regex"}
+        # Check non-Latin portfolio patterns
+        try:
+            if any(re.search(p, message) for p in PORTFOLIO_PATTERNS_NONLATIN):
+                return {"intent": "portfolio", "asset": None, "amount": None, "price": None, "confidence": 0.95, "source": "regex"}
+        except NameError:
+            pass
     
     # SPECIAL HANDLING: "get rid of" is SELL, not BUY
     if re.search(r'\bget rid of\b', message_lower):
