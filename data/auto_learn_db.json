@@ -212,6 +212,132 @@
       },
       "{asset} chart": {
         "price": 1
+      },
+      "how much": {
+        "price": 1
+      },
+      "price": {
+        "price": 1
+      }
+    },
+    "portfolio_test_user": {
+      "portfolio": {
+        "portfolio": 1
+      },
+      "my portfolio": {
+        "portfolio": 1
+      },
+      "show portfolio": {
+        "portfolio": 1
+      },
+      "check portfolio": {
+        "portfolio": 1
+      },
+      "view portfolio": {
+        "portfolio": 1
+      },
+      "my holdings": {
+        "portfolio": 1
+      },
+      "what do i have": {
+        "portfolio": 1
+      },
+      "what do i own": {
+        "portfolio": 1
+      },
+      "show my assets": {
+        "portfolio": 1
+      },
+      "my positions": {
+        "unknown": 1
+      },
+      "portfolio value": {
+        "portfolio": 1
+      },
+      "net worth": {
+        "portfolio": 1
+      },
+      "total value": {
+        "price": 1
+      },
+      "portfolio performance": {
+        "portfolio": 1
+      },
+      "how am i doing": {
+        "portfolio": 1
+      },
+      "show my {asset}": {
+        "portfolio": 1
+      },
+      "my {asset} amount": {
+        "portfolio": 1
+      },
+      "portfolio summary": {
+        "portfolio": 1
+      }
+    },
+    "portfolio_fix": {
+      "my positions": {
+        "portfolio": 1
+      },
+      "total value": {
+        "portfolio": 1
+      },
+      "asset allocation": {
+        "portfolio": 1
+      }
+    },
+    "portfolio_perfect": {
+      "portfolio": {
+        "portfolio": 1
+      },
+      "my portfolio": {
+        "portfolio": 1
+      },
+      "show portfolio": {
+        "portfolio": 1
+      },
+      "check portfolio": {
+        "portfolio": 1
+      },
+      "view portfolio": {
+        "portfolio": 1
+      },
+      "my holdings": {
+        "portfolio": 1
+      },
+      "what do i have": {
+        "portfolio": 1
+      },
+      "what do i own": {
+        "portfolio": 1
+      },
+      "show my assets": {
+        "portfolio": 1
+      },
+      "my positions": {
+        "portfolio": 1
+      },
+      "portfolio value": {
+        "portfolio": 1
+      },
+      "net worth": {
+        "portfolio": 1
+      },
+      "total value": {
+        "portfolio": 1
+      },
+      "portfolio performance": {
+        "portfolio": 1
+      },
+      "how am i doing": {
+        "portfolio": 1
+      },
+      "show my {asset}": {
+        "portfolio": 1
+      },
+      "my {asset} amount": {
+        "portfolio": 1
       }
     }
   },
@@ -384,7 +510,72 @@
     },
     "{asset} chart": {
       "price": 1
+    },
+    "how much": {
+      "price": 1
+    },
+    "price": {
+      "price": 1
+    },
+    "portfolio": {
+      "portfolio": 2
+    },
+    "my portfolio": {
+      "portfolio": 2
+    },
+    "show portfolio": {
+      "portfolio": 2
+    },
+    "check portfolio": {
+      "portfolio": 2
+    },
+    "view portfolio": {
+      "portfolio": 2
+    },
+    "my holdings": {
+      "portfolio": 2
+    },
+    "what do i have": {
+      "portfolio": 2
+    },
+    "what do i own": {
+      "portfolio": 2
+    },
+    "show my assets": {
+      "portfolio": 2
+    },
+    "my positions": {
+      "unknown": 1,
+      "portfolio": 2
+    },
+    "portfolio value": {
+      "portfolio": 2
+    },
+    "net worth": {
+      "portfolio": 2
+    },
+    "total value": {
+      "price": 1,
+      "portfolio": 2
+    },
+    "portfolio performance": {
+      "portfolio": 2
+    },
+    "how am i doing": {
+      "portfolio": 2
+    },
+    "show my {asset}": {
+      "portfolio": 2
+    },
+    "my {asset} amount": {
+      "portfolio": 2
+    },
+    "portfolio summary": {
+      "portfolio": 1
+    },
+    "asset allocation": {
+      "portfolio": 1
     }
   },
-  "last_updated": "2026-06-08T00:00:49.299765"
+  "last_updated": "2026-06-08T00:06:07.275866"
 }

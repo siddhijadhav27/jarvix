@@ -1663,7 +1663,183 @@
         }
       ],
       "suggestions_enabled": true
+    },
+    "portfolio_test_user": {
+      "user_id": "portfolio_test_user",
+      "created_at": "2026-06-08T00:05:02.283124",
+      "preferences": {
+        "risk_level": "low",
+        "preferred_assets": [
+          "ETH",
+          "BTC"
+        ],
+        "auto_confirm": false,
+        "notifications": true,
+        "response_style": "detailed",
+        "detail_level": "standard"
+      },
+      "behavior": {
+        "total_commands": 19,
+        "intent_counts": {
+          "portfolio": 16,
+          "unknown": 2,
+          "price": 1
+        },
+        "asset_counts": {
+          "ETH": 1,
+          "BTC": 1
+        },
+        "time_distribution": {
+          "0": 19
+        },
+        "avg_trade_size": 0,
+        "last_active": "2026-06-08T00:05:02.648707"
+      },
+      "portfolio_history": [],
+      "favorite_commands": [
+        {
+          "message": "Portfolio",
+          "count": 1,
+          "first_used": "2026-06-08T00:05:02.291451",
+          "last_used": "2026-06-08T00:05:02.291458"
+        },
+        {
+          "message": "My portfolio",
+          "count": 1,
+          "first_used": "2026-06-08T00:05:02.312800",
+          "last_used": "2026-06-08T00:05:02.312807"
+        },
+        {
+          "message": "Show portfolio",
+          "count": 1,
+          "first_used": "2026-06-08T00:05:02.332486",
+          "last_used": "2026-06-08T00:05:02.332493"
+        },
+        {
+          "message": "Check portfolio",
+          "count": 1,
+          "first_used": "2026-06-08T00:05:02.350169",
+          "last_used": "2026-06-08T00:05:02.350174"
+        },
+        {
+          "message": "View portfolio",
+          "count": 1,
+          "first_used": "2026-06-08T00:05:02.369432",
+          "last_used": "2026-06-08T00:05:02.369440"
+        }
+      ],
+      "suggestions_enabled": true
+    },
+    "portfolio_fix": {
+      "user_id": "portfolio_fix",
+      "created_at": "2026-06-08T00:06:06.445360",
+      "preferences": {
+        "risk_level": "low",
+        "preferred_assets": [],
+        "auto_confirm": false,
+        "notifications": true,
+        "response_style": "detailed",
+        "detail_level": "standard"
+      },
+      "behavior": {
+        "total_commands": 3,
+        "intent_counts": {
+          "portfolio": 3
+        },
+        "asset_counts": {},
+        "time_distribution": {
+          "0": 3
+        },
+        "avg_trade_size": 0,
+        "last_active": "2026-06-08T00:06:06.652078"
+      },
+      "portfolio_history": [],
+      "favorite_commands": [
+        {
+          "message": "My positions",
+          "count": 1,
+          "first_used": "2026-06-08T00:06:06.451338",
+          "last_used": "2026-06-08T00:06:06.451342"
+        },
+        {
+          "message": "Total value",
+          "count": 1,
+          "first_used": "2026-06-08T00:06:06.556071",
+          "last_used": "2026-06-08T00:06:06.556075"
+        },
+        {
+          "message": "Asset allocation",
+          "count": 1,
+          "first_used": "2026-06-08T00:06:06.652092",
+          "last_used": "2026-06-08T00:06:06.652096"
+        }
+      ],
+      "suggestions_enabled": true
+    },
+    "portfolio_perfect": {
+      "user_id": "portfolio_perfect",
+      "created_at": "2026-06-08T00:06:07.033052",
+      "preferences": {
+        "risk_level": "low",
+        "preferred_assets": [
+          "ETH",
+          "BTC"
+        ],
+        "auto_confirm": false,
+        "notifications": true,
+        "response_style": "detailed",
+        "detail_level": "standard"
+      },
+      "behavior": {
+        "total_commands": 19,
+        "intent_counts": {
+          "portfolio": 19
+        },
+        "asset_counts": {
+          "ETH": 1,
+          "BTC": 1
+        },
+        "time_distribution": {
+          "0": 19
+        },
+        "avg_trade_size": 0,
+        "last_active": "2026-06-08T00:06:07.324518"
+      },
+      "portfolio_history": [],
+      "favorite_commands": [
+        {
+          "message": "Portfolio",
+          "count": 1,
+          "first_used": "2026-06-08T00:06:07.037839",
+          "last_used": "2026-06-08T00:06:07.037842"
+        },
+        {
+          "message": "My portfolio",
+          "count": 1,
+          "first_used": "2026-06-08T00:06:07.058250",
+          "last_used": "2026-06-08T00:06:07.058254"
+        },
+        {
+          "message": "Show portfolio",
+          "count": 1,
+          "first_used": "2026-06-08T00:06:07.072555",
+          "last_used": "2026-06-08T00:06:07.072559"
+        },
+        {
+          "message": "Check portfolio",
+          "count": 1,
+          "first_used": "2026-06-08T00:06:07.089776",
+          "last_used": "2026-06-08T00:06:07.089783"
+        },
+        {
+          "message": "View portfolio",
+          "count": 1,
+          "first_used": "2026-06-08T00:06:07.104490",
+          "last_used": "2026-06-08T00:06:07.104495"
+        }
+      ],
+      "suggestions_enabled": true
     }
   },
-  "last_updated": "2026-06-08T00:00:49.328662"
+  "last_updated": "2026-06-08T00:06:07.325948"
 }
