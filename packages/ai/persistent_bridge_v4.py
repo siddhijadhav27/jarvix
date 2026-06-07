@@ -118,7 +118,63 @@ class HermesBridge:
         return self._extract_response(new_output)
     
     def _extract_response(self, raw_output: str) -> str:
-        """Extract clean response with JSON safety"""
+        """Extract clean response from TUI output"""
+        
+        # Remove ANSI codes
+        ansi_escape = re.compile(r'\x1B(?:[@-Z\-_]|\[[0-?]*[ -/]*[@-~])')
+        cleaned = ansi_escape.sub('', raw_output)
+        
+        # Split into lines
+        lines = cleaned.split('\n')
+        
+        # Strategy: Find lines after "● User message" that contain actual content
+        found_prompt = False
+        content_lines = []
+        
+        for line in lines:
+            stripped = line.strip()
+            
+            # Mark when we see the user prompt
+            if '●' in stripped and ('Say' in stripped or 'Buy' in stripped or 'Sell' in stripped):
+                found_prompt = True
+                continue
+            
+            # Skip if we haven't found prompt yet
+            if not found_prompt:
+                continue
+            
+            # Skip TUI artifacts
+            if any(x in stripped for x in [
+                '⚕', '⏱', '⏲', '❯', '───', '╭', '╰',
+                'kimi-for-coding', 'msg=interrupt', 'Available Tools',
+                'Session:', 'Duration:', 'Initializing agent',
+                ' pondering...', ' reflecting...', ' computing...',
+                'Ctrl+C', '/queue', '/bg', '/steer',
+                'Goodbye!', '⚕'
+            ]):
+                continue
+            
+            # Skip empty lines
+            if not stripped:
+                continue
+            
+            # Skip single digits
+            if stripped in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']:
+                continue
+            
+            # This looks like actual content (allow short responses like "Hello!")
+            if len(stripped) >= 2 and not stripped.startswith('─') and not stripped.startswith('╭') and not stripped.startswith('╰'):
+                content_lines.append(stripped)
+        
+        if content_lines:
+            # Return longest content line
+            return max(content_lines, key=len)
+        
+        # Fallback: try old method
+        return self._extract_response_old(raw_output)
+    
+    def _extract_response_old(self, raw_output: str) -> str:
+        """Old extraction method as fallback"""
         
         # Remove ANSI codes
         ansi_escape = re.compile(r'\x1B(?:[@-Z\-_]|\[[0-?]*[ -/]*[@-~])')
@@ -129,10 +185,11 @@ class HermesBridge:
         if json_result:
             return json_result
         
-        # Strategy 2: Look for content keywords (Bitcoin, ETH, etc.)
+        # Strategy 2: Look for content keywords
         content_keywords = [
             'Bitcoin', 'Ethereum', 'ETH', 'BTC', 'SOL', 'decentralized',
-            'portfolio', 'price', 'buy', 'sell', 'intent', 'asset'
+            'portfolio', 'price', 'buy', 'sell', 'intent', 'asset',
+            'Sir,', 'sir,', 'Hello', 'Hi', 'Yes', 'No'
         ]
         
         lines = cleaned.split('\n')
