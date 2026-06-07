@@ -343,6 +343,19 @@ async def detect_intent_hybrid(message: str, context: Optional[Dict[str, Any]] =
     clean_message = emoji_pattern.sub(r'', message).strip()
     message_lower = clean_message.lower().strip()
     
+    # SPECIAL HANDLING: Non-Latin scripts (Japanese, Chinese, etc.)
+    has_nonlatin = any(ord(c) > 127 for c in message)
+    if has_nonlatin:
+        # Check non-Latin buy patterns
+        if any(re.search(p, message) for p in BUY_PATTERNS_NONLATIN):
+            return {"intent": "buy", "asset": None, "amount": None, "price": None, "confidence": 0.95, "source": "regex"}
+        # Check non-Latin sell patterns
+        if any(re.search(p, message) for p in SELL_PATTERNS_NONLATIN):
+            return {"intent": "sell", "asset": None, "amount": None, "price": None, "confidence": 0.95, "source": "regex"}
+        # Check non-Latin price patterns
+        if any(re.search(p, message) for p in PRICE_PATTERNS_NONLATIN):
+            return {"intent": "price", "asset": None, "amount": None, "price": None, "confidence": 0.95, "source": "regex"}
+    
     # SPECIAL HANDLING: "get rid of" is SELL, not BUY
     if re.search(r'\bget rid of\b', message_lower):
         # Extract asset
