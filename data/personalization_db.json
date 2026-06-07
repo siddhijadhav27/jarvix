@@ -81,20 +81,21 @@
         "detail_level": "standard"
       },
       "behavior": {
-        "total_commands": 6,
+        "total_commands": 10,
         "intent_counts": {
-          "buy": 6
+          "buy": 9,
+          "price": 1
         },
         "asset_counts": {
-          "ETH": 2,
-          "BTC": 2,
-          "SOL": 2
+          "ETH": 4,
+          "BTC": 3,
+          "SOL": 3
         },
         "time_distribution": {
-          "23": 6
+          "23": 10
         },
-        "avg_trade_size": 0,
-        "last_active": "2026-06-07T23:30:57.591203"
+        "avg_trade_size": 11.11111111111111,
+        "last_active": "2026-06-07T23:38:03.715128"
       },
       "portfolio_history": [],
       "favorite_commands": [
@@ -206,7 +207,120 @@
         }
       ],
       "suggestions_enabled": true
+    },
+    "priority_test": {
+      "user_id": "priority_test",
+      "created_at": "2026-06-07T23:39:14.441864",
+      "preferences": {
+        "risk_level": "low",
+        "preferred_assets": [
+          "ETH"
+        ],
+        "auto_confirm": false,
+        "notifications": true,
+        "response_style": "detailed",
+        "detail_level": "standard"
+      },
+      "behavior": {
+        "total_commands": 1,
+        "intent_counts": {
+          "buy": 1
+        },
+        "asset_counts": {
+          "ETH": 1
+        },
+        "time_distribution": {
+          "23": 1
+        },
+        "avg_trade_size": 0,
+        "last_active": "2026-06-07T23:39:14.443112"
+      },
+      "portfolio_history": [],
+      "favorite_commands": [
+        {
+          "message": "Buy ETH if price drops",
+          "count": 1,
+          "first_used": "2026-06-07T23:39:14.443123",
+          "last_used": "2026-06-07T23:39:14.443127"
+        }
+      ],
+      "suggestions_enabled": true
+    },
+    "final_test": {
+      "user_id": "final_test",
+      "created_at": "2026-06-07T23:39:14.808236",
+      "preferences": {
+        "risk_level": "high",
+        "preferred_assets": [
+          "ETH",
+          "BTC",
+          "SOL"
+        ],
+        "auto_confirm": false,
+        "notifications": true,
+        "response_style": "concise",
+        "detail_level": "standard"
+      },
+      "behavior": {
+        "total_commands": 55,
+        "intent_counts": {
+          "buy": 55
+        },
+        "asset_counts": {
+          "ETH": 17,
+          "BTC": 14,
+          "SOL": 11,
+          "ADA": 5,
+          "DOGE": 1,
+          "LINK": 1,
+          "MATIC": 1,
+          "DOT": 1,
+          "BTC, SOL": 1,
+          "ETH, BTC": 1,
+          "SOL, ADA": 1,
+          "ETH, SOL": 1
+        },
+        "time_distribution": {
+          "23": 55
+        },
+        "avg_trade_size": 2326.0939316438044,
+        "last_active": "2026-06-07T23:39:15.356209"
+      },
+      "portfolio_history": [],
+      "favorite_commands": [
+        {
+          "message": "Buy ETH",
+          "count": 1,
+          "first_used": "2026-06-07T23:39:14.810017",
+          "last_used": "2026-06-07T23:39:14.810024"
+        },
+        {
+          "message": "Buy BTC",
+          "count": 1,
+          "first_used": "2026-06-07T23:39:14.825041",
+          "last_used": "2026-06-07T23:39:14.825045"
+        },
+        {
+          "message": "Buy SOL",
+          "count": 1,
+          "first_used": "2026-06-07T23:39:14.832711",
+          "last_used": "2026-06-07T23:39:14.832715"
+        },
+        {
+          "message": "Buy ADA",
+          "count": 1,
+          "first_used": "2026-06-07T23:39:14.843708",
+          "last_used": "2026-06-07T23:39:14.843713"
+        },
+        {
+          "message": "Buy 100 ETH",
+          "count": 1,
+          "first_used": "2026-06-07T23:39:14.851124",
+          "last_used": "2026-06-07T23:39:14.851128"
+        }
+      ],
+      "suggestions_enabled": true
     }
   },
-  "last_updated": "2026-06-07T23:31:29.036992"
+  "last_updated": "2026-06-07T23:39:15.356486"
 }
