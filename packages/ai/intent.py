@@ -12,6 +12,8 @@ from .openrouter_client import call_openrouter
 # Latin scripts
 BUY_PATTERNS = [
     r'\b(buy|purchase|acquire|add|invest in|stack|enter.*position|long|don\'t miss|dont miss|grab|pick up|moon|lambo|rocket|time to buy|buying time|thinking about buying|considering buying|possibly get|kharido|lena hai|comprar|acheter|kaufen|사기|شراء|Купить|comprare|kopen|al|mua|ซื้อ|beli|kupić|köp|Αγορά)\b',
+    # "Get" is BUY, but NOT "get rid of" (that's SELL)
+    r'\bget\b(?!\s+rid\s+of)',
     # Conditional buy patterns
     r'\bbuy\s+(?:if|when|at)\b',
     r'\bbuy\s+.*\s+(?:dip|low|cheap|discount|bargain)\b',
