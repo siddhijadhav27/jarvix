@@ -17,7 +17,9 @@ BUY_PATTERNS = [
     r'\bbuy\s+.*\s+(?:dip|low|cheap|discount|bargain)\b',
 ]
 SELL_PATTERNS = [
-    r'\b(sell|sale|dump|cash out|liquidate|get rid of|unload|offload|exit|crash|panic|emergency|stop loss|limit sell|time to sell|selling time|thinking about selling|thinking of selling|thinking of dumping|considering selling|possibly unload|remove from portfolio|remove.*portfolio|get out|take profits|profit taking|becho|bech do|dena hai|nikal do|nikat do|vender|vendre|verkaufen|팔기|بيع|Продать|vendere|verkopen|sat|bán|ขาย|jual|sprzedać|sälj|Πώληση)\b',
+    r'\b(sell|sale|dump|cash out|liquidate|unload|offload|exit|crash|panic|emergency|stop loss|limit sell|time to sell|selling time|thinking about selling|thinking of selling|thinking of dumping|considering selling|possibly unload|remove from portfolio|remove.*portfolio|get out|take profits|profit taking|becho|bech do|dena hai|nikal do|nikat do|vender|vendre|verkaufen|팔기|بيع|Продать|vendere|verkopen|sat|bán|ขาย|jual|sprzedać|sälj|Πώληση)\b',
+    # "Get rid of" is SELL, not BUY
+    r'\bget rid of\b',
     # Conditional sell patterns
     r'\bsell\s+(?:if|when|at)\b',
     r'\bsell\s+.*\s+(?:pump|high|expensive|premium|profit|rises)\b',
