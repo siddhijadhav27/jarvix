@@ -11,7 +11,7 @@ from .openrouter_client import call_openrouter
 # Fast regex patterns for common commands
 # Latin scripts
 BUY_PATTERNS = [
-    r'\b(buy|purchase|acquire|add|invest in|stack|enter.*position|long|don\'t miss|dont miss|grab|pick up|moon|lambo|rocket|time to buy|buying time|thinking about buying|considering buying|possibly get|kharido|lena hai|comprar|acheter|kaufen|사기|شراء|Купить|comprare|kopen|al|mua|ซื้อ|beli|kupić|köp|Αγορά)\b',
+    r'\b(buy|purchase|acquire|add|invest in|stack|enter.*position|long|don\'t miss|dont miss|grab|pick up|moon|lambo|rocket|time to buy|buying time|thinking about buying|considering buying|possibly get|kharido|lena hai|comprar|acheter|kaufen|사기|شراء|Купить|comprare|kopen|al|mua|ซื้อ|beli|kupić|köp|Αγορά|購入)\b',
     # "Get" is BUY, but NOT "get rid of" (that's SELL)
     r'\bget\b(?!\s+rid\s+of)',
     # Conditional buy patterns
@@ -19,7 +19,7 @@ BUY_PATTERNS = [
     r'\bbuy\s+.*\s+(?:dip|low|cheap|discount|bargain)\b',
 ]
 SELL_PATTERNS = [
-    r'\b(sell|sale|dump|cash out|liquidate|unload|offload|exit|crash|panic|emergency|stop loss|limit sell|time to sell|selling time|thinking about selling|thinking of selling|thinking of dumping|considering selling|possibly unload|remove from portfolio|remove.*portfolio|get out|take profits|profit taking|becho|bech do|dena hai|nikal do|nikat do|vender|vendre|verkaufen|팔기|بيع|Продать|vendere|verkopen|sat|bán|ขาย|jual|sprzedać|sälj|Πώληση)\b',
+    r'\b(sell|sale|dump|cash out|liquidate|unload|offload|exit|crash|panic|emergency|stop loss|limit sell|time to sell|selling time|thinking about selling|thinking of selling|thinking of dumping|considering selling|possibly unload|remove from portfolio|remove.*portfolio|get out|take profits|profit taking|becho|bech do|dena hai|nikal do|nikat do|vender|vendre|verkaufen|팔기|بيع|Продать|vendere|verkopen|sat|bán|ขาย|jual|sprzedać|sälj|Πώληση|販売)\b',
     # "Get rid of" is SELL, not BUY
     r'\bget rid of\b',
     # Conditional sell patterns
@@ -32,7 +32,7 @@ SELL_PATTERNS = [
     r'\blimit\s+sell\b',
 ]
 PRICE_PATTERNS = [
-    r'\b(price|prices|cost|value|how much|worth|rate|chart|kitna|kya chal raha hai|kya scene hai|ka bhav|ka rate|precio|prix|preis|가격|سعر|Цена|prezzo|prijs|fiyat|giá|ราคา|harga|cena|pris|Τιμή|going up|going down|pump|dump|mooning|crashing|support|resistance|all time high|ath)\b'
+    r'\b(price|prices|cost|value|how much|worth|rate|chart|kitna|kya chal raha hai|kya scene hai|ka bhav|ka rate|precio|prix|preis|가격|سعر|Цена|prezzo|prijs|fiyat|giá|ราคา|harga|cena|pris|Τιμή|going up|going down|pump|dump|mooning|crashing|support|resistance|all time high|ath|market|scene)\b'
 ]
 
 # Non-Latin scripts (Chinese, Japanese, Russian) - no word boundaries
@@ -45,7 +45,7 @@ SELL_PATTERNS_NONLATIN = [
 PRICE_PATTERNS_NONLATIN = [
     r'价格|価格|價格|料金|Цена',
 ]
-PORTFOLIO_PATTERNS = [r'\b(portfolio|balance|holdings|net worth|what do i have|what do i own|show my|my assets|kitna paisa|mere paas|hold|assets|show assets|how am i doing|p\u0026l|profit.*loss|summary|gains|do i have|do i own|amount|positions|allocation|total value)\b']
+PORTFOLIO_PATTERNS = [r'\b(portfolio|balance|holdings|net worth|what do i have|what do i own|show my|my assets|kitna paisa|mere paas|hold|assets|show assets|how am i doing|p\u0026l|profit.*loss|summary|gains|do i have|do i own|amount|positions|allocation|total value|ポートフォリオ)\b']
 STOP_LOSS_PATTERNS = [r'\b(stop.loss|stoploss|protect|stop loss)\b']
 
 # Add stop loss as sell intent - when triggered, sell
