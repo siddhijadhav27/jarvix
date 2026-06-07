@@ -972,7 +972,121 @@
         }
       ],
       "suggestions_enabled": true
+    },
+    "final_final2": {
+      "user_id": "final_final2",
+      "created_at": "2026-06-07T23:49:07.252430",
+      "preferences": {
+        "risk_level": "low",
+        "preferred_assets": [
+          "SOL"
+        ],
+        "auto_confirm": false,
+        "notifications": true,
+        "response_style": "detailed",
+        "detail_level": "standard"
+      },
+      "behavior": {
+        "total_commands": 1,
+        "intent_counts": {
+          "buy": 1
+        },
+        "asset_counts": {
+          "SOL": 1
+        },
+        "time_distribution": {
+          "23": 1
+        },
+        "avg_trade_size": 0,
+        "last_active": "2026-06-07T23:49:07.257351"
+      },
+      "portfolio_history": [],
+      "favorite_commands": [
+        {
+          "message": "Get rid of SOL",
+          "count": 1,
+          "first_used": "2026-06-07T23:49:07.257373",
+          "last_used": "2026-06-07T23:49:07.257380"
+        }
+      ],
+      "suggestions_enabled": true
+    },
+    "sell_perfect": {
+      "user_id": "sell_perfect",
+      "created_at": "2026-06-07T23:49:07.611504",
+      "preferences": {
+        "risk_level": "high",
+        "preferred_assets": [
+          "ETH",
+          "BTC",
+          "SOL"
+        ],
+        "auto_confirm": false,
+        "notifications": true,
+        "response_style": "concise",
+        "detail_level": "standard"
+      },
+      "behavior": {
+        "total_commands": 60,
+        "intent_counts": {
+          "sell": 59,
+          "buy": 1
+        },
+        "asset_counts": {
+          "ETH": 19,
+          "BTC": 16,
+          "SOL": 11,
+          "ADA": 6,
+          "DOGE": 1,
+          "LINK": 1,
+          "MATIC": 1,
+          "DOT": 1,
+          "BTC, SOL": 1,
+          "ETH, BTC": 1,
+          "SOL, ADA": 1,
+          "ETH, SOL": 1
+        },
+        "time_distribution": {
+          "23": 60
+        },
+        "avg_trade_size": 3627.6517089049057,
+        "last_active": "2026-06-07T23:49:08.317990"
+      },
+      "portfolio_history": [],
+      "favorite_commands": [
+        {
+          "message": "Sell ETH",
+          "count": 1,
+          "first_used": "2026-06-07T23:49:07.615373",
+          "last_used": "2026-06-07T23:49:07.615377"
+        },
+        {
+          "message": "Sell BTC",
+          "count": 1,
+          "first_used": "2026-06-07T23:49:07.633316",
+          "last_used": "2026-06-07T23:49:07.633320"
+        },
+        {
+          "message": "Sell SOL",
+          "count": 1,
+          "first_used": "2026-06-07T23:49:07.644363",
+          "last_used": "2026-06-07T23:49:07.644367"
+        },
+        {
+          "message": "Sell ADA",
+          "count": 1,
+          "first_used": "2026-06-07T23:49:07.658536",
+          "last_used": "2026-06-07T23:49:07.658540"
+        },
+        {
+          "message": "Sell 100 ETH",
+          "count": 1,
+          "first_used": "2026-06-07T23:49:07.670321",
+          "last_used": "2026-06-07T23:49:07.670325"
+        }
+      ],
+      "suggestions_enabled": true
     }
   },
-  "last_updated": "2026-06-07T23:47:27.080991"
+  "last_updated": "2026-06-07T23:49:08.318176"
 }

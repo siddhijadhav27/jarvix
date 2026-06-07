@@ -535,8 +535,11 @@ def _regex_fallback_intent(message: str) -> Optional[Dict[str, Any]]:
     # Multi-word regex patterns
     intent = None
     
+    # Check "get rid of" FIRST (SELL, not BUY)
+    if re.search(r'\bget rid of\b', message_lower):
+        intent = "sell"
     # Check advice patterns FIRST
-    if any(re.search(p, message_lower) for p in ADVICE_PATTERNS):
+    elif any(re.search(p, message_lower) for p in ADVICE_PATTERNS):
         intent = "advice"
     # Check alert patterns BEFORE price
     elif any(re.search(p, message_lower) for p in ALERT_PATTERNS):
@@ -544,15 +547,15 @@ def _regex_fallback_intent(message: str) -> Optional[Dict[str, Any]]:
     # Check portfolio patterns FIRST
     elif any(re.search(p, message_lower) for p in PORTFOLIO_PATTERNS):
         intent = "portfolio"
+    # Check buy patterns BEFORE price
+    elif any(re.search(p, message_lower) for p in BUY_PATTERNS):
+        intent = "buy"
+    # Check sell patterns BEFORE price
+    elif any(re.search(p, message_lower) for p in SELL_PATTERNS):
+        intent = "sell"
     # Check price patterns
     elif any(re.search(p, message_lower) for p in PRICE_PATTERNS):
         intent = "price"
-    # Check sell patterns
-    elif any(re.search(p, message_lower) for p in SELL_PATTERNS):
-        intent = "sell"
-    # Check buy patterns
-    elif any(re.search(p, message_lower) for p in BUY_PATTERNS):
-        intent = "buy"
     # Check greeting
     elif any(re.search(p, message_lower) for p in GREETING_PATTERNS):
         intent = "greeting"
