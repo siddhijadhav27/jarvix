@@ -2902,7 +2902,112 @@
         }
       ],
       "suggestions_enabled": true
+    },
+    "emotional_fix6": {
+      "user_id": "emotional_fix6",
+      "created_at": "2026-06-08T00:52:24.750638",
+      "preferences": {
+        "risk_level": "low",
+        "preferred_assets": [],
+        "auto_confirm": false,
+        "notifications": true,
+        "response_style": "detailed",
+        "detail_level": "standard"
+      },
+      "behavior": {
+        "total_commands": 3,
+        "intent_counts": {
+          "unknown": 3
+        },
+        "asset_counts": {},
+        "time_distribution": {
+          "0": 3
+        },
+        "avg_trade_size": 0,
+        "last_active": "2026-06-08T00:52:24.967425"
+      },
+      "portfolio_history": [],
+      "favorite_commands": [
+        {
+          "message": "Feeling great",
+          "count": 1,
+          "first_used": "2026-06-08T00:52:24.760159",
+          "last_used": "2026-06-08T00:52:24.760167"
+        },
+        {
+          "message": "Best day ever",
+          "count": 1,
+          "first_used": "2026-06-08T00:52:24.872009",
+          "last_used": "2026-06-08T00:52:24.872013"
+        },
+        {
+          "message": "Worst day ever",
+          "count": 1,
+          "first_used": "2026-06-08T00:52:24.967438",
+          "last_used": "2026-06-08T00:52:24.967441"
+        }
+      ],
+      "suggestions_enabled": true
+    },
+    "emotional_perfect6": {
+      "user_id": "emotional_perfect6",
+      "created_at": "2026-06-08T00:52:25.332209",
+      "preferences": {
+        "risk_level": "low",
+        "preferred_assets": [],
+        "auto_confirm": false,
+        "notifications": true,
+        "response_style": "witty",
+        "detail_level": "standard"
+      },
+      "behavior": {
+        "total_commands": 30,
+        "intent_counts": {
+          "emotional": 27,
+          "unknown": 3
+        },
+        "asset_counts": {},
+        "time_distribution": {
+          "0": 30
+        },
+        "avg_trade_size": 0,
+        "last_active": "2026-06-08T00:52:25.839415"
+      },
+      "portfolio_history": [],
+      "favorite_commands": [
+        {
+          "message": "I am so happy today",
+          "count": 1,
+          "first_used": "2026-06-08T00:52:25.340276",
+          "last_used": "2026-06-08T00:52:25.340282"
+        },
+        {
+          "message": "This is amazing",
+          "count": 1,
+          "first_used": "2026-06-08T00:52:25.364149",
+          "last_used": "2026-06-08T00:52:25.364153"
+        },
+        {
+          "message": "I am excited about crypto",
+          "count": 1,
+          "first_used": "2026-06-08T00:52:25.380523",
+          "last_used": "2026-06-08T00:52:25.380527"
+        },
+        {
+          "message": "Feeling great",
+          "count": 1,
+          "first_used": "2026-06-08T00:52:25.395931",
+          "last_used": "2026-06-08T00:52:25.395935"
+        },
+        {
+          "message": "So bullish right now",
+          "count": 1,
+          "first_used": "2026-06-08T00:52:25.412446",
+          "last_used": "2026-06-08T00:52:25.412450"
+        }
+      ],
+      "suggestions_enabled": true
     }
   },
-  "last_updated": "2026-06-08T00:50:34.001887"
+  "last_updated": "2026-06-08T00:52:25.839640"
 }
