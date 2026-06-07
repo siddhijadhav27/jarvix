@@ -3007,7 +3007,260 @@
         }
       ],
       "suggestions_enabled": true
+    },
+    "debug": {
+      "user_id": "debug",
+      "created_at": "2026-06-08T00:52:57.801895",
+      "preferences": {
+        "risk_level": "low",
+        "preferred_assets": [],
+        "auto_confirm": false,
+        "notifications": true,
+        "response_style": "detailed",
+        "detail_level": "standard"
+      },
+      "behavior": {
+        "total_commands": 1,
+        "intent_counts": {
+          "unknown": 1
+        },
+        "asset_counts": {},
+        "time_distribution": {
+          "0": 1
+        },
+        "avg_trade_size": 0,
+        "last_active": "2026-06-08T00:52:57.815980"
+      },
+      "portfolio_history": [],
+      "favorite_commands": [
+        {
+          "message": "Feeling great",
+          "count": 1,
+          "first_used": "2026-06-08T00:52:57.816001",
+          "last_used": "2026-06-08T00:52:57.816008"
+        }
+      ],
+      "suggestions_enabled": true
+    },
+    "debug2": {
+      "user_id": "debug2",
+      "created_at": "2026-06-08T00:53:03.120037",
+      "preferences": {
+        "risk_level": "low",
+        "preferred_assets": [],
+        "auto_confirm": false,
+        "notifications": true,
+        "response_style": "detailed",
+        "detail_level": "standard"
+      },
+      "behavior": {
+        "total_commands": 3,
+        "intent_counts": {
+          "unknown": 3
+        },
+        "asset_counts": {},
+        "time_distribution": {
+          "0": 3
+        },
+        "avg_trade_size": 0,
+        "last_active": "2026-06-08T00:53:03.332817"
+      },
+      "portfolio_history": [],
+      "favorite_commands": [
+        {
+          "message": "Feeling great",
+          "count": 1,
+          "first_used": "2026-06-08T00:53:03.130033",
+          "last_used": "2026-06-08T00:53:03.130037"
+        },
+        {
+          "message": "Best day ever",
+          "count": 1,
+          "first_used": "2026-06-08T00:53:03.237355",
+          "last_used": "2026-06-08T00:53:03.237359"
+        },
+        {
+          "message": "Worst day ever",
+          "count": 1,
+          "first_used": "2026-06-08T00:53:03.332830",
+          "last_used": "2026-06-08T00:53:03.332834"
+        }
+      ],
+      "suggestions_enabled": true
+    },
+    "fresh_start": {
+      "user_id": "fresh_start",
+      "created_at": "2026-06-08T00:55:35.750692",
+      "preferences": {
+        "risk_level": "low",
+        "preferred_assets": [],
+        "auto_confirm": false,
+        "notifications": true,
+        "response_style": "detailed",
+        "detail_level": "standard"
+      },
+      "behavior": {
+        "total_commands": 3,
+        "intent_counts": {
+          "unknown": 3
+        },
+        "asset_counts": {},
+        "time_distribution": {
+          "0": 3
+        },
+        "avg_trade_size": 0,
+        "last_active": "2026-06-08T00:55:36.111090"
+      },
+      "portfolio_history": [],
+      "favorite_commands": [
+        {
+          "message": "Feeling great",
+          "count": 1,
+          "first_used": "2026-06-08T00:55:35.763923",
+          "last_used": "2026-06-08T00:55:35.763929"
+        },
+        {
+          "message": "Best day ever",
+          "count": 1,
+          "first_used": "2026-06-08T00:55:36.006973",
+          "last_used": "2026-06-08T00:55:36.006980"
+        },
+        {
+          "message": "Worst day ever",
+          "count": 1,
+          "first_used": "2026-06-08T00:55:36.111104",
+          "last_used": "2026-06-08T00:55:36.111109"
+        }
+      ],
+      "suggestions_enabled": true
+    },
+    "fresh_test": {
+      "user_id": "fresh_test",
+      "created_at": "2026-06-08T00:55:36.475199",
+      "preferences": {
+        "risk_level": "low",
+        "preferred_assets": [],
+        "auto_confirm": false,
+        "notifications": true,
+        "response_style": "witty",
+        "detail_level": "standard"
+      },
+      "behavior": {
+        "total_commands": 30,
+        "intent_counts": {
+          "emotional": 27,
+          "unknown": 3
+        },
+        "asset_counts": {},
+        "time_distribution": {
+          "0": 30
+        },
+        "avg_trade_size": 0,
+        "last_active": "2026-06-08T00:55:36.996709"
+      },
+      "portfolio_history": [],
+      "favorite_commands": [
+        {
+          "message": "I am so happy today",
+          "count": 1,
+          "first_used": "2026-06-08T00:55:36.484523",
+          "last_used": "2026-06-08T00:55:36.484527"
+        },
+        {
+          "message": "This is amazing",
+          "count": 1,
+          "first_used": "2026-06-08T00:55:36.508669",
+          "last_used": "2026-06-08T00:55:36.508675"
+        },
+        {
+          "message": "I am excited about crypto",
+          "count": 1,
+          "first_used": "2026-06-08T00:55:36.526677",
+          "last_used": "2026-06-08T00:55:36.526684"
+        },
+        {
+          "message": "Feeling great",
+          "count": 1,
+          "first_used": "2026-06-08T00:55:36.548400",
+          "last_used": "2026-06-08T00:55:36.548405"
+        },
+        {
+          "message": "So bullish right now",
+          "count": 1,
+          "first_used": "2026-06-08T00:55:36.565563",
+          "last_used": "2026-06-08T00:55:36.565567"
+        }
+      ],
+      "suggestions_enabled": true
+    },
+    "test1": {
+      "user_id": "test1",
+      "created_at": "2026-06-08T00:58:39.055482",
+      "preferences": {
+        "risk_level": "low",
+        "preferred_assets": [],
+        "auto_confirm": false,
+        "notifications": true,
+        "response_style": "detailed",
+        "detail_level": "standard"
+      },
+      "behavior": {
+        "total_commands": 1,
+        "intent_counts": {
+          "unknown": 1
+        },
+        "asset_counts": {},
+        "time_distribution": {
+          "0": 1
+        },
+        "avg_trade_size": 0,
+        "last_active": "2026-06-08T00:58:39.069081"
+      },
+      "portfolio_history": [],
+      "favorite_commands": [
+        {
+          "message": "Feeling great",
+          "count": 1,
+          "first_used": "2026-06-08T00:58:39.069097",
+          "last_used": "2026-06-08T00:58:39.069101"
+        }
+      ],
+      "suggestions_enabled": true
+    },
+    "restart_test": {
+      "user_id": "restart_test",
+      "created_at": "2026-06-08T01:03:18.121957",
+      "preferences": {
+        "risk_level": "low",
+        "preferred_assets": [],
+        "auto_confirm": false,
+        "notifications": true,
+        "response_style": "detailed",
+        "detail_level": "standard"
+      },
+      "behavior": {
+        "total_commands": 1,
+        "intent_counts": {
+          "unknown": 1
+        },
+        "asset_counts": {},
+        "time_distribution": {
+          "1": 1
+        },
+        "avg_trade_size": 0,
+        "last_active": "2026-06-08T01:03:18.141000"
+      },
+      "portfolio_history": [],
+      "favorite_commands": [
+        {
+          "message": "Feeling great",
+          "count": 1,
+          "first_used": "2026-06-08T01:03:18.141021",
+          "last_used": "2026-06-08T01:03:18.141028"
+        }
+      ],
+      "suggestions_enabled": true
     }
   },
-  "last_updated": "2026-06-08T00:52:25.839640"
+  "last_updated": "2026-06-08T01:03:18.141212"
 }
