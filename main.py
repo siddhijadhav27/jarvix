@@ -171,8 +171,89 @@ async def chat(request: ChatRequest):
     llm_router = get_llm_router()
     use_llm, reason = llm_router.should_use_llm(request.message, intent_data["intent"])
     
-    # Use personalized response if available, otherwise use template
-    if personalized_response:
+    # Step 1: Universal Intent Parser for unknown commands
+    if intent_data["intent"] == "unknown" and intent_data.get("universal_parse", False):
+        print(f"[UNIVERSAL PARSER] Handling unknown command: {request.message}")
+        from ai.universal_intent import handle_unknown_command
+        from ai.agent_planner import plan_agent_task, execute_agent_task, get_task_status
+        
+        universal_result = await handle_unknown_command(
+            request.message, 
+            intent_data["intent"], 
+            context
+        )
+        
+        classification = universal_result["classification"]
+        category = classification["category"]
+        
+        print(f"[UNIVERSAL PARSER] Category: {category}, Confidence: {classification['confidence']:.2f}")
+        
+        if category == "reject":
+            response_text = universal_result["response"]
+            intent_data["intent"] = "rejected"
+            intent_data["confidence"] = classification["confidence"]
+            
+        elif category == "direct_answer":
+            response_text = universal_result["response"]
+            intent_data["intent"] = "direct_answer"
+            intent_data["confidence"] = classification["confidence"]
+            
+        elif category == "clarify":
+            response_text = universal_result["response"]
+            intent_data["intent"] = "clarify"
+            intent_data["confidence"] = classification["confidence"]
+            
+        elif category == "tool_call":
+            # Step 2: Execute the tool!
+            from ai.tool_executor import parse_and_execute_tools
+            
+            suggested_tools = classification.get("suggested_tools", [])
+            if suggested_tools:
+                print(f"[TOOL EXECUTOR] Executing tools: {suggested_tools}")
+                tool_result = await parse_and_execute_tools(
+                    request.message,
+                    suggested_tools
+                )
+                response_text = tool_result["response"]
+                print(f"[TOOL EXECUTOR] Result: {response_text[:100]}...")
+            else:
+                response_text = universal_result["response"]
+            
+            intent_data["intent"] = "tool_call"
+            intent_data["confidence"] = classification["confidence"]
+            intent_data["suggested_tools"] = suggested_tools
+            
+        elif category == "agent_task":
+            # Step 3: Plan and execute agent task!
+            from ai.agent_planner import plan_agent_task
+            
+            agent_result = await plan_agent_task(request.message, request.user_id)
+            
+            if agent_result["is_agent_task"]:
+                response_text = agent_result["response"]
+                intent_data["intent"] = "agent_task"
+                intent_data["confidence"] = classification["confidence"]
+                intent_data["task_id"] = agent_result.get("task_id")
+                intent_data["steps_count"] = agent_result.get("steps_count")
+            else:
+                response_text = agent_result["response"]
+                intent_data["intent"] = "agent_task"
+                intent_data["confidence"] = classification["confidence"]
+            
+        elif category == "known_crypto":
+            # Re-classify as crypto command
+            response_text = universal_result["response"]
+            intent_data["intent"] = "advice"  # Generic crypto handler
+            intent_data["confidence"] = classification["confidence"]
+            
+        else:
+            response_text = universal_result["response"]
+            intent_data["intent"] = "unknown_handled"
+            intent_data["confidence"] = classification["confidence"]
+        
+        llm_router.record_request(request.message, intent_data["intent"], True)
+        
+    elif personalized_response:
         response_text = personalized_response
         llm_router.record_request(request.message, intent_data["intent"], False)
     elif intent_data["intent"] in REGEX_ONLY_INTENTS:

@@ -118,11 +118,7 @@ class SelfLearningSystem:
             print(f"[LEARNING] Found learned pattern: '{normalized}' → {pattern_data['intent']}")
             return pattern_data['intent']
         
-        # Partial match (check if message contains learned pattern)
-        for pattern, data in self.learned_patterns.items():
-            if pattern in normalized or normalized in pattern:
-                print(f"[LEARNING] Partial match: '{normalized}' matches '{pattern}' → {data['intent']}")
-                return data['intent']
+        # No partial match - exact match only to prevent false positives
         
         return None
     
