@@ -288,11 +288,11 @@ class ChatRequest(BaseModel):
 class ChatResponse(BaseModel):
     response: str
     intent: str
-    asset: str | None = None
-    amount: float | None = None
-    price: float | None = None
+    asset: Optional[str] = None
+    amount: Optional[float] = None
+    price: Optional[float] = None
     confidence: float = 0.95
-    behavioral_warning: dict | None = None
+    behavioral_warning: Optional[dict] = None
     status: str = "complete"
 
 @app.post("/api/ai/chat")
