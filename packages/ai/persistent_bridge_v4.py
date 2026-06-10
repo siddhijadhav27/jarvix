@@ -282,7 +282,7 @@ from pydantic import BaseModel
 
 app = FastAPI(title="Hermes Bridge v4 - Pre-warmed Pool")
 
-class ChatRequest(BaseModel):
+class BridgeChatRequest(BaseModel):
     message: str
     session_id: str = "default"
 
@@ -293,7 +293,7 @@ async def startup():
     print("🎯 Jarvix Bridge ready")
 
 @app.post("/chat")
-async def chat(request: ChatRequest):
+async def chat(request: BridgeChatRequest):
     manager = get_manager()
     bridge = manager.get_session(request.session_id)
     
