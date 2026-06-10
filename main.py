@@ -692,6 +692,16 @@ async def health():
     """Health check endpoint"""
     return {"status": "healthy", "service": "jarvix-backend", "version": "1.0.0"}
 
+@app.get("/api/health")
+async def api_health():
+    """API health check endpoint"""
+    return {"status": "healthy", "service": "jarvix-backend", "version": "1.0.0"}
+
+@app.get("/api/portfolio")
+async def api_portfolio():
+    """API portfolio endpoint"""
+    return {"total_value": 100000, "change_pct": 2.4, "holdings": []}
+
 @app.get("/")
 async def root():
     """Root endpoint"""
