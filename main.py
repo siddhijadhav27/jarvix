@@ -34,14 +34,20 @@ from ai.llm_router import get_llm_router, REGEX_ONLY_INTENTS
 
 app = FastAPI()
 
-# CORS Middleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
+# CORS Middleware - dynamic from env var
+cors_origins = os.getenv("CORS_ORIGINS", "")
+if cors_origins:
+    allow_origins = [origin.strip() for origin in cors_origins.split(",")]
+else:
+    allow_origins = [
         "http://localhost:3000",
         "http://localhost:3001",
         "http://127.0.0.1:3000",
-    ],
+    ]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=allow_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
