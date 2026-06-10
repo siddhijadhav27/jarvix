@@ -43,6 +43,8 @@ app.add_middleware(
 
 # ─── API Models ───
 
+from typing import Optional, Dict, Any, List
+
 class ChatRequest(BaseModel):
     message: str
     user_id: str = "default"
@@ -52,7 +54,7 @@ class ChatResponse(BaseModel):
     confidence: float
     fast_path: bool
     source: str
-    entities: dict
+    entities: Dict
     message: str
     latency_ms: int
 
@@ -292,7 +294,7 @@ class ChatResponse(BaseModel):
     amount: Optional[float] = None
     price: Optional[float] = None
     confidence: float = 0.95
-    behavioral_warning: Optional[dict] = None
+    behavioral_warning: Optional[Dict] = None
     status: str = "complete"
 
 @app.post("/api/ai/chat")
