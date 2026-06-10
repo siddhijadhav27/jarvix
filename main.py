@@ -769,6 +769,23 @@ async def check_alerts(user_id: str):
         "unread_count": manager.get_unread_count()
     }
 
+@app.websocket("/ws/prices")
+async def websocket_prices(websocket: WebSocket):
+    """WebSocket for real-time prices"""
+    await websocket.accept()
+    try:
+        while True:
+            # Send demo price data
+            prices = {
+                "BTC": {"price": 65000 + random.randint(-1000, 1000), "change_24h": 2.5},
+                "ETH": {"price": 3500 + random.randint(-100, 100), "change_24h": 1.8},
+                "SOL": {"price": 150 + random.randint(-10, 10), "change_24h": -0.5},
+            }
+            await websocket.send_json(prices)
+            await asyncio.sleep(5)
+    except WebSocketDisconnect:
+        pass
+
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8000)), reload=True)
 # Deploy trigger
