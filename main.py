@@ -17,7 +17,7 @@ from ai.personality import personality_engine
 from ai.llm_client import generate_jarvis_response
 from ai.openrouter_client import call_openrouter
 from ai.mock_llm import generate_mock_response
-from ai.intent import classify_intent
+from ai.intent import IntentClassifier
 from ai.memory import get_memory, format_context_for_llm
 from ai.ghost_mode import get_ghost_mode
 from ai.proactive_alerts import get_alert_manager
@@ -135,18 +135,19 @@ async def post_chat(request: ChatRequest):
     
     try:
         # Use existing intent detection
-        from ai.intent import classify_intent
-        result = classify_intent(request.message)
+        from ai.intent import IntentClassifier
+        classifier = IntentClassifier()
+        result = await classifier.classify(request.message)
         
         latency_ms = int((time.time() - start) * 1000)
         
         return ChatResponse(
             intent=result.get("intent", "UNKNOWN"),
             confidence=result.get("confidence", 0.0),
-            fast_path=result.get("fast_path", False),
-            source=result.get("source", "regex"),
+            fast_path=True,
+            source="llm",
             entities=result.get("entities", {}),
-            message=result.get("message", "Processing complete, sir."),
+            message="Processing complete, sir.",
             latency_ms=latency_ms,
         )
     except Exception as e:
@@ -321,8 +322,10 @@ async def chat(request: ChatRequest):
     # Get conversation context
     context = memory.get_full_context()
     
-    # Classify intent using hybrid approach (regex + LLM fallback)
-    intent_data = await classify_intent(request.message, context)
+    # Classify intent using LLM
+    from ai.intent import IntentClassifier
+    classifier = IntentClassifier()
+    intent_data = await classifier.classify(request.message)
     
     # Check learned patterns (self-learning Phase 1)
     learning = get_learning_system()
