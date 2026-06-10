@@ -62,10 +62,12 @@ class Holding(BaseModel):
     value: float
     change_pct: float
 
+from typing import Optional, Dict, Any, List
+
 class PortfolioResponse(BaseModel):
     total_value: float
     change_pct: float
-    holdings: list[Holding]
+    holdings: List[Holding]
 
 class HealthResponse(BaseModel):
     neural_engine: int
