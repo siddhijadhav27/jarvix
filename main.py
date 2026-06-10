@@ -1,7 +1,13 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from typing import Optional, Dict, Any, List
 import uvicorn
+
+# Override FastAPI's Contact to avoid conflicts
+class Contact(BaseModel):
+    name: Optional[str] = None
+    email: Optional[str] = None
 import sys
 import os
 import time
