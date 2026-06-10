@@ -3331,7 +3331,76 @@
         }
       ],
       "suggestions_enabled": true
+    },
+    "siddhi": {
+      "user_id": "siddhi",
+      "created_at": "2026-06-10T15:00:28.086693",
+      "preferences": {
+        "risk_level": "low",
+        "preferred_assets": [
+          "BTC",
+          "ETH"
+        ],
+        "auto_confirm": false,
+        "notifications": true,
+        "response_style": "detailed",
+        "detail_level": "standard"
+      },
+      "behavior": {
+        "total_commands": 18,
+        "intent_counts": {
+          "buy": 2,
+          "price": 10,
+          "portfolio": 1,
+          "advice": 3,
+          "alert": 2
+        },
+        "asset_counts": {
+          "BTC": 14,
+          "ETH": 3
+        },
+        "time_distribution": {
+          "15": 17,
+          "16": 1
+        },
+        "avg_trade_size": 0,
+        "last_active": "2026-06-10T16:01:02.735053"
+      },
+      "portfolio_history": [],
+      "favorite_commands": [
+        {
+          "message": "btc price",
+          "count": 10,
+          "first_used": "2026-06-10T15:20:59.010781",
+          "last_used": "2026-06-10T16:01:02.735069"
+        },
+        {
+          "message": "Buy 100 BTC",
+          "count": 1,
+          "first_used": "2026-06-10T15:00:28.096962",
+          "last_used": "2026-06-10T15:00:28.096967"
+        },
+        {
+          "message": "buy 0.5 btc",
+          "count": 1,
+          "first_used": "2026-06-10T15:49:00.022362",
+          "last_used": "2026-06-10T15:49:00.022370"
+        },
+        {
+          "message": "portfolio",
+          "count": 1,
+          "first_used": "2026-06-10T15:49:32.456070",
+          "last_used": "2026-06-10T15:49:32.456075"
+        },
+        {
+          "message": "should I buy ETH",
+          "count": 1,
+          "first_used": "2026-06-10T15:50:44.631542",
+          "last_used": "2026-06-10T15:50:44.631546"
+        }
+      ],
+      "suggestions_enabled": true
     }
   },
-  "last_updated": "2026-06-08T18:40:20.417333"
+  "last_updated": "2026-06-10T16:01:02.735326"
 }

@@ -10,9 +10,10 @@ from .auto_learning import get_auto_learning_system
 from .personalization import get_personalization_system
 
 # Commands that NEVER need LLM (instant, free)
+# NOTE: All intents now use real-time data, no static templates
 REGEX_ONLY_INTENTS = {
-    "price", "buy", "sell", "portfolio", "greeting", 
-    "advice", "alert", "stop_loss", "take_profit"
+    # Empty - all intents now enhanced with real-time data
+    # LLM is used for complex queries and unknown intents
 }
 
 # Commands that MIGHT need LLM (complex queries)

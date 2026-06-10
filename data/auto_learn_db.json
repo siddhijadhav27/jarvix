@@ -1,1893 +1,164 @@
 {
   "user_patterns": {
-    "cleared_test": {
-      "get rid of {asset}": {
-        "sell": 1
-      }
-    },
-    "sell_perfect_final": {
-      "sell {amount} {asset}": {
-        "sell": 14
-      },
-      "sell {asset} now": {
-        "sell": 2
-      },
-      "sell {asset} immediately": {
-        "sell": 1
-      },
-      "sell {asset} at {amount}": {
-        "sell": 3
-      },
-      "sell {asset} if price rises": {
-        "sell": 1
-      },
-      "sell {asset} on peak": {
-        "sell": 1
-      },
-      "sell the pump {asset}": {
-        "sell": 1
-      },
-      "sell {asset} high": {
-        "sell": 1
-      },
-      "sell {asset} expensive": {
-        "sell": 1
-      },
-      "sell {asset} premium": {
-        "sell": 1
-      },
-      "sell {asset} profit": {
-        "sell": 1
-      },
-      "dump {asset}": {
-        "sell": 1
-      },
-      "cash out {asset}": {
-        "sell": 1
-      },
-      "liquidate {asset}": {
-        "sell": 1
-      },
-      "unload {asset}": {
-        "sell": 1
-      },
-      "offload {asset}": {
-        "sell": 1
-      },
-      "exit {asset} position": {
-        "sell": 1
-      },
-      "get rid of {asset}": {
-        "sell": 1
-      },
-      "remove {asset}": {
-        "sell": 1
-      },
-      "take profits {asset}": {
-        "sell": 1
-      },
-      "profit taking {asset}": {
-        "sell": 1
-      },
-      "sell {asset} quickly": {
-        "sell": 1
-      },
-      "sell {asset} fast": {
-        "sell": 1
-      },
-      "sell {asset} asap": {
-        "sell": 1
-      },
-      "sell {asset} please": {
-        "sell": 1
-      },
-      "sell {asset} sir": {
-        "sell": 1
-      },
-      "sell {asset} today": {
-        "sell": 1
-      },
-      "sell {asset} tomorrow": {
-        "sell": 1
-      },
-      "sell {asset} tonight": {
-        "sell": 1
-      },
-      "sell {asset} morning": {
-        "sell": 1
-      },
-      "sell {amount} {asset} at {amount}": {
-        "sell": 1
-      },
-      "sell {asset} and {asset}": {
-        "sell": 1
-      },
-      "sell {asset} not {asset}": {
-        "sell": 1
-      },
-      "sell {asset} instead of {asset}": {
-        "sell": 1
-      },
-      "sell {amount} {asset} {amount} {asset}": {
-        "sell": 1
-      },
-      "panic sell {asset}": {
-        "sell": 1
-      },
-      "crash sell {asset}": {
-        "sell": 1
-      },
-      "emergency sell {asset}": {
-        "sell": 1
-      },
-      "stop loss sell {asset}": {
-        "sell": 1
-      },
-      "limit sell {asset}": {
-        "sell": 1
-      }
-    },
-    "price_test_user": {
-      "{asset} price": {
-        "price": 4
-      },
-      "how much is {asset}": {
-        "price": 1
-      },
-      "what is {asset} price": {
-        "price": 1
-      },
-      "{asset} value": {
-        "price": 1
-      },
-      "{asset} cost": {
-        "price": 1
-      },
-      "{asset} worth": {
-        "price": 1
-      },
-      "check {asset} price": {
-        "price": 1
-      },
-      "show {asset} price": {
-        "price": 1
-      },
-      "get {asset} price": {
-        "buy": 1
-      },
-      "{asset} going up": {
-        "price": 1
-      }
-    },
-    "price_fix": {
-      "get {asset} price": {
-        "price": 1
-      }
-    },
-    "price_perfect": {
-      "{asset} price": {
-        "price": 4
-      },
-      "how much is {asset}": {
-        "price": 1
-      },
-      "what is {asset} price": {
-        "price": 1
-      },
-      "{asset} value": {
-        "price": 1
-      },
-      "{asset} cost": {
-        "price": 1
-      },
-      "{asset} worth": {
-        "price": 1
-      },
-      "check {asset} price": {
-        "price": 1
-      },
-      "show {asset} price": {
-        "price": 1
-      },
-      "get {asset} price": {
-        "price": 1
-      },
-      "{asset} going up": {
-        "price": 1
-      },
-      "{asset} going down": {
-        "price": 1
-      },
-      "{asset} vs {asset} price": {
-        "price": 1
-      },
-      "{asset} all time high": {
-        "price": 1
-      },
-      "{asset} support level": {
-        "price": 1
-      },
-      "{asset} resistance": {
-        "price": 1
-      },
-      "{asset} chart": {
-        "price": 1
-      },
-      "how much": {
-        "price": 1
-      },
-      "price": {
-        "price": 1
-      }
-    },
-    "portfolio_test_user": {
-      "portfolio": {
-        "portfolio": 1
-      },
-      "my portfolio": {
-        "portfolio": 1
-      },
-      "show portfolio": {
-        "portfolio": 1
-      },
-      "check portfolio": {
-        "portfolio": 1
-      },
-      "view portfolio": {
-        "portfolio": 1
-      },
-      "my holdings": {
-        "portfolio": 1
-      },
-      "what do i have": {
-        "portfolio": 1
-      },
-      "what do i own": {
-        "portfolio": 1
-      },
-      "show my assets": {
-        "portfolio": 1
-      },
-      "my positions": {
-        "unknown": 1
-      },
-      "portfolio value": {
-        "portfolio": 1
-      },
-      "net worth": {
-        "portfolio": 1
-      },
-      "total value": {
-        "price": 1
-      },
-      "portfolio performance": {
-        "portfolio": 1
-      },
-      "how am i doing": {
-        "portfolio": 1
-      },
-      "show my {asset}": {
-        "portfolio": 1
-      },
-      "my {asset} amount": {
-        "portfolio": 1
-      },
-      "portfolio summary": {
-        "portfolio": 1
-      }
-    },
-    "portfolio_fix": {
-      "my positions": {
-        "portfolio": 1
-      },
-      "total value": {
-        "portfolio": 1
-      },
-      "asset allocation": {
-        "portfolio": 1
-      }
-    },
-    "portfolio_perfect": {
-      "portfolio": {
-        "portfolio": 1
-      },
-      "my portfolio": {
-        "portfolio": 1
-      },
-      "show portfolio": {
-        "portfolio": 1
-      },
-      "check portfolio": {
-        "portfolio": 1
-      },
-      "view portfolio": {
-        "portfolio": 1
-      },
-      "my holdings": {
-        "portfolio": 1
-      },
-      "what do i have": {
-        "portfolio": 1
-      },
-      "what do i own": {
-        "portfolio": 1
-      },
-      "show my assets": {
-        "portfolio": 1
-      },
-      "my positions": {
-        "portfolio": 1
-      },
-      "portfolio value": {
-        "portfolio": 1
-      },
-      "net worth": {
-        "portfolio": 1
-      },
-      "total value": {
-        "portfolio": 1
-      },
-      "portfolio performance": {
-        "portfolio": 1
-      },
-      "how am i doing": {
-        "portfolio": 1
-      },
-      "show my {asset}": {
-        "portfolio": 1
-      },
-      "my {asset} amount": {
-        "portfolio": 1
-      },
-      "portfolio summary": {
-        "portfolio": 1
-      },
-      "asset allocation": {
-        "portfolio": 1
-      }
-    },
-    "greeting_test_user": {
-      "hello": {
-        "greeting": 1
-      },
-      "hi": {
-        "greeting": 1
-      },
-      "hey": {
-        "greeting": 1
-      },
-      "good morning": {
-        "greeting": 1
-      },
-      "good afternoon": {
-        "greeting": 1
-      },
-      "good evening": {
-        "greeting": 1
-      },
-      "good night": {
-        "unknown": 1
-      },
-      "greetings": {
-        "unknown": 1
-      },
-      "welcome": {
-        "unknown": 1
-      },
-      "hello there": {
-        "greeting": 1
-      },
-      "hey there": {
-        "greeting": 1
-      },
-      "hi there": {
-        "greeting": 1
-      },
-      "yo": {
-        "greeting": 1
-      },
-      "what's up": {
-        "greeting": 1
-      },
-      "howdy": {
-        "greeting": 1
-      },
-      "how are you": {
-        "greeting": 1
-      },
-      "how is it going": {
-        "unknown": 1
-      },
-      "what's going on": {
-        "unknown": 1
-      }
-    },
-    "greeting_fix": {
-      "good night": {
-        "greeting": 1
-      },
-      "greetings": {
-        "greeting": 1
-      },
-      "welcome": {
-        "greeting": 1
-      },
-      "how is it going": {
-        "greeting": 1
-      },
-      "what's going on": {
-        "greeting": 1
-      },
-      "nice to meet you": {
-        "greeting": 1
-      }
-    },
-    "greeting_perfect": {
-      "hello": {
-        "greeting": 1
-      },
-      "hi": {
-        "greeting": 1
-      },
-      "hey": {
-        "greeting": 1
-      },
-      "good morning": {
-        "greeting": 1
-      },
-      "good afternoon": {
-        "greeting": 1
-      },
-      "good evening": {
-        "greeting": 1
-      },
-      "good night": {
-        "greeting": 1
-      },
-      "greetings": {
-        "greeting": 1
-      },
-      "welcome": {
-        "greeting": 1
-      },
-      "hello there": {
-        "greeting": 1
-      },
-      "hey there": {
-        "greeting": 1
-      },
-      "hi there": {
-        "greeting": 1
-      },
-      "yo": {
-        "greeting": 1
-      },
-      "what's up": {
-        "greeting": 1
-      },
-      "howdy": {
-        "greeting": 1
-      },
-      "how are you": {
-        "greeting": 1
-      },
-      "how is it going": {
-        "greeting": 1
-      },
-      "what's going on": {
-        "greeting": 1
-      },
-      "how do you do": {
-        "greeting": 1
-      },
-      "nice to meet you": {
-        "greeting": 1
-      },
-      "hey jarvix": {
-        "greeting": 1
-      },
-      "hello jarvix": {
-        "greeting": 1
-      },
-      "hi jarvix": {
-        "greeting": 1
-      },
-      "good morning jarvix": {
-        "greeting": 1
-      },
-      "hey jarvix how are you": {
-        "greeting": 1
-      }
-    },
-    "advice_test_user": {
-      "should i buy {asset}": {
-        "advice": 1
-      },
-      "should i sell {asset}": {
-        "advice": 1
-      },
-      "is it good to buy {asset}": {
-        "buy": 1
-      },
-      "is it time to sell {asset}": {
-        "advice": 1
-      },
-      "should i invest in {asset}": {
-        "advice": 1
-      },
-      "should i exit {asset}": {
-        "advice": 1
-      },
-      "what should i buy": {
-        "advice": 1
-      },
-      "what should i sell": {
-        "advice": 1
-      },
-      "recommend me a coin": {
-        "advice": 1
-      }
-    },
-    "advice_fix": {
-      "is it good to buy {asset}": {
-        "advice": 1
-      },
-      "which crypto to buy": {
-        "advice": 1
-      },
-      "what to invest in": {
-        "advice": 1
-      },
-      "is {asset} a good buy": {
-        "advice": 1
-      },
-      "is it worth buying {asset}": {
-        "advice": 1
-      }
-    },
-    "advice_perfect": {
-      "should i buy {asset}": {
-        "advice": 1
-      },
-      "should i sell {asset}": {
-        "advice": 1
-      },
-      "is it good to buy {asset}": {
-        "advice": 1
-      },
-      "is it time to sell {asset}": {
-        "advice": 1
-      },
-      "should i invest in {asset}": {
-        "advice": 1
-      },
-      "should i exit {asset}": {
-        "advice": 1
-      },
-      "what should i buy": {
-        "advice": 1
-      },
-      "what should i sell": {
-        "advice": 1
-      },
-      "recommend me a coin": {
-        "advice": 1
-      },
-      "which crypto to buy": {
-        "advice": 1
-      },
-      "what to invest in": {
-        "advice": 1
-      },
-      "give me advice": {
-        "advice": 1
-      },
-      "help me decide": {
-        "advice": 1
-      },
-      "i need advice": {
-        "advice": 1
-      },
-      "what do you think about {asset}": {
-        "advice": 1
-      },
-      "is {asset} a good buy": {
-        "advice": 1
-      },
-      "should i hold {asset}": {
-        "advice": 1
-      },
-      "is it worth buying {asset}": {
-        "advice": 1
-      }
-    },
-    "alert_test_user": {
-      "alert me when {asset} hits {amount}": {
-        "alert": 1
-      },
-      "notify me when {asset} drops below {amount}": {
-        "alert": 1
-      },
-      "tell me when {asset} reaches {amount}": {
-        "alert": 1
-      },
-      "set alert for {asset} at {amount}": {
-        "alert": 1
-      },
-      "warn me if {asset} dumps": {
-        "alert": 1
-      },
-      "alert when {asset} goes above {amount}": {
-        "alert": 1
-      },
-      "notify when {asset} falls to {amount}": {
-        "alert": 1
-      },
-      "tell me when {asset} pumps": {
-        "alert": 1
-      },
-      "set notification for {asset} crash": {
-        "alert": 1
-      },
-      "alert me if {asset} moons": {
-        "alert": 1
-      }
-    },
-    "emotional_test_user": {
-      "i am so happy today": {
-        "unknown": 1,
-        "emotional": 1
-      },
-      "this is amazing": {
-        "unknown": 1,
-        "emotional": 1
-      },
-      "i am excited about crypto": {
-        "unknown": 1,
-        "emotional": 1
-      },
-      "feeling great": {
-        "unknown": 2
-      },
-      "so bullish right now": {
-        "unknown": 1,
-        "emotional": 1
-      },
-      "i love this market": {
-        "unknown": 1,
-        "emotional": 1
-      },
-      "best day ever": {
-        "unknown": 2
-      },
-      "feeling confident": {
-        "unknown": 1,
-        "emotional": 1
-      },
-      "this is awesome": {
-        "unknown": 1,
-        "emotional": 1
-      },
-      "i am thrilled": {
-        "unknown": 1,
-        "emotional": 1
-      },
-      "i am so angry": {
-        "unknown": 1,
-        "emotional": 1
-      },
-      "this is frustrating": {
-        "unknown": 1,
-        "emotional": 1
-      },
-      "i am scared of the market": {
-        "unknown": 1,
-        "emotional": 1
-      },
-      "feeling sad": {
-        "unknown": 1,
-        "emotional": 1
-      },
-      "so bearish right now": {
-        "unknown": 1,
-        "emotional": 1
-      },
-      "i hate this crash": {
-        "sell": 2
-      },
-      "worst day ever": {
-        "unknown": 2
-      },
-      "feeling anxious": {
-        "unknown": 1,
-        "emotional": 1
-      },
-      "this is terrible": {
-        "unknown": 1,
-        "emotional": 1
-      },
-      "i am worried": {
-        "unknown": 1,
-        "emotional": 1
-      },
-      "i am confused": {
-        "advice": 2
-      },
-      "feeling overwhelmed": {
-        "unknown": 1,
-        "emotional": 1
-      },
-      "i am disappointed": {
-        "unknown": 1,
-        "emotional": 1
-      },
-      "so stressed": {
-        "unknown": 1,
-        "emotional": 1
-      },
-      "i am nervous": {
-        "unknown": 1,
-        "emotional": 1
-      },
-      "feeling uncertain": {
-        "unknown": 2
-      },
-      "i am shocked": {
-        "unknown": 1,
-        "emotional": 1
-      },
-      "so surprised": {
-        "emotional": 1
-      },
-      "i am grateful": {
-        "emotional": 1
-      },
-      "feeling hopeful": {
-        "emotional": 1
-      }
-    },
-    "emotional_fix": {
-      "feeling great": {
-        "unknown": 1
-      },
-      "best day ever": {
-        "unknown": 1
-      },
-      "i hate this crash": {
-        "sell": 1
-      },
-      "worst day ever": {
-        "unknown": 1
-      },
-      "i am confused": {
-        "advice": 1
-      },
-      "feeling uncertain": {
-        "unknown": 1
-      }
-    },
-    "emotional_perfect": {
-      "i am so happy today": {
-        "emotional": 1
-      },
-      "this is amazing": {
-        "emotional": 1
-      },
-      "i am excited about crypto": {
-        "emotional": 1
-      },
-      "feeling great": {
-        "unknown": 1
-      },
-      "so bullish right now": {
-        "emotional": 1
-      },
-      "i love this market": {
-        "emotional": 1
-      },
-      "best day ever": {
-        "unknown": 1
-      },
-      "feeling confident": {
-        "emotional": 1
-      },
-      "this is awesome": {
-        "emotional": 1
-      },
-      "i am thrilled": {
-        "emotional": 1
-      },
-      "i am so angry": {
-        "emotional": 1
-      },
-      "this is frustrating": {
-        "emotional": 1
-      },
-      "i am scared of the market": {
-        "emotional": 1
-      },
-      "feeling sad": {
-        "emotional": 1
-      },
-      "so bearish right now": {
-        "emotional": 1
-      },
-      "i hate this crash": {
-        "sell": 1
-      },
-      "worst day ever": {
-        "unknown": 1
-      },
-      "feeling anxious": {
-        "emotional": 1
-      },
-      "this is terrible": {
-        "emotional": 1
-      },
-      "i am worried": {
-        "emotional": 1
-      },
-      "i am confused": {
-        "advice": 1
-      },
-      "feeling overwhelmed": {
-        "emotional": 1
-      },
-      "i am disappointed": {
-        "emotional": 1
-      },
-      "so stressed": {
-        "emotional": 1
-      }
-    },
-    "emotional_fix2": {
-      "feeling great": {
-        "unknown": 1
-      },
-      "best day ever": {
-        "unknown": 1
-      },
-      "i hate this crash": {
-        "emotional": 1
-      },
-      "worst day ever": {
-        "unknown": 1
-      },
-      "i am confused": {
-        "emotional": 1
-      },
-      "feeling uncertain": {
-        "unknown": 1
-      }
-    },
-    "emotional_perfect2": {
-      "i am so happy today": {
-        "emotional": 1
-      },
-      "this is amazing": {
-        "emotional": 1
-      },
-      "i am excited about crypto": {
-        "emotional": 1
-      },
-      "feeling great": {
-        "unknown": 1
-      },
-      "so bullish right now": {
-        "emotional": 1
-      },
-      "i love this market": {
-        "emotional": 1
-      },
-      "best day ever": {
-        "unknown": 1
-      },
-      "feeling confident": {
-        "emotional": 1
-      },
-      "this is awesome": {
-        "emotional": 1
-      },
-      "i am thrilled": {
-        "emotional": 1
-      },
-      "i am so angry": {
-        "emotional": 1
-      },
-      "this is frustrating": {
-        "emotional": 1
-      },
-      "i am scared of the market": {
-        "emotional": 1
-      },
-      "feeling sad": {
-        "emotional": 1
-      },
-      "so bearish right now": {
-        "emotional": 1
-      },
-      "i hate this crash": {
-        "emotional": 1
-      },
-      "worst day ever": {
-        "unknown": 1
-      },
-      "feeling anxious": {
-        "emotional": 1
-      },
-      "this is terrible": {
-        "emotional": 1
-      },
-      "i am worried": {
-        "emotional": 1
-      },
-      "i am confused": {
-        "emotional": 1
-      },
-      "feeling overwhelmed": {
-        "emotional": 1
-      },
-      "i am disappointed": {
-        "emotional": 1
-      },
-      "so stressed": {
-        "emotional": 1
-      }
-    },
-    "emotional_fix3": {
-      "feeling great": {
-        "unknown": 1
-      },
-      "best day ever": {
-        "unknown": 1
-      },
-      "worst day ever": {
-        "unknown": 1
-      },
-      "feeling uncertain": {
-        "emotional": 1
-      }
-    },
-    "emotional_perfect3": {
-      "i am so happy today": {
-        "emotional": 1
-      },
-      "this is amazing": {
-        "emotional": 1
-      },
-      "i am excited about crypto": {
-        "emotional": 1
-      },
-      "feeling great": {
-        "unknown": 1
-      },
-      "so bullish right now": {
-        "emotional": 1
-      },
-      "i love this market": {
-        "emotional": 1
-      },
-      "best day ever": {
-        "unknown": 1
-      },
-      "feeling confident": {
-        "emotional": 1
-      },
-      "this is awesome": {
-        "emotional": 1
-      },
-      "i am thrilled": {
-        "emotional": 1
-      },
-      "i am so angry": {
-        "emotional": 1
-      },
-      "this is frustrating": {
-        "emotional": 1
-      },
-      "i am scared of the market": {
-        "emotional": 1
-      },
-      "feeling sad": {
-        "emotional": 1
-      },
-      "so bearish right now": {
-        "emotional": 1
-      },
-      "i hate this crash": {
-        "emotional": 1
-      },
-      "worst day ever": {
-        "unknown": 1
-      },
-      "feeling anxious": {
-        "emotional": 1
-      },
-      "this is terrible": {
-        "emotional": 1
-      },
-      "i am worried": {
-        "emotional": 1
-      },
-      "i am confused": {
-        "emotional": 1
-      },
-      "feeling overwhelmed": {
-        "emotional": 1
-      },
-      "i am disappointed": {
-        "emotional": 1
-      },
-      "so stressed": {
-        "emotional": 1
-      },
-      "i am nervous": {
-        "emotional": 1
-      },
-      "feeling uncertain": {
-        "emotional": 1
-      }
-    },
-    "emotional_fix4": {
-      "feeling great": {
-        "unknown": 1
-      },
-      "best day ever": {
-        "unknown": 1
-      },
-      "worst day ever": {
-        "unknown": 1
-      }
-    },
-    "emotional_perfect4": {
-      "i am so happy today": {
-        "emotional": 1
-      },
-      "this is amazing": {
-        "emotional": 1
-      },
-      "i am excited about crypto": {
-        "emotional": 1
-      },
-      "feeling great": {
-        "unknown": 1
-      },
-      "so bullish right now": {
-        "emotional": 1
-      },
-      "i love this market": {
-        "emotional": 1
-      },
-      "best day ever": {
-        "unknown": 1
-      },
-      "feeling confident": {
-        "emotional": 1
-      },
-      "this is awesome": {
-        "emotional": 1
-      },
-      "i am thrilled": {
-        "emotional": 1
-      },
-      "i am so angry": {
-        "emotional": 1
-      },
-      "this is frustrating": {
-        "emotional": 1
-      },
-      "i am scared of the market": {
-        "emotional": 1
-      },
-      "feeling sad": {
-        "emotional": 1
-      },
-      "so bearish right now": {
-        "emotional": 1
-      },
-      "i hate this crash": {
-        "emotional": 1
-      },
-      "worst day ever": {
-        "unknown": 1
-      },
-      "feeling anxious": {
-        "emotional": 1
-      },
-      "this is terrible": {
-        "emotional": 1
-      },
-      "i am worried": {
-        "emotional": 1
-      },
-      "i am confused": {
-        "emotional": 1
-      },
-      "feeling overwhelmed": {
-        "emotional": 1
-      },
-      "i am disappointed": {
-        "emotional": 1
-      },
-      "so stressed": {
-        "emotional": 1
-      },
-      "i am nervous": {
-        "emotional": 1
-      },
-      "feeling uncertain": {
-        "emotional": 1
-      },
-      "i am shocked": {
-        "emotional": 1
-      }
-    },
-    "emotional_fix5": {
-      "feeling great": {
-        "unknown": 1
-      },
-      "best day ever": {
-        "unknown": 1
-      },
-      "worst day ever": {
-        "unknown": 1
-      }
-    },
-    "emotional_perfect5": {
-      "i am so happy today": {
-        "emotional": 1
-      },
-      "this is amazing": {
-        "emotional": 1
-      },
-      "i am excited about crypto": {
-        "emotional": 1
-      },
-      "feeling great": {
-        "unknown": 1
-      },
-      "so bullish right now": {
-        "emotional": 1
-      },
-      "i love this market": {
-        "emotional": 1
-      },
-      "best day ever": {
-        "unknown": 1
-      },
-      "feeling confident": {
-        "emotional": 1
-      },
-      "this is awesome": {
-        "emotional": 1
-      },
-      "i am thrilled": {
-        "emotional": 1
-      },
-      "i am so angry": {
-        "emotional": 1
-      },
-      "this is frustrating": {
-        "emotional": 1
-      },
-      "i am scared of the market": {
-        "emotional": 1
-      },
-      "feeling sad": {
-        "emotional": 1
-      },
-      "so bearish right now": {
-        "emotional": 1
-      },
-      "i hate this crash": {
-        "emotional": 1
-      },
-      "worst day ever": {
-        "unknown": 1
-      },
-      "feeling anxious": {
-        "emotional": 1
-      },
-      "this is terrible": {
-        "emotional": 1
-      },
-      "i am worried": {
-        "emotional": 1
-      },
-      "i am confused": {
-        "emotional": 1
-      },
-      "feeling overwhelmed": {
-        "emotional": 1
-      },
-      "i am disappointed": {
-        "emotional": 1
-      },
-      "so stressed": {
-        "emotional": 1
-      },
-      "i am nervous": {
-        "emotional": 1
-      },
-      "feeling uncertain": {
-        "emotional": 1
-      },
-      "i am shocked": {
-        "emotional": 1
-      }
-    },
-    "emotional_fix6": {
-      "feeling great": {
-        "unknown": 1
-      },
-      "best day ever": {
-        "unknown": 1
-      },
-      "worst day ever": {
-        "unknown": 1
-      }
-    },
-    "emotional_perfect6": {
-      "i am so happy today": {
-        "emotional": 1
-      },
-      "this is amazing": {
-        "emotional": 1
-      },
-      "i am excited about crypto": {
-        "emotional": 1
-      },
-      "feeling great": {
-        "unknown": 1
-      },
-      "so bullish right now": {
-        "emotional": 1
-      },
-      "i love this market": {
-        "emotional": 1
-      },
-      "best day ever": {
-        "unknown": 1
-      },
-      "feeling confident": {
-        "emotional": 1
-      },
-      "this is awesome": {
-        "emotional": 1
-      },
-      "i am thrilled": {
-        "emotional": 1
-      },
-      "i am so angry": {
-        "emotional": 1
-      },
-      "this is frustrating": {
-        "emotional": 1
-      },
-      "i am scared of the market": {
-        "emotional": 1
-      },
-      "feeling sad": {
-        "emotional": 1
-      },
-      "so bearish right now": {
-        "emotional": 1
-      },
-      "i hate this crash": {
-        "emotional": 1
-      },
-      "worst day ever": {
-        "unknown": 1
-      },
-      "feeling anxious": {
-        "emotional": 1
-      },
-      "this is terrible": {
-        "emotional": 1
-      },
-      "i am worried": {
-        "emotional": 1
-      },
-      "i am confused": {
-        "emotional": 1
-      },
-      "feeling overwhelmed": {
-        "emotional": 1
-      },
-      "i am disappointed": {
-        "emotional": 1
-      },
-      "so stressed": {
-        "emotional": 1
-      },
-      "i am nervous": {
-        "emotional": 1
-      },
-      "feeling uncertain": {
-        "emotional": 1
-      },
-      "i am shocked": {
-        "emotional": 1
-      }
-    },
-    "debug2": {
-      "feeling great": {
-        "unknown": 1
-      },
-      "best day ever": {
-        "unknown": 1
-      },
-      "worst day ever": {
-        "unknown": 1
-      }
-    },
-    "fresh_start": {
-      "feeling great": {
-        "unknown": 1
-      },
-      "best day ever": {
-        "unknown": 1
-      },
-      "worst day ever": {
-        "unknown": 1
-      }
-    },
-    "fresh_test": {
-      "i am so happy today": {
-        "emotional": 1
-      },
-      "this is amazing": {
-        "emotional": 1
-      },
-      "i am excited about crypto": {
-        "emotional": 1
-      },
-      "feeling great": {
-        "unknown": 1
-      },
-      "so bullish right now": {
-        "emotional": 1
-      },
-      "i love this market": {
-        "emotional": 1
-      },
-      "best day ever": {
-        "unknown": 1
-      },
-      "feeling confident": {
-        "emotional": 1
-      },
-      "this is awesome": {
-        "emotional": 1
-      },
-      "i am thrilled": {
-        "emotional": 1
-      },
-      "i am so angry": {
-        "emotional": 1
-      },
-      "this is frustrating": {
-        "emotional": 1
-      },
-      "i am scared of the market": {
-        "emotional": 1
-      },
-      "feeling sad": {
-        "emotional": 1
-      },
-      "so bearish right now": {
-        "emotional": 1
-      },
-      "i hate this crash": {
-        "emotional": 1
-      },
-      "worst day ever": {
-        "unknown": 1
-      },
-      "feeling anxious": {
-        "emotional": 1
-      },
-      "this is terrible": {
-        "emotional": 1
-      },
-      "i am worried": {
-        "emotional": 1
-      },
-      "i am confused": {
-        "emotional": 1
-      },
-      "feeling overwhelmed": {
-        "emotional": 1
-      },
-      "i am disappointed": {
-        "emotional": 1
-      },
-      "so stressed": {
-        "emotional": 1
-      }
-    },
     "default": {
-      "how much is {asset}": {
+      "{asset} price": {
         "price": 3
       },
-      "what is {asset} worth": {
+      "bitcoin price": {
+        "price": 2
+      },
+      "ethereum price": {
+        "price": 2
+      },
+      "solana price": {
+        "price": 2
+      },
+      "price of {asset}": {
         "price": 3
       },
-      "{asset} value": {
+      "current {asset} price": {
         "price": 3
       },
-      "{asset} cost": {
+      "what is {asset} price": {
         "price": 3
       },
-      "{asset} rate": {
+      "check {asset} price": {
         "price": 3
       },
-      "show me {asset}": {
+      "{asset}/usd": {
+        "unknown": 3
+      },
+      "how much is bitcoin": {
+        "price": 2
+      },
+      "how much is ethereum": {
+        "price": 2
+      },
+      "bitcoin value": {
+        "price": 2
+      },
+      "ethereum value": {
+        "price": 2
+      },
+      "solana value": {
+        "price": 2
+      },
+      "market price {asset}": {
         "price": 3
       },
-      "{asset} chart": {
-        "price": 3
-      },
-      "{asset} going up": {
-        "price": 3
-      },
-      "{asset} going down": {
-        "price": 3
-      },
-      "{asset} support": {
-        "price": 3
-      },
-      "{asset} resistance": {
-        "price": 3
-      },
-      "{asset} all time high": {
-        "price": 3
-      },
-      "{asset} market": {
-        "price": 3
-      },
-      "{asset} scene": {
-        "price": 3
-      },
-      "my portfolio": {
-        "portfolio": 3
-      },
-      "show portfolio": {
-        "portfolio": 3
-      },
-      "portfolio value": {
-        "portfolio": 3
-      },
-      "my holdings": {
-        "portfolio": 3
-      },
-      "what do i own": {
-        "portfolio": 3
-      },
-      "my assets": {
-        "portfolio": 3
-      },
-      "my positions": {
-        "portfolio": 3
-      },
-      "my coins": {
-        "portfolio": 3
-      },
-      "my crypto": {
-        "unknown": 1,
-        "portfolio": 1
-      },
-      "my investments": {
-        "unknown": 1,
-        "portfolio": 1
-      },
-      "my balance": {
-        "portfolio": 3
-      },
-      "my net worth": {
-        "portfolio": 3
-      },
-      "my total value": {
-        "portfolio": 3
-      },
-      "my pnl": {
-        "unknown": 1,
-        "portfolio": 1
-      },
-      "my profit loss": {
+      "portfolio": {
         "portfolio": 2
       },
-      "my returns": {
-        "unknown": 1,
-        "portfolio": 1
+      "my portfolio": {
+        "portfolio": 2
       },
-      "my allocation": {
-        "portfolio": 3
+      "show portfolio": {
+        "portfolio": 2
       },
-      "my diversification": {
-        "unknown": 2
+      "view portfolio": {
+        "portfolio": 2
+      },
+      "portfolio value": {
+        "portfolio": 2
+      },
+      "my holdings": {
+        "portfolio": 2
+      },
+      "show holdings": {
+        "portfolio": 2
+      },
+      "view holdings": {
+        "portfolio": 2
+      },
+      "what do i have": {
+        "portfolio": 2
+      },
+      "what am i holding": {
+        "portfolio": 2
+      },
+      "my assets": {
+        "portfolio": 2
+      },
+      "show my assets": {
+        "portfolio": 2
+      },
+      "account balance": {
+        "portfolio": 2
+      },
+      "my balance": {
+        "portfolio": 2
+      },
+      "total value": {
+        "portfolio": 2
+      },
+      "net worth": {
+        "portfolio": 2
+      },
+      "p&l": {
+        "portfolio": 2
+      },
+      "profit and loss": {
+        "portfolio": 2
+      },
+      "gains": {
+        "portfolio": 2
+      },
+      "my positions": {
+        "portfolio": 2
       },
       "hello": {
-        "greeting": 3
+        "greeting": 2
       },
       "hi": {
-        "greeting": 3
+        "greeting": 2
       },
       "hey": {
-        "greeting": 3
+        "greeting": 2
       },
       "good morning": {
-        "greeting": 3
+        "greeting": 2
       },
       "good afternoon": {
-        "greeting": 3
+        "greeting": 2
       },
       "good evening": {
-        "greeting": 3
-      },
-      "what's up": {
-        "greeting": 3
-      },
-      "how are you": {
-        "greeting": 3
+        "greeting": 2
       },
       "howdy": {
-        "greeting": 3
+        "greeting": 2
       },
       "greetings": {
-        "greeting": 3
+        "greeting": 2
       },
-      "yo": {
-        "greeting": 3
+      "what's up": {
+        "greeting": 2
       },
       "sup": {
-        "greeting": 3
+        "greeting": 2
       },
-      "hola": {
-        "greeting": 3
+      "yo": {
+        "greeting": 2
       },
-      "bonjour": {
-        "greeting": 3
+      "hiya": {
+        "unknown": 2
       },
-      "namaste": {
-        "greeting": 3
+      "how are you": {
+        "greeting": 2
       },
-      "salaam": {
-        "greeting": 3
+      "how's it going": {
+        "greeting": 2
       },
-      "shalom": {
-        "greeting": 3
+      "nice to meet you": {
+        "greeting": 2
       },
-      "whats up": {
-        "greeting": 3
+      "buy bitcoin": {
+        "buy": 2
       },
-      "what up": {
-        "greeting": 3
+      "buy ethereum": {
+        "buy": 2
       },
-      "wassup": {
-        "unknown": 1
-      },
-      "howdy partner": {
-        "greeting": 3
-      },
-      "hey there": {
-        "greeting": 3
-      },
-      "hi there": {
-        "greeting": 3
-      },
-      "hello there": {
-        "greeting": 3
-      },
-      "greetings friend": {
-        "greeting": 3
-      },
-      "xyz abc": {
-        "unknown": 3
-      },
-      "random text": {
-        "unknown": 3
-      },
-      "blah blah": {
-        "unknown": 3
-      },
-      "foo bar": {
-        "unknown": 3
-      },
-      "test test": {
-        "unknown": 3
-      },
-      "asdf qwer": {
-        "unknown": 3
-      },
-      "nothing here": {
-        "unknown": 3
-      },
-      "no intent": {
-        "unknown": 3
-      },
-      "what is this": {
-        "unknown": 3
-      },
-      "hello world": {
-        "greeting": 1
-      },
-      "just checking": {
-        "unknown": 3
-      },
-      "kharido {asset}": {
-        "buy": 3
-      },
-      "becho {asset}": {
-        "sell": 3
-      },
-      "kitna hai {asset}": {
-        "price": 3
-      },
-      "comprar {asset}": {
-        "buy": 3
-      },
-      "vender {asset}": {
-        "sell": 3
-      },
-      "precio {asset}": {
-        "price": 3
-      },
-      "acheter {asset}": {
-        "buy": 3
-      },
-      "vendre {asset}": {
-        "sell": 3
-      },
-      "prix {asset}": {
-        "price": 3
-      },
-      "kaufen {asset}": {
-        "buy": 3
-      },
-      "verkaufen {asset}": {
-        "sell": 3
-      },
-      "preis {asset}": {
-        "price": 3
-      },
-      "\uc0ac\uae30 {asset}": {
-        "buy": 3
-      },
-      "\ud314\uae30 {asset}": {
-        "sell": 3
-      },
-      "\uac00\uaca9 {asset}": {
-        "price": 3
-      },
-      "\u0634\u0631\u0627\u0621 {asset}": {
-        "buy": 3
-      },
-      "\u0628\u064a\u0639 {asset}": {
-        "sell": 3
-      },
-      "\u0633\u0639\u0631 {asset}": {
-        "price": 3
-      },
-      "\u043a\u0443\u043f\u0438\u0442\u044c {asset}": {
-        "buy": 3
-      },
-      "\u043f\u0440\u043e\u0434\u0430\u0442\u044c {asset}": {
-        "sell": 3
-      },
-      "\u0446\u0435\u043d\u0430 {asset}": {
-        "price": 3
-      },
-      "comprare {asset}": {
-        "buy": 3
-      },
-      "vendere {asset}": {
-        "sell": 3
-      },
-      "prezzo {asset}": {
-        "price": 3
-      },
-      "al {asset}": {
-        "buy": 3
-      },
-      "sat {asset}": {
-        "sell": 3
-      },
-      "fiyat {asset}": {
-        "price": 3
-      },
-      "beli {asset}": {
-        "buy": 3
-      },
-      "jual {asset}": {
-        "sell": 3
-      },
-      "harga {asset}": {
-        "price": 3
-      },
-      "alert me when {asset} hits 50k": {
-        "alert": 3
-      },
-      "notify me if {asset} drops": {
-        "alert": 3
-      },
-      "warn me when {asset} pumps": {
-        "alert": 3
-      },
-      "set alert for {asset} at {amount}": {
-        "alert": 3
-      },
-      "tell me when {asset} moons": {
-        "alert": 3
-      },
-      "ping me if {asset} crashes": {
-        "alert": 3
-      },
-      "alert for {asset} support": {
-        "alert": 3
-      },
-      "notify for {asset} resistance": {
-        "alert": 3
-      },
-      "watch {asset} price": {
-        "price": 1,
-        "alert": 1
-      },
-      "monitor {asset}": {
-        "unknown": 1,
-        "alert": 1
-      },
-      "i'm scared": {
-        "emotional": 3
-      },
-      "i'm worried": {
-        "emotional": 3
-      },
-      "i'm panicking": {
-        "emotional": 3
-      },
-      "i'm stressed": {
-        "emotional": 3
-      },
-      "i'm anxious": {
-        "emotional": 3
-      },
-      "i'm nervous": {
-        "emotional": 3
-      },
-      "i'm terrified": {
-        "emotional": 3
-      },
-      "i'm freaking out": {
-        "emotional": 3
-      },
-      "i'm losing it": {
-        "emotional": 3
-      },
-      "i can't take it": {
-        "emotional": 3
-      },
-      "i'm giving up": {
-        "emotional": 3
-      },
-      "i'm so tired": {
-        "emotional": 3
-      },
-      "i'm exhausted": {
-        "emotional": 3
-      },
-      "this is too much": {
-        "emotional": 3
-      },
-      "i want to quit": {
-        "unknown": 1,
-        "emotional": 1
-      },
-      "jesus christ": {
-        "emotional": 3
-      },
-      "oh my god": {
-        "emotional": 3
-      },
-      "holy shit": {
-        "emotional": 3
-      },
-      "fuck this": {
-        "emotional": 3
-      },
-      "damn it": {
-        "emotional": 3
-      },
-      "shit": {
-        "emotional": 3
-      },
-      "i'm depressed": {
-        "emotional": 3
-      },
-      "i'm hopeless": {
-        "emotional": 3
-      },
-      "i'm devastated": {
-        "emotional": 1
-      },
-      "i'm heartbroken": {
-        "emotional": 1
-      },
-      "i'm crushed": {
-        "unknown": 1,
-        "emotional": 1
-      },
-      "i'm destroyed": {
-        "emotional": 3
-      },
-      "i'm ruined": {
-        "emotional": 3
-      },
-      "i'm finished": {
-        "emotional": 3
-      },
-      "should i buy {asset}": {
-        "advice": 3
-      },
-      "is {asset} a good investment": {
-        "advice": 3
-      },
-      "what do you think about {asset}": {
-        "advice": 3
-      },
-      "thoughts on {asset}": {
-        "advice": 3
-      },
-      "recommendation for {asset}": {
-        "advice": 3
-      },
-      "opinion on {asset}": {
-        "advice": 3
-      },
-      "advice on {asset}": {
-        "advice": 3
-      },
-      "suggestion for {asset}": {
-        "unknown": 1,
-        "advice": 1
-      },
-      "help me decide": {
-        "advice": 3
-      },
-      "guide me": {
-        "advice": 3
-      },
-      "not sure about {asset}": {
-        "advice": 3
-      },
-      "confused about {asset}": {
-        "advice": 3
-      },
-      "kya kharidu": {
-        "advice": 3
-      },
-      "bechna chahiye": {
-        "advice": 3
-      },
-      "lena chahiye": {
-        "advice": 3
-      },
-      "conseil pour {asset}": {
-        "advice": 3
-      },
-      "rat f\u00fcr {asset}": {
-        "advice": 3
-      },
-      "consiglio per {asset}": {
-        "advice": 3
-      },
-      "recomendaci\u00f3n para {asset}": {
-        "unknown": 1,
-        "advice": 1
-      },
-      "advies voor {asset}": {
-        "unknown": 1,
-        "advice": 1
+      "buy solana": {
+        "buy": 2
       },
       "purchase {asset}": {
         "buy": 3
@@ -1898,142 +169,70 @@
       "acquire {asset}": {
         "buy": 3
       },
-      "add {asset}": {
-        "buy": 3
-      },
-      "invest in {asset}": {
-        "buy": 3
-      },
-      "stack {asset}": {
-        "buy": 3
-      },
-      "enter {asset} position": {
-        "buy": 3
-      },
       "long {asset}": {
         "buy": 3
       },
-      "don't miss {asset}": {
-        "buy": 3
-      },
-      "grab {asset}": {
-        "buy": 3
-      },
-      "pick up {asset}": {
-        "buy": 3
-      },
-      "moon {asset}": {
-        "buy": 3
-      },
-      "lambo {asset}": {
-        "buy": 3
-      },
-      "rocket {asset}": {
-        "buy": 3
-      },
-      "time to buy {asset}": {
-        "buy": 3
-      },
-      "buying time {asset}": {
-        "buy": 3
-      },
-      "thinking about buying {asset}": {
-        "buy": 3
-      },
-      "considering buying {asset}": {
-        "buy": 3
-      },
-      "possibly get {asset}": {
-        "buy": 3
-      },
-      "load up on {asset}": {
-        "buy": 3
-      },
-      "accumulate {asset}": {
-        "buy": 3
-      },
-      "dca into {asset}": {
-        "buy": 3
-      },
-      "dollar cost average {asset}": {
-        "buy": 3
-      },
-      "btfd {asset}": {
-        "buy": 3
-      },
-      "buy the dip {asset}": {
-        "buy": 3
-      },
-      "buy the fucking dip {asset}": {
-        "buy": 3
-      },
       "go long {asset}": {
-        "buy": 3
+        "buy": 2
       },
       "enter long {asset}": {
-        "buy": 3
+        "buy": 2
       },
       "open long {asset}": {
-        "buy": 3
+        "buy": 2
       },
       "take long {asset}": {
+        "buy": 2
+      },
+      "dollar cost average {asset}": {
+        "buy": 2
+      },
+      "accumulate {asset}": {
+        "buy": 2
+      },
+      "stack sats": {
+        "buy": 2
+      },
+      "buy the dip": {
+        "buy": 2
+      },
+      "btfd": {
+        "buy": 2
+      },
+      "buy {amount} {asset}": {
         "buy": 3
+      },
+      "buy {asset} at {amount}": {
+        "buy": 2
+      },
+      "limit buy {asset} {amount}": {
+        "buy": 2
+      },
+      "stop buy {asset} {amount}": {
+        "buy": 2
       },
       "market buy {asset}": {
         "buy": 3
       },
-      "limit buy {asset}": {
-        "buy": 3
-      },
-      "stop buy {asset}": {
-        "buy": 3
-      },
-      "buy {asset} every day": {
-        "unknown": 1
-      },
-      "buy {asset} daily": {
-        "buy": 3
-      },
-      "buy {asset} weekly": {
-        "buy": 3
-      },
-      "buy {asset} monthly": {
-        "buy": 3
-      },
-      "auto buy {asset}": {
-        "buy": 3
-      },
-      "recurring buy {asset}": {
-        "buy": 3
-      },
-      "dollar cost average into {asset}": {
-        "buy": 3
-      },
-      "buy {asset} if it drops": {
-        "buy": 3
-      },
-      "buy {asset} when it dips": {
-        "buy": 3
-      },
-      "buy {asset} at the dip": {
-        "buy": 3
-      },
-      "buy {asset} on discount": {
-        "buy": 3
-      },
-      "buy {asset} cheap": {
-        "buy": 3
-      },
-      "buy {asset} low": {
-        "buy": 3
+      "swap usdt for {asset}": {
+        "buy": 2
       },
       "convert usdt to {asset}": {
-        "sell": 1
+        "buy": 2
       },
-      "exchange {asset} for {asset}": {
-        "sell": 3
+      "exchange usdt for {asset}": {
+        "buy": 2
       },
-      "trade usdc for {asset}": {
+      "trade usdt for {asset}": {
+        "buy": 2
+      },
+      "sell bitcoin": {
+        "sell": 2
+      },
+      "sell ethereum": {
+        "sell": 2
+      },
+      "sell solana": {
         "sell": 2
       },
       "dump {asset}": {
@@ -2042,1044 +241,398 @@
       "unload {asset}": {
         "sell": 3
       },
-      "liquidate {asset}": {
-        "sell": 3
-      },
-      "cash out {asset}": {
-        "sell": 3
-      },
-      "exit {asset}": {
-        "sell": 3
-      },
-      "close {asset}": {
-        "unknown": 1,
-        "sell": 1
-      },
-      "take profit {asset}": {
-        "sell": 3
-      },
-      "tp {asset}": {
-        "sell": 3
-      },
-      "stfr {asset}": {
-        "sell": 3
-      },
-      "sell the rip {asset}": {
-        "sell": 3
-      },
-      "sell the fucking rip {asset}": {
-        "sell": 3
-      },
       "short {asset}": {
         "sell": 3
       },
       "go short {asset}": {
-        "sell": 3
+        "sell": 2
       },
       "enter short {asset}": {
-        "sell": 3
+        "sell": 2
       },
       "open short {asset}": {
-        "sell": 3
+        "sell": 2
       },
       "take short {asset}": {
+        "sell": 2
+      },
+      "close trade {asset}": {
+        "sell": 2
+      },
+      "trim position {asset}": {
+        "sell": 2
+      },
+      "reduce exposure {asset}": {
+        "sell": 2
+      },
+      "take profit {asset}": {
+        "sell": 2
+      },
+      "tp {asset}": {
         "sell": 3
+      },
+      "sell {amount} {asset}": {
+        "sell": 3
+      },
+      "sell {asset} at {amount}": {
+        "sell": 2
+      },
+      "limit sell {asset} {amount}": {
+        "sell": 2
+      },
+      "stop sell {asset} {amount}": {
+        "sell": 2
       },
       "market sell {asset}": {
         "sell": 3
       },
-      "limit sell {asset}": {
-        "sell": 3
-      },
-      "stop sell {asset}": {
-        "sell": 3
-      },
-      "trim {asset}": {
-        "unknown": 1,
-        "sell": 1
-      },
-      "scale out {asset}": {
+      "swap {asset} for usdt": {
         "sell": 2
-      },
-      "reduce {asset}": {
-        "unknown": 1,
-        "sell": 1
-      },
-      "cut {asset}": {
-        "unknown": 1,
-        "sell": 1
-      },
-      "stop loss {asset}": {
-        "sell": 3
-      },
-      "sl {asset}": {
-        "sell": 3
-      },
-      "trailing stop {asset}": {
-        "sell": 3
-      },
-      "get rid of {asset}": {
-        "sell": 2
-      },
-      "remove {asset} from portfolio": {
-        "portfolio": 2
-      },
-      "panic sell {asset}": {
-        "emotional": 2
-      },
-      "crash sell {asset}": {
-        "sell": 3
-      },
-      "emergency sell {asset}": {
-        "sell": 3
-      },
-      "sell {asset} if it pumps": {
-        "sell": 3
-      },
-      "dump {asset} when it rises": {
-        "sell": 3
-      },
-      "unload {asset} if it moons": {
-        "sell": 3
-      },
-      "sell {asset} at 50k": {
-        "sell": 3
-      },
-      "dump {asset} at 3k": {
-        "sell": 3
-      },
-      "swap {asset} for {asset}": {
-        "sell": 3
       },
       "convert {asset} to usdt": {
-        "sell": 3
-      },
-      "trade {asset} for {asset}": {
         "sell": 2
       },
-      "price {asset}": {
-        "price": 2
+      "exchange {asset} for usdt": {
+        "sell": 2
       },
-      "buy {asset} now": {
-        "buy": 2
+      "trade {asset} for usdt": {
+        "sell": 2
       },
-      "": {
+      "alert me when {asset} hits {amount}": {
+        "alert": 2
+      },
+      "notify me if {asset} drops below {amount}": {
+        "alert": 2
+      },
+      "set alert {asset} {amount}": {
+        "alert": 2
+      },
+      "price alert {asset}": {
+        "alert": 2
+      },
+      "create alert {asset}": {
+        "alert": 2
+      },
+      "alert {asset} above {amount}": {
+        "alert": 2
+      },
+      "alert {asset} below {amount}": {
+        "alert": 2
+      },
+      "notify {asset} {amount}": {
+        "alert": 2
+      },
+      "remind me {asset} price": {
+        "alert": 2
+      },
+      "watch {asset} {amount}": {
         "unknown": 2
       },
-      "sell {asset} please": {
-        "sell": 1
+      "is {asset} a good buy": {
+        "advice": 2
       },
-      "buy": {
-        "buy": 1
+      "what do you think about {asset}": {
+        "advice": 2
       },
-      "sell": {
-        "sell": 1
+      "recommendation for {asset}": {
+        "advice": 2
       },
-      "price": {
-        "price": 1
+      "advice on {asset}": {
+        "advice": 2
+      },
+      "suggestion for {asset}": {
+        "unknown": 2
+      },
+      "your opinion on {asset}": {
+        "advice": 2
+      },
+      "your thoughts on {asset}": {
+        "advice": 2
+      },
+      "market opinion {asset}": {
+        "advice": 2
+      },
+      "{asset} forecast": {
+        "advice": 2
+      },
+      "{asset} prediction": {
+        "advice": 2
+      },
+      "price target {asset}": {
+        "price": 2
+      },
+      "kya kharidu": {
+        "advice": 2
+      },
+      "conseil pour {asset}": {
+        "advice": 2
+      },
+      "rat f\u00fcr {asset}": {
+        "advice": 2
+      },
+      "thoughts on {asset}": {
+        "advice": 2
+      },
+      "hold or sell {asset}": {
+        "advice": 2
+      },
+      "buy or sell {asset}": {
+        "advice": 2
+      },
+      "i lost money": {
+        "emotional": 2
+      },
+      "i'm losing money": {
+        "emotional": 2
+      },
+      "help me": {
+        "emotional": 2
+      },
+      "save me": {
+        "emotional": 2
+      },
+      "this is bad": {
+        "emotional": 2
+      },
+      "i'm desperate": {
+        "emotional": 2
+      },
+      "i'm frustrated": {
+        "emotional": 2
+      },
+      "i'm scared": {
+        "emotional": 2
+      },
+      "panic sell": {
+        "emotional": 2
+      },
+      "fomo": {
+        "unknown": 2
+      },
+      "regret selling": {
+        "emotional": 2
+      },
+      "should have bought": {
+        "unknown": 2
+      },
+      "missed the pump": {
+        "price": 2
+      },
+      "rekt": {
+        "emotional": 2
+      },
+      "liquidated": {
+        "emotional": 2
+      },
+      "margin call": {
+        "emotional": 2
+      },
+      "can't sleep": {
+        "unknown": 2
+      },
+      "stressed": {
+        "emotional": 2
+      },
+      "depressed": {
+        "emotional": 2
+      },
+      "angry": {
+        "emotional": 2
+      },
+      "random text": {
+        "unknown": 2
+      },
+      "asdfgh": {
+        "unknown": 2
+      },
+      "{amount}": {
+        "unknown": 2
+      },
+      "what is life": {
+        "unknown": 2
+      },
+      "tell me a joke": {
+        "unknown": 2
+      },
+      "weather today": {
+        "unknown": 2
+      },
+      "hello world": {
+        "unknown": 2
+      },
+      "test command": {
+        "unknown": 2
+      },
+      "foo bar": {
+        "unknown": 1
+      },
+      "crypto": {
+        "unknown": 1
+      },
+      "blockchain": {
+        "unknown": 1
       }
     }
   },
   "global_patterns": {
-    "get rid of {asset}": {
-      "sell": 4
-    },
-    "sell {amount} {asset}": {
-      "sell": 14
-    },
-    "sell {asset} now": {
-      "sell": 2
-    },
-    "sell {asset} immediately": {
-      "sell": 1
-    },
-    "sell {asset} at {amount}": {
-      "sell": 3
-    },
-    "sell {asset} if price rises": {
-      "sell": 1
-    },
-    "sell {asset} on peak": {
-      "sell": 1
-    },
-    "sell the pump {asset}": {
-      "sell": 1
-    },
-    "sell {asset} high": {
-      "sell": 1
-    },
-    "sell {asset} expensive": {
-      "sell": 1
-    },
-    "sell {asset} premium": {
-      "sell": 1
-    },
-    "sell {asset} profit": {
-      "sell": 1
-    },
-    "dump {asset}": {
-      "sell": 4
-    },
-    "cash out {asset}": {
-      "sell": 4
-    },
-    "liquidate {asset}": {
-      "sell": 4
-    },
-    "unload {asset}": {
-      "sell": 4
-    },
-    "offload {asset}": {
-      "sell": 1
-    },
-    "exit {asset} position": {
-      "sell": 1
-    },
-    "remove {asset}": {
-      "sell": 1
-    },
-    "take profits {asset}": {
-      "sell": 1
-    },
-    "profit taking {asset}": {
-      "sell": 1
-    },
-    "sell {asset} quickly": {
-      "sell": 1
-    },
-    "sell {asset} fast": {
-      "sell": 1
-    },
-    "sell {asset} asap": {
-      "sell": 1
-    },
-    "sell {asset} please": {
-      "sell": 2
-    },
-    "sell {asset} sir": {
-      "sell": 1
-    },
-    "sell {asset} today": {
-      "sell": 1
-    },
-    "sell {asset} tomorrow": {
-      "sell": 1
-    },
-    "sell {asset} tonight": {
-      "sell": 1
-    },
-    "sell {asset} morning": {
-      "sell": 1
-    },
-    "sell {amount} {asset} at {amount}": {
-      "sell": 1
-    },
-    "sell {asset} and {asset}": {
-      "sell": 1
-    },
-    "sell {asset} not {asset}": {
-      "sell": 1
-    },
-    "sell {asset} instead of {asset}": {
-      "sell": 1
-    },
-    "sell {amount} {asset} {amount} {asset}": {
-      "sell": 1
-    },
-    "panic sell {asset}": {
-      "sell": 1,
-      "emotional": 2
-    },
-    "crash sell {asset}": {
-      "sell": 4
-    },
-    "emergency sell {asset}": {
-      "sell": 4
-    },
-    "stop loss sell {asset}": {
-      "sell": 1
-    },
-    "limit sell {asset}": {
-      "sell": 4
-    },
     "{asset} price": {
-      "price": 8
+      "price": 3
     },
-    "how much is {asset}": {
-      "price": 5
+    "bitcoin price": {
+      "price": 2
+    },
+    "ethereum price": {
+      "price": 2
+    },
+    "solana price": {
+      "price": 2
+    },
+    "price of {asset}": {
+      "price": 3
+    },
+    "current {asset} price": {
+      "price": 3
     },
     "what is {asset} price": {
-      "price": 2
-    },
-    "{asset} value": {
-      "price": 5
-    },
-    "{asset} cost": {
-      "price": 5
-    },
-    "{asset} worth": {
-      "price": 2
+      "price": 3
     },
     "check {asset} price": {
+      "price": 3
+    },
+    "{asset}/usd": {
+      "unknown": 3
+    },
+    "how much is bitcoin": {
       "price": 2
     },
-    "show {asset} price": {
+    "how much is ethereum": {
       "price": 2
     },
-    "get {asset} price": {
-      "buy": 1,
+    "bitcoin value": {
       "price": 2
     },
-    "{asset} going up": {
-      "price": 5
-    },
-    "{asset} going down": {
-      "price": 4
-    },
-    "{asset} vs {asset} price": {
-      "price": 1
-    },
-    "{asset} all time high": {
-      "price": 4
-    },
-    "{asset} support level": {
-      "price": 1
-    },
-    "{asset} resistance": {
-      "price": 4
-    },
-    "{asset} chart": {
-      "price": 4
-    },
-    "how much": {
-      "price": 1
-    },
-    "price": {
+    "ethereum value": {
       "price": 2
+    },
+    "solana value": {
+      "price": 2
+    },
+    "market price {asset}": {
+      "price": 3
     },
     "portfolio": {
       "portfolio": 2
     },
     "my portfolio": {
-      "portfolio": 5
+      "portfolio": 2
     },
     "show portfolio": {
-      "portfolio": 5
-    },
-    "check portfolio": {
       "portfolio": 2
     },
     "view portfolio": {
       "portfolio": 2
     },
+    "portfolio value": {
+      "portfolio": 2
+    },
     "my holdings": {
-      "portfolio": 5
+      "portfolio": 2
+    },
+    "show holdings": {
+      "portfolio": 2
+    },
+    "view holdings": {
+      "portfolio": 2
     },
     "what do i have": {
       "portfolio": 2
     },
-    "what do i own": {
-      "portfolio": 5
+    "what am i holding": {
+      "portfolio": 2
+    },
+    "my assets": {
+      "portfolio": 2
     },
     "show my assets": {
       "portfolio": 2
     },
-    "my positions": {
-      "unknown": 1,
-      "portfolio": 5
+    "account balance": {
+      "portfolio": 2
     },
-    "portfolio value": {
-      "portfolio": 5
+    "my balance": {
+      "portfolio": 2
+    },
+    "total value": {
+      "portfolio": 2
     },
     "net worth": {
       "portfolio": 2
     },
-    "total value": {
-      "price": 1,
+    "p&l": {
       "portfolio": 2
     },
-    "portfolio performance": {
+    "profit and loss": {
       "portfolio": 2
     },
-    "how am i doing": {
+    "gains": {
       "portfolio": 2
     },
-    "show my {asset}": {
-      "portfolio": 2
-    },
-    "my {asset} amount": {
-      "portfolio": 2
-    },
-    "portfolio summary": {
-      "portfolio": 2
-    },
-    "asset allocation": {
+    "my positions": {
       "portfolio": 2
     },
     "hello": {
-      "greeting": 5
+      "greeting": 2
     },
     "hi": {
-      "greeting": 5
+      "greeting": 2
     },
     "hey": {
-      "greeting": 5
+      "greeting": 2
     },
     "good morning": {
-      "greeting": 5
+      "greeting": 2
     },
     "good afternoon": {
-      "greeting": 5
+      "greeting": 2
     },
     "good evening": {
-      "greeting": 5
+      "greeting": 2
     },
-    "good night": {
-      "unknown": 1,
+    "howdy": {
       "greeting": 2
     },
     "greetings": {
-      "unknown": 1,
-      "greeting": 5
-    },
-    "welcome": {
-      "unknown": 1,
       "greeting": 2
-    },
-    "hello there": {
-      "greeting": 5
-    },
-    "hey there": {
-      "greeting": 5
-    },
-    "hi there": {
-      "greeting": 5
-    },
-    "yo": {
-      "greeting": 5
     },
     "what's up": {
-      "greeting": 5
-    },
-    "howdy": {
-      "greeting": 5
-    },
-    "how are you": {
-      "greeting": 5
-    },
-    "how is it going": {
-      "unknown": 1,
       "greeting": 2
     },
-    "what's going on": {
-      "unknown": 1,
+    "sup": {
+      "greeting": 2
+    },
+    "yo": {
+      "greeting": 2
+    },
+    "hiya": {
+      "unknown": 2
+    },
+    "how are you": {
+      "greeting": 2
+    },
+    "how's it going": {
       "greeting": 2
     },
     "nice to meet you": {
       "greeting": 2
     },
-    "how do you do": {
-      "greeting": 1
+    "buy bitcoin": {
+      "buy": 2
     },
-    "hey jarvix": {
-      "greeting": 1
+    "buy ethereum": {
+      "buy": 2
     },
-    "hello jarvix": {
-      "greeting": 1
-    },
-    "hi jarvix": {
-      "greeting": 1
-    },
-    "good morning jarvix": {
-      "greeting": 1
-    },
-    "hey jarvix how are you": {
-      "greeting": 1
-    },
-    "should i buy {asset}": {
-      "advice": 5
-    },
-    "should i sell {asset}": {
-      "advice": 2
-    },
-    "is it good to buy {asset}": {
-      "buy": 1,
-      "advice": 2
-    },
-    "is it time to sell {asset}": {
-      "advice": 2
-    },
-    "should i invest in {asset}": {
-      "advice": 2
-    },
-    "should i exit {asset}": {
-      "advice": 2
-    },
-    "what should i buy": {
-      "advice": 2
-    },
-    "what should i sell": {
-      "advice": 2
-    },
-    "recommend me a coin": {
-      "advice": 2
-    },
-    "which crypto to buy": {
-      "advice": 2
-    },
-    "what to invest in": {
-      "advice": 2
-    },
-    "is {asset} a good buy": {
-      "advice": 2
-    },
-    "is it worth buying {asset}": {
-      "advice": 2
-    },
-    "give me advice": {
-      "advice": 1
-    },
-    "help me decide": {
-      "advice": 4
-    },
-    "i need advice": {
-      "advice": 1
-    },
-    "what do you think about {asset}": {
-      "advice": 4
-    },
-    "should i hold {asset}": {
-      "advice": 1
-    },
-    "alert me when {asset} hits {amount}": {
-      "alert": 1
-    },
-    "notify me when {asset} drops below {amount}": {
-      "alert": 1
-    },
-    "tell me when {asset} reaches {amount}": {
-      "alert": 1
-    },
-    "set alert for {asset} at {amount}": {
-      "alert": 4
-    },
-    "warn me if {asset} dumps": {
-      "alert": 1
-    },
-    "alert when {asset} goes above {amount}": {
-      "alert": 1
-    },
-    "notify when {asset} falls to {amount}": {
-      "alert": 1
-    },
-    "tell me when {asset} pumps": {
-      "alert": 1
-    },
-    "set notification for {asset} crash": {
-      "alert": 1
-    },
-    "alert me if {asset} moons": {
-      "alert": 1
-    },
-    "i am so happy today": {
-      "unknown": 1,
-      "emotional": 8
-    },
-    "this is amazing": {
-      "unknown": 1,
-      "emotional": 8
-    },
-    "i am excited about crypto": {
-      "unknown": 1,
-      "emotional": 8
-    },
-    "feeling great": {
-      "unknown": 17
-    },
-    "so bullish right now": {
-      "unknown": 1,
-      "emotional": 8
-    },
-    "i love this market": {
-      "unknown": 1,
-      "emotional": 8
-    },
-    "best day ever": {
-      "unknown": 17
-    },
-    "feeling confident": {
-      "unknown": 1,
-      "emotional": 8
-    },
-    "this is awesome": {
-      "unknown": 1,
-      "emotional": 8
-    },
-    "i am thrilled": {
-      "unknown": 1,
-      "emotional": 8
-    },
-    "i am so angry": {
-      "unknown": 1,
-      "emotional": 8
-    },
-    "this is frustrating": {
-      "unknown": 1,
-      "emotional": 8
-    },
-    "i am scared of the market": {
-      "unknown": 1,
-      "emotional": 8
-    },
-    "feeling sad": {
-      "unknown": 1,
-      "emotional": 8
-    },
-    "so bearish right now": {
-      "unknown": 1,
-      "emotional": 8
-    },
-    "i hate this crash": {
-      "sell": 4,
-      "emotional": 7
-    },
-    "worst day ever": {
-      "unknown": 17
-    },
-    "feeling anxious": {
-      "unknown": 1,
-      "emotional": 8
-    },
-    "this is terrible": {
-      "unknown": 1,
-      "emotional": 8
-    },
-    "i am worried": {
-      "unknown": 1,
-      "emotional": 8
-    },
-    "i am confused": {
-      "advice": 4,
-      "emotional": 7
-    },
-    "feeling overwhelmed": {
-      "unknown": 1,
-      "emotional": 8
-    },
-    "i am disappointed": {
-      "unknown": 1,
-      "emotional": 8
-    },
-    "so stressed": {
-      "unknown": 1,
-      "emotional": 8
-    },
-    "i am nervous": {
-      "unknown": 1,
-      "emotional": 5
-    },
-    "feeling uncertain": {
-      "unknown": 4,
-      "emotional": 5
-    },
-    "i am shocked": {
-      "unknown": 1,
-      "emotional": 4
-    },
-    "so surprised": {
-      "emotional": 1
-    },
-    "i am grateful": {
-      "emotional": 1
-    },
-    "feeling hopeful": {
-      "emotional": 1
-    },
-    "what is {asset} worth": {
-      "price": 3
-    },
-    "{asset} rate": {
-      "price": 3
-    },
-    "show me {asset}": {
-      "price": 3
-    },
-    "{asset} support": {
-      "price": 3
-    },
-    "{asset} market": {
-      "price": 3
-    },
-    "{asset} scene": {
-      "price": 3
-    },
-    "my assets": {
-      "portfolio": 3
-    },
-    "my coins": {
-      "portfolio": 3
-    },
-    "my crypto": {
-      "unknown": 1,
-      "portfolio": 1
-    },
-    "my investments": {
-      "unknown": 1,
-      "portfolio": 1
-    },
-    "my balance": {
-      "portfolio": 3
-    },
-    "my net worth": {
-      "portfolio": 3
-    },
-    "my total value": {
-      "portfolio": 3
-    },
-    "my pnl": {
-      "unknown": 1,
-      "portfolio": 1
-    },
-    "my profit loss": {
-      "portfolio": 2
-    },
-    "my returns": {
-      "unknown": 1,
-      "portfolio": 1
-    },
-    "my allocation": {
-      "portfolio": 3
-    },
-    "my diversification": {
-      "unknown": 2
-    },
-    "sup": {
-      "greeting": 3
-    },
-    "hola": {
-      "greeting": 3
-    },
-    "bonjour": {
-      "greeting": 3
-    },
-    "namaste": {
-      "greeting": 3
-    },
-    "salaam": {
-      "greeting": 3
-    },
-    "shalom": {
-      "greeting": 3
-    },
-    "whats up": {
-      "greeting": 3
-    },
-    "what up": {
-      "greeting": 3
-    },
-    "wassup": {
-      "unknown": 1
-    },
-    "howdy partner": {
-      "greeting": 3
-    },
-    "greetings friend": {
-      "greeting": 3
-    },
-    "xyz abc": {
-      "unknown": 3
-    },
-    "random text": {
-      "unknown": 3
-    },
-    "blah blah": {
-      "unknown": 3
-    },
-    "foo bar": {
-      "unknown": 3
-    },
-    "test test": {
-      "unknown": 3
-    },
-    "asdf qwer": {
-      "unknown": 3
-    },
-    "nothing here": {
-      "unknown": 3
-    },
-    "no intent": {
-      "unknown": 3
-    },
-    "what is this": {
-      "unknown": 3
-    },
-    "hello world": {
-      "greeting": 1
-    },
-    "just checking": {
-      "unknown": 3
-    },
-    "kharido {asset}": {
-      "buy": 3
-    },
-    "becho {asset}": {
-      "sell": 3
-    },
-    "kitna hai {asset}": {
-      "price": 3
-    },
-    "comprar {asset}": {
-      "buy": 3
-    },
-    "vender {asset}": {
-      "sell": 3
-    },
-    "precio {asset}": {
-      "price": 3
-    },
-    "acheter {asset}": {
-      "buy": 3
-    },
-    "vendre {asset}": {
-      "sell": 3
-    },
-    "prix {asset}": {
-      "price": 3
-    },
-    "kaufen {asset}": {
-      "buy": 3
-    },
-    "verkaufen {asset}": {
-      "sell": 3
-    },
-    "preis {asset}": {
-      "price": 3
-    },
-    "\uc0ac\uae30 {asset}": {
-      "buy": 3
-    },
-    "\ud314\uae30 {asset}": {
-      "sell": 3
-    },
-    "\uac00\uaca9 {asset}": {
-      "price": 3
-    },
-    "\u0634\u0631\u0627\u0621 {asset}": {
-      "buy": 3
-    },
-    "\u0628\u064a\u0639 {asset}": {
-      "sell": 3
-    },
-    "\u0633\u0639\u0631 {asset}": {
-      "price": 3
-    },
-    "\u043a\u0443\u043f\u0438\u0442\u044c {asset}": {
-      "buy": 3
-    },
-    "\u043f\u0440\u043e\u0434\u0430\u0442\u044c {asset}": {
-      "sell": 3
-    },
-    "\u0446\u0435\u043d\u0430 {asset}": {
-      "price": 3
-    },
-    "comprare {asset}": {
-      "buy": 3
-    },
-    "vendere {asset}": {
-      "sell": 3
-    },
-    "prezzo {asset}": {
-      "price": 3
-    },
-    "al {asset}": {
-      "buy": 3
-    },
-    "sat {asset}": {
-      "sell": 3
-    },
-    "fiyat {asset}": {
-      "price": 3
-    },
-    "beli {asset}": {
-      "buy": 3
-    },
-    "jual {asset}": {
-      "sell": 3
-    },
-    "harga {asset}": {
-      "price": 3
-    },
-    "alert me when {asset} hits 50k": {
-      "alert": 3
-    },
-    "notify me if {asset} drops": {
-      "alert": 3
-    },
-    "warn me when {asset} pumps": {
-      "alert": 3
-    },
-    "tell me when {asset} moons": {
-      "alert": 3
-    },
-    "ping me if {asset} crashes": {
-      "alert": 3
-    },
-    "alert for {asset} support": {
-      "alert": 3
-    },
-    "notify for {asset} resistance": {
-      "alert": 3
-    },
-    "watch {asset} price": {
-      "price": 1,
-      "alert": 1
-    },
-    "monitor {asset}": {
-      "unknown": 1,
-      "alert": 1
-    },
-    "i'm scared": {
-      "emotional": 3
-    },
-    "i'm worried": {
-      "emotional": 3
-    },
-    "i'm panicking": {
-      "emotional": 3
-    },
-    "i'm stressed": {
-      "emotional": 3
-    },
-    "i'm anxious": {
-      "emotional": 3
-    },
-    "i'm nervous": {
-      "emotional": 3
-    },
-    "i'm terrified": {
-      "emotional": 3
-    },
-    "i'm freaking out": {
-      "emotional": 3
-    },
-    "i'm losing it": {
-      "emotional": 3
-    },
-    "i can't take it": {
-      "emotional": 3
-    },
-    "i'm giving up": {
-      "emotional": 3
-    },
-    "i'm so tired": {
-      "emotional": 3
-    },
-    "i'm exhausted": {
-      "emotional": 3
-    },
-    "this is too much": {
-      "emotional": 3
-    },
-    "i want to quit": {
-      "unknown": 1,
-      "emotional": 1
-    },
-    "jesus christ": {
-      "emotional": 3
-    },
-    "oh my god": {
-      "emotional": 3
-    },
-    "holy shit": {
-      "emotional": 3
-    },
-    "fuck this": {
-      "emotional": 3
-    },
-    "damn it": {
-      "emotional": 3
-    },
-    "shit": {
-      "emotional": 3
-    },
-    "i'm depressed": {
-      "emotional": 3
-    },
-    "i'm hopeless": {
-      "emotional": 3
-    },
-    "i'm devastated": {
-      "emotional": 1
-    },
-    "i'm heartbroken": {
-      "emotional": 1
-    },
-    "i'm crushed": {
-      "unknown": 1,
-      "emotional": 1
-    },
-    "i'm destroyed": {
-      "emotional": 3
-    },
-    "i'm ruined": {
-      "emotional": 3
-    },
-    "i'm finished": {
-      "emotional": 3
-    },
-    "is {asset} a good investment": {
-      "advice": 3
-    },
-    "thoughts on {asset}": {
-      "advice": 3
-    },
-    "recommendation for {asset}": {
-      "advice": 3
-    },
-    "opinion on {asset}": {
-      "advice": 3
-    },
-    "advice on {asset}": {
-      "advice": 3
-    },
-    "suggestion for {asset}": {
-      "unknown": 1,
-      "advice": 1
-    },
-    "guide me": {
-      "advice": 3
-    },
-    "not sure about {asset}": {
-      "advice": 3
-    },
-    "confused about {asset}": {
-      "advice": 3
-    },
-    "kya kharidu": {
-      "advice": 3
-    },
-    "bechna chahiye": {
-      "advice": 3
-    },
-    "lena chahiye": {
-      "advice": 3
-    },
-    "conseil pour {asset}": {
-      "advice": 3
-    },
-    "rat f\u00fcr {asset}": {
-      "advice": 3
-    },
-    "consiglio per {asset}": {
-      "advice": 3
-    },
-    "recomendaci\u00f3n para {asset}": {
-      "unknown": 1,
-      "advice": 1
-    },
-    "advies voor {asset}": {
-      "unknown": 1,
-      "advice": 1
+    "buy solana": {
+      "buy": 2
     },
     "purchase {asset}": {
       "buy": 3
@@ -3090,253 +643,309 @@
     "acquire {asset}": {
       "buy": 3
     },
-    "add {asset}": {
-      "buy": 3
-    },
-    "invest in {asset}": {
-      "buy": 3
-    },
-    "stack {asset}": {
-      "buy": 3
-    },
-    "enter {asset} position": {
-      "buy": 3
-    },
     "long {asset}": {
       "buy": 3
     },
-    "don't miss {asset}": {
-      "buy": 3
-    },
-    "grab {asset}": {
-      "buy": 3
-    },
-    "pick up {asset}": {
-      "buy": 3
-    },
-    "moon {asset}": {
-      "buy": 3
-    },
-    "lambo {asset}": {
-      "buy": 3
-    },
-    "rocket {asset}": {
-      "buy": 3
-    },
-    "time to buy {asset}": {
-      "buy": 3
-    },
-    "buying time {asset}": {
-      "buy": 3
-    },
-    "thinking about buying {asset}": {
-      "buy": 3
-    },
-    "considering buying {asset}": {
-      "buy": 3
-    },
-    "possibly get {asset}": {
-      "buy": 3
-    },
-    "load up on {asset}": {
-      "buy": 3
-    },
-    "accumulate {asset}": {
-      "buy": 3
-    },
-    "dca into {asset}": {
-      "buy": 3
-    },
-    "dollar cost average {asset}": {
-      "buy": 3
-    },
-    "btfd {asset}": {
-      "buy": 3
-    },
-    "buy the dip {asset}": {
-      "buy": 3
-    },
-    "buy the fucking dip {asset}": {
-      "buy": 3
-    },
     "go long {asset}": {
-      "buy": 3
+      "buy": 2
     },
     "enter long {asset}": {
-      "buy": 3
+      "buy": 2
     },
     "open long {asset}": {
-      "buy": 3
+      "buy": 2
     },
     "take long {asset}": {
+      "buy": 2
+    },
+    "dollar cost average {asset}": {
+      "buy": 2
+    },
+    "accumulate {asset}": {
+      "buy": 2
+    },
+    "stack sats": {
+      "buy": 2
+    },
+    "buy the dip": {
+      "buy": 2
+    },
+    "btfd": {
+      "buy": 2
+    },
+    "buy {amount} {asset}": {
       "buy": 3
+    },
+    "buy {asset} at {amount}": {
+      "buy": 2
+    },
+    "limit buy {asset} {amount}": {
+      "buy": 2
+    },
+    "stop buy {asset} {amount}": {
+      "buy": 2
     },
     "market buy {asset}": {
       "buy": 3
     },
-    "limit buy {asset}": {
-      "buy": 3
-    },
-    "stop buy {asset}": {
-      "buy": 3
-    },
-    "buy {asset} every day": {
-      "unknown": 1
-    },
-    "buy {asset} daily": {
-      "buy": 3
-    },
-    "buy {asset} weekly": {
-      "buy": 3
-    },
-    "buy {asset} monthly": {
-      "buy": 3
-    },
-    "auto buy {asset}": {
-      "buy": 3
-    },
-    "recurring buy {asset}": {
-      "buy": 3
-    },
-    "dollar cost average into {asset}": {
-      "buy": 3
-    },
-    "buy {asset} if it drops": {
-      "buy": 3
-    },
-    "buy {asset} when it dips": {
-      "buy": 3
-    },
-    "buy {asset} at the dip": {
-      "buy": 3
-    },
-    "buy {asset} on discount": {
-      "buy": 3
-    },
-    "buy {asset} cheap": {
-      "buy": 3
-    },
-    "buy {asset} low": {
-      "buy": 3
+    "swap usdt for {asset}": {
+      "buy": 2
     },
     "convert usdt to {asset}": {
-      "sell": 1
+      "buy": 2
     },
-    "exchange {asset} for {asset}": {
-      "sell": 3
+    "exchange usdt for {asset}": {
+      "buy": 2
     },
-    "trade usdc for {asset}": {
+    "trade usdt for {asset}": {
+      "buy": 2
+    },
+    "sell bitcoin": {
       "sell": 2
     },
-    "exit {asset}": {
+    "sell ethereum": {
+      "sell": 2
+    },
+    "sell solana": {
+      "sell": 2
+    },
+    "dump {asset}": {
       "sell": 3
     },
-    "close {asset}": {
-      "unknown": 1,
-      "sell": 1
-    },
-    "take profit {asset}": {
-      "sell": 3
-    },
-    "tp {asset}": {
-      "sell": 3
-    },
-    "stfr {asset}": {
-      "sell": 3
-    },
-    "sell the rip {asset}": {
-      "sell": 3
-    },
-    "sell the fucking rip {asset}": {
+    "unload {asset}": {
       "sell": 3
     },
     "short {asset}": {
       "sell": 3
     },
     "go short {asset}": {
-      "sell": 3
+      "sell": 2
     },
     "enter short {asset}": {
-      "sell": 3
+      "sell": 2
     },
     "open short {asset}": {
-      "sell": 3
+      "sell": 2
     },
     "take short {asset}": {
+      "sell": 2
+    },
+    "close trade {asset}": {
+      "sell": 2
+    },
+    "trim position {asset}": {
+      "sell": 2
+    },
+    "reduce exposure {asset}": {
+      "sell": 2
+    },
+    "take profit {asset}": {
+      "sell": 2
+    },
+    "tp {asset}": {
       "sell": 3
+    },
+    "sell {amount} {asset}": {
+      "sell": 3
+    },
+    "sell {asset} at {amount}": {
+      "sell": 2
+    },
+    "limit sell {asset} {amount}": {
+      "sell": 2
+    },
+    "stop sell {asset} {amount}": {
+      "sell": 2
     },
     "market sell {asset}": {
       "sell": 3
     },
-    "stop sell {asset}": {
-      "sell": 3
-    },
-    "trim {asset}": {
-      "unknown": 1,
-      "sell": 1
-    },
-    "scale out {asset}": {
+    "swap {asset} for usdt": {
       "sell": 2
-    },
-    "reduce {asset}": {
-      "unknown": 1,
-      "sell": 1
-    },
-    "cut {asset}": {
-      "unknown": 1,
-      "sell": 1
-    },
-    "stop loss {asset}": {
-      "sell": 3
-    },
-    "sl {asset}": {
-      "sell": 3
-    },
-    "trailing stop {asset}": {
-      "sell": 3
-    },
-    "remove {asset} from portfolio": {
-      "portfolio": 2
-    },
-    "sell {asset} if it pumps": {
-      "sell": 3
-    },
-    "dump {asset} when it rises": {
-      "sell": 3
-    },
-    "unload {asset} if it moons": {
-      "sell": 3
-    },
-    "sell {asset} at 50k": {
-      "sell": 3
-    },
-    "dump {asset} at 3k": {
-      "sell": 3
-    },
-    "swap {asset} for {asset}": {
-      "sell": 3
     },
     "convert {asset} to usdt": {
-      "sell": 3
-    },
-    "trade {asset} for {asset}": {
       "sell": 2
     },
-    "price {asset}": {
-      "price": 2
+    "exchange {asset} for usdt": {
+      "sell": 2
     },
-    "buy {asset} now": {
-      "buy": 2
+    "trade {asset} for usdt": {
+      "sell": 2
     },
-    "": {
+    "alert me when {asset} hits {amount}": {
+      "alert": 2
+    },
+    "notify me if {asset} drops below {amount}": {
+      "alert": 2
+    },
+    "set alert {asset} {amount}": {
+      "alert": 2
+    },
+    "price alert {asset}": {
+      "alert": 2
+    },
+    "create alert {asset}": {
+      "alert": 2
+    },
+    "alert {asset} above {amount}": {
+      "alert": 2
+    },
+    "alert {asset} below {amount}": {
+      "alert": 2
+    },
+    "notify {asset} {amount}": {
+      "alert": 2
+    },
+    "remind me {asset} price": {
+      "alert": 2
+    },
+    "watch {asset} {amount}": {
       "unknown": 2
     },
-    "buy": {
-      "buy": 1
+    "is {asset} a good buy": {
+      "advice": 2
     },
-    "sell": {
-      "sell": 1
+    "what do you think about {asset}": {
+      "advice": 2
+    },
+    "recommendation for {asset}": {
+      "advice": 2
+    },
+    "advice on {asset}": {
+      "advice": 2
+    },
+    "suggestion for {asset}": {
+      "unknown": 2
+    },
+    "your opinion on {asset}": {
+      "advice": 2
+    },
+    "your thoughts on {asset}": {
+      "advice": 2
+    },
+    "market opinion {asset}": {
+      "advice": 2
+    },
+    "{asset} forecast": {
+      "advice": 2
+    },
+    "{asset} prediction": {
+      "advice": 2
+    },
+    "price target {asset}": {
+      "price": 2
+    },
+    "kya kharidu": {
+      "advice": 2
+    },
+    "conseil pour {asset}": {
+      "advice": 2
+    },
+    "rat f\u00fcr {asset}": {
+      "advice": 2
+    },
+    "thoughts on {asset}": {
+      "advice": 2
+    },
+    "hold or sell {asset}": {
+      "advice": 2
+    },
+    "buy or sell {asset}": {
+      "advice": 2
+    },
+    "i lost money": {
+      "emotional": 2
+    },
+    "i'm losing money": {
+      "emotional": 2
+    },
+    "help me": {
+      "emotional": 2
+    },
+    "save me": {
+      "emotional": 2
+    },
+    "this is bad": {
+      "emotional": 2
+    },
+    "i'm desperate": {
+      "emotional": 2
+    },
+    "i'm frustrated": {
+      "emotional": 2
+    },
+    "i'm scared": {
+      "emotional": 2
+    },
+    "panic sell": {
+      "emotional": 2
+    },
+    "fomo": {
+      "unknown": 2
+    },
+    "regret selling": {
+      "emotional": 2
+    },
+    "should have bought": {
+      "unknown": 2
+    },
+    "missed the pump": {
+      "price": 2
+    },
+    "rekt": {
+      "emotional": 2
+    },
+    "liquidated": {
+      "emotional": 2
+    },
+    "margin call": {
+      "emotional": 2
+    },
+    "can't sleep": {
+      "unknown": 2
+    },
+    "stressed": {
+      "emotional": 2
+    },
+    "depressed": {
+      "emotional": 2
+    },
+    "angry": {
+      "emotional": 2
+    },
+    "random text": {
+      "unknown": 2
+    },
+    "asdfgh": {
+      "unknown": 2
+    },
+    "{amount}": {
+      "unknown": 2
+    },
+    "what is life": {
+      "unknown": 2
+    },
+    "tell me a joke": {
+      "unknown": 2
+    },
+    "weather today": {
+      "unknown": 2
+    },
+    "hello world": {
+      "unknown": 2
+    },
+    "test command": {
+      "unknown": 2
+    },
+    "foo bar": {
+      "unknown": 1
+    },
+    "crypto": {
+      "unknown": 1
+    },
+    "blockchain": {
+      "unknown": 1
     }
   },
-  "last_updated": "2026-06-08T21:29:39.254203"
+  "last_updated": "2026-06-10T15:04:27.864096"
 }
