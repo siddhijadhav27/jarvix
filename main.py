@@ -17,7 +17,7 @@ from ai.personality import personality_engine
 from ai.llm_client import generate_jarvis_response
 from ai.openrouter_client import call_openrouter
 from ai.mock_llm import generate_mock_response
-from ai.intent import detect_intent_hybrid
+from ai.intent import classify_intent
 from ai.memory import get_memory, format_context_for_llm
 from ai.ghost_mode import get_ghost_mode
 from ai.proactive_alerts import get_alert_manager
@@ -135,8 +135,8 @@ async def post_chat(request: ChatRequest):
     
     try:
         # Use existing intent detection
-        from ai.intent import detect_intent_hybrid
-        result = detect_intent_hybrid(request.message)
+        from ai.intent import classify_intent
+        result = classify_intent(request.message)
         
         latency_ms = int((time.time() - start) * 1000)
         
@@ -322,7 +322,7 @@ async def chat(request: ChatRequest):
     context = memory.get_full_context()
     
     # Classify intent using hybrid approach (regex + LLM fallback)
-    intent_data = await detect_intent_hybrid(request.message, context)
+    intent_data = await classify_intent(request.message, context)
     
     # Check learned patterns (self-learning Phase 1)
     learning = get_learning_system()
