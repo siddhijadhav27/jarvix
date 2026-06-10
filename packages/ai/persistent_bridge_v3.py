@@ -216,12 +216,12 @@ from pydantic import BaseModel
 
 app = FastAPI(title="Hermes Bridge v3 - Session Isolation")
 
-class ChatRequest(BaseModel):
+class BridgeChatRequest(BaseModel):
     message: str
     session_id: str = "default"
 
 @app.post("/chat")
-async def chat(request: ChatRequest):
+async def chat(request: BridgeChatRequest):
     manager = get_manager()
     bridge = manager.get_session(request.session_id)
     
@@ -237,7 +237,7 @@ async def chat(request: ChatRequest):
     }
 
 @app.post("/reset")
-async def reset(request: ChatRequest):
+async def reset(request: BridgeChatRequest):
     manager = get_manager()
     bridge = manager.reset_session(request.session_id)
     return {"status": "reset", "session_id": request.session_id}
