@@ -1,13 +1,20 @@
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
-from fastapi.middleware.cors import CORSMiddleware
+# Fix Pydantic v1/v2 compatibility
+from typing import Optional
 from pydantic import BaseModel
-from typing import Optional, Dict, Any, List
-import uvicorn
 
-# Override FastAPI's Contact to avoid conflicts
 class Contact(BaseModel):
     name: Optional[str] = None
+    url: Optional[str] = None
     email: Optional[str] = None
+
+# Inject into FastAPI before import
+import fastapi.openapi.models as _models
+_models.Contact = Contact
+
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi.middleware.cors import CORSMiddleware
+from typing import Dict, Any, List
+import uvicorn
 import sys
 import os
 import time
