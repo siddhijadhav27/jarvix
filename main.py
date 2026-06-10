@@ -292,7 +292,7 @@ class ChatResponse(BaseModel):
     amount: Optional[float] = None
     price: Optional[float] = None
     confidence: float = 0.95
-    behavioral_warning: Optional[dict] = None
+    behavioral_warning: Optional[Dict] = None
     status: str = "complete"
 
 @app.post("/api/ai/chat")
