@@ -180,7 +180,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-class ChatRequest(BaseModel):
+class BridgeChatRequest(BaseModel):
     message: str
     session_id: str = "default"
 
@@ -200,7 +200,7 @@ async def startup():
     print("🎯 Bridge v5 ready with PTY")
 
 @app.post("/chat")
-async def chat(request: ChatRequest):
+async def chat(request: BridgeChatRequest):
     bridge = get_bridge()
     
     start_time = time.time()
