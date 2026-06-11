@@ -115,8 +115,8 @@ class IntentClassifier:
     async def _classify_with_llm(self, message: str) -> Dict[str, Any]:
         """Use LLM for intent classification"""
         
-        from simple_router import simple_chat
-        from response_cleaner import clean_response
+        from .simple_router import simple_chat
+        from .response_cleaner import clean_response
         
         prompt = f"{CLASSIFICATION_PROMPT}\n'{message}'"
         
