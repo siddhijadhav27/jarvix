@@ -63,3 +63,4 @@ coverage/
 dist/
 build/
 out/
+.next/
