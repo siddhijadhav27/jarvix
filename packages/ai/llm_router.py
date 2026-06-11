@@ -233,7 +233,7 @@ def get_llm_router():
     return _router
 
 # Intents that use regex only (no LLM)
-REGEX_ONLY_INTENTS = {"price", "portfolio", "trend", "greeting", "unknown"}
+REGEX_ONLY_INTENTS = {"PRICE", "PORTFOLIO", "TREND", "GREETING", "UNKNOWN"}
 
 if __name__ == "__main__":
     asyncio.run(test())

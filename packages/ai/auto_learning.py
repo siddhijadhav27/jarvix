@@ -87,6 +87,26 @@ class AutoLearningSystem:
         """
         pattern = self.extract_pattern(message)
         
+        # SKIP LEARNING for problematic patterns
+        # These patterns are ambiguous and cause false learning
+        skip_patterns = [
+            '{asset}',  # Too generic
+            '{asset} usd',  # Can be PRICE or UNKNOWN
+            'dca {asset}',  # Can be BUY or UNKNOWN
+            'convert {asset} to {asset}',  # Can be BUY or SELL
+            'exchange {asset} for {asset}',  # Can be BUY or SELL
+            'trade {asset} for {asset}',  # Can be BUY or SELL
+            'swap {asset} for {asset}',  # Can be BUY or SELL
+            'should i buy {asset}',  # Can be ADVICE or BUY
+            'should i sell {asset}',  # Can be ADVICE or SELL
+            'thinking about buying {asset}',  # Can be ADVICE or BUY
+            'thinking about selling {asset}',  # Can be ADVICE or SELL
+        ]
+        
+        if pattern in skip_patterns:
+            print(f"[AUTO-LEARN] Skipping ambiguous pattern: '{pattern}'")
+            return
+        
         # Skip if pattern is too generic
         if pattern in ['{asset}', 'buy {asset}', 'sell {asset}']:
             return

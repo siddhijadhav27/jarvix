@@ -22,7 +22,6 @@ class Intent(Enum):
 # Fast regex pre-filter for obvious cases
 FAST_PATTERNS = {
     Intent.GREETING: r"^(hi|hello|hey|hii|good morning|good afternoon|good evening)\b",
-    Intent.PRICE: r"(price|cost|worth|trading at|how much|current price|market price).*(btc|bitcoin|eth|ethereum|sol|solana)|(btc|bitcoin|eth|ethereum|sol|solana).*(price|cost|worth|trading at|how much|current price|market price)",
 }
 
 CLASSIFICATION_PROMPT = """You are a crypto trading assistant intent classifier.
@@ -86,16 +85,9 @@ class IntentClassifier:
         # Step 1: Fast regex pre-filter
         for intent, pattern in FAST_PATTERNS.items():
             if re.search(pattern, message.lower()):
-                # Extract asset from message
-                asset = None
-                msg_lower = message.lower()
-                for asset_name in [("btc", "bitcoin", "BTC"), ("eth", "ethereum", "ETH"), ("sol", "solana", "SOL")]:
-                    if asset_name[0] in msg_lower or asset_name[1] in msg_lower:
-                        asset = asset_name[2]
-                        break
                 return {
                     "intent": intent.value,
-                    "asset": asset,
+                    "asset": None,
                     "amount": None,
                     "amount_type": None,
                     "price": None,
@@ -164,15 +156,13 @@ class IntentClassifier:
         text = re.sub(r'```json\s*', '', text)
         text = re.sub(r'```\s*', '', text)
         
-        # Remove UI artifacts
-        text = re.sub(r"[^\x20-\x7E]", "", text)
         # Find JSON with intent field (most reliable pattern)
-        match = re.search(r'{"intent":"(price|buy|sell|portfolio|greeting|advice|stop_loss|take_profit)","asset":"[^"]*"}', text)
+        match = re.search(r'\{.*"intent".*\}', text, re.DOTALL)
         if match:
             return match.group(0)
         
         # Fallback: find any JSON object
-        match = re.search(r'\{[^{}]*\}', text)
+        match = re.search(r'\{.*\}', text, re.DOTALL)
         if match:
             return match.group(0)
         
