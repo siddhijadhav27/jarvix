@@ -34,7 +34,7 @@ from ai.llm_router import get_llm_router, REGEX_ONLY_INTENTS
 
 app = FastAPI()
 
-# CORS Middleware - dynamic from env var
+# CORS Middleware - dynamic from env var + default deployed origin
 cors_origins = os.getenv("CORS_ORIGINS", "")
 if cors_origins:
     allow_origins = [origin.strip() for origin in cors_origins.split(",")]
@@ -43,6 +43,7 @@ else:
         "http://localhost:3000",
         "http://localhost:3001",
         "http://127.0.0.1:3000",
+        "https://jarvix-48y1.onrender.com",
     ]
 
 app.add_middleware(
