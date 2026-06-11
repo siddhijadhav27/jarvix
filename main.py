@@ -158,13 +158,34 @@ async def post_chat(request: ChatRequest):
         
         latency_ms = int((time.time() - start) * 1000)
         
+        # Generate real-time price message for price intents
+        intent = result.get("intent", "UNKNOWN")
+        asset = result.get("entities", {}).get("asset")
+        
+        if intent == "price" and asset:
+            prices = get_live_prices()
+            asset_upper = asset.upper()
+            if asset_upper in prices:
+                p = prices[asset_upper]
+                change_emoji = "📈" if p['change'] >= 0 else "📉"
+                change_sign = "+" if p['change'] >= 0 else ""
+                message = f"Sir, {asset_upper} is trading at ${p['price']:,}. {change_emoji} {change_sign}{p['change']:.2f}% in 24h."
+            else:
+                message = f"Sir, {asset_upper} price data not available."
+        elif intent == "price":
+            prices = get_live_prices()
+            btc = prices.get('BTC', {}).get('price', 62000)
+            message = f"Sir, BTC is at ${btc:,}. Which asset would you like the price for?"
+        else:
+            message = "Processing complete, sir."
+        
         return ChatResponse(
-            intent=result.get("intent", "UNKNOWN"),
+            intent=intent,
             confidence=result.get("confidence", 0.0),
             fast_path=True,
             source="llm",
             entities=result.get("entities", {}),
-            message="Processing complete, sir.",
+            message=message,
             latency_ms=latency_ms,
         )
     except Exception as e:
