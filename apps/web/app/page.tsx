@@ -44,10 +44,10 @@ export default function Home() {
         <div className="center-panel" style={{ position: 'relative', overflow: 'hidden' }}>
           <div className="center-line-top" />
           <ArcReactor 
-            btcPrice={fmt(prices?.BTC ?? 62690)}
-            ethPrice={fmt(prices?.ETH ?? 1994)}
-            solPrice={fmt(prices?.SOL ?? 152)}
-            portfolio={fmt(portfolio?.total_value ?? 313342)}
+            btcPrice={fmt(prices?.BTC ?? 62690, 2)}
+            ethPrice={fmt(prices?.ETH ?? 1994, 2)}
+            solPrice={fmt(prices?.SOL ?? 152, 2)}
+            portfolio={fmt(portfolio?.total_value ?? 313342, 2)}
           />
           <div className="center-line-bottom" />
         </div>
