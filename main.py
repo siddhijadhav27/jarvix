@@ -280,20 +280,9 @@ def generate_template_response(intent_data, message, context_str):
     else:
         return f"Sir, I understand. Your portfolio is at $311,342. How can I help?"
 
-app = FastAPI(title="Jarvix AI Backend", version="1.0.0")
-
 # Rate limiting - track last request time
 last_request_time = 0
 MIN_REQUEST_INTERVAL = 5  # 5 seconds between requests
-
-# CORS for frontend connection
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 class ChatRequest(BaseModel):
     message: str
