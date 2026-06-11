@@ -23,6 +23,7 @@ class Intent(Enum):
 FAST_PATTERNS = {
     Intent.GREETING: r"^(hi|hello|hey|hii|good morning|good afternoon|good evening)\b",
     Intent.PRICE: r"(price|cost|worth|trading at|how much|current price|market price|what is|what's).*(btc|bitcoin|eth|ethereum|sol|solana)|(btc|bitcoin|eth|ethereum|sol|solana).*(price|cost|worth|trading at|how much|current price|market price)",
+    Intent.ADVICE: r"(should|advice|recommend|is it good|worth buying|worth selling|buy now|sell now|hold|long|short|bullish|bearish|entry|exit)",
 }
 
 CLASSIFICATION_PROMPT = """You are a crypto trading assistant intent classifier.
