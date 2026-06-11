@@ -20,7 +20,7 @@ async def simple_chat(message: str) -> str:
                 raw = result.get("response", "")
                 
                 # Extract JSON if present
-                json_match = re.search(r'\{[^{}]*\}', raw, re.DOTALL)
+                json_match = re.search(r'\{"intent"[^}]*\}', raw, re.DOTALL)
                 if json_match:
                     json_str = json_match.group(0)
                     # Remove newlines from inside JSON
@@ -28,6 +28,8 @@ async def simple_chat(message: str) -> str:
                     return json_str
                 
                 # Find longest non-UI line
+                # Remove UI artifacts
+                raw = re.sub(r"[^\x20-\x7E]", "", raw)
                 lines = raw.split('\n')
                 longest = ''
                 for line in lines:

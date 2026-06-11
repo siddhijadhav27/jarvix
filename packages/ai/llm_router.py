@@ -12,7 +12,7 @@ from enum import Enum
 import json
 import time
 
-from response_cleaner import clean_response
+from ai.response_cleaner import clean_response
 
 class ModelProvider(Enum):
     KIMI = "kimi"
@@ -222,6 +222,18 @@ async def test():
         print(f"✅ {result['model_used']} in {latency:.2f}s")
     else:
         print(f"❌ {result['error']}")
+
+# Global router instance
+_router = None
+
+def get_llm_router():
+    global _router
+    if _router is None:
+        _router = LLMRouter()
+    return _router
+
+# Intents that use regex only (no LLM)
+REGEX_ONLY_INTENTS = {"price", "portfolio", "trend", "greeting", "unknown"}
 
 if __name__ == "__main__":
     asyncio.run(test())
