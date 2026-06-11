@@ -24,7 +24,7 @@ from ai.llm_client import generate_jarvis_response
 from ai.openrouter_client import call_openrouter
 from ai.mock_llm import generate_mock_response
 from ai.intent import IntentClassifier
-from ai.memory import get_memory, format_context_for_llm
+from ai.memory import ConversationMemory
 from ai.ghost_mode import get_ghost_mode
 from ai.proactive_alerts import get_alert_manager
 from ai.self_learning import get_learning_system
@@ -159,6 +159,18 @@ async def post_chat(request: ChatRequest):
         # Override price keywords
         if any(word in request.message.lower() for word in ["price", "cost", "worth", "trading at", "how much"]):
             result["intent"] = "price"
+            result["confidence"] = 0.98
+            # Extract asset from message
+            msg_lower = request.message.lower()
+            for asset_name in ["btc", "bitcoin", "eth", "ethereum", "sol", "solana"]:
+                if asset_name in msg_lower:
+                    if asset_name in ["btc", "bitcoin"]:
+                        result["asset"] = "BTC"
+                    elif asset_name in ["eth", "ethereum"]:
+                        result["asset"] = "ETH"
+                    elif asset_name in ["sol", "solana"]:
+                        result["asset"] = "SOL"
+                    break
         
         # Generate proper response
         response_text = generate_template_response(result, request.message, "")
@@ -167,7 +179,7 @@ async def post_chat(request: ChatRequest):
         
         return ChatResponse(
             intent=result.get("intent", "UNKNOWN"),
-            confidence=result.get("confidence", 0.0),
+            confidence=result.get("confidence", 0.98),
             fast_path=True,
             source="llm",
             entities=result.get("entities", {}),
@@ -190,13 +202,15 @@ async def post_chat(request: ChatRequest):
 async def ws_prices(websocket: WebSocket):
     """Streams live prices every 10 seconds"""
     await websocket.accept()
-    prices = dict(DEMO_PRICES)
     
     try:
         while True:
-            for asset in prices:
-                change = random.uniform(-0.005, 0.005)
-                prices[asset] = round(DEMO_PRICES[asset] * (1 + change), 2)
+            live_prices = get_live_prices()
+            prices = {
+                "BTC": live_prices["BTC"]["price"],
+                "ETH": live_prices["ETH"]["price"],
+                "SOL": live_prices["SOL"]["price"],
+            }
             
             await websocket.send_json({
                 **prices,
@@ -212,7 +226,7 @@ price_cache_time = 0
 PRICE_CACHE_TTL = 30  # 30 seconds
 
 def get_live_prices():
-    """Fetch real-time prices from CoinGecko"""
+    """Fetch real-time prices from Binance"""
     global price_cache, price_cache_time
     
     now = time.time()
@@ -220,15 +234,18 @@ def get_live_prices():
         return price_cache
     
     try:
+        # Binance API for real-time prices
         res = requests.get(
-            'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=usd&include_24hr_change=true',
-            timeout=5
+            'https://api.binance.com/api/v3/ticker/24hr?symbols=["BTCUSDT","ETHUSDT","SOLUSDT"]',
+            timeout=3
         )
         data = res.json()
+        # Create dict by symbol for safe access
+        prices_by_symbol = {item['symbol']: item for item in data}
         price_cache = {
-            'BTC': {'price': data['bitcoin']['usd'], 'change': data['bitcoin'].get('usd_24h_change', 0)},
-            'ETH': {'price': data['ethereum']['usd'], 'change': data['ethereum'].get('usd_24h_change', 0)},
-            'SOL': {'price': data['solana']['usd'], 'change': data['solana'].get('usd_24h_change', 0)},
+            'BTC': {'price': round(float(prices_by_symbol['BTCUSDT']['lastPrice']), 2), 'change': round(float(prices_by_symbol['BTCUSDT']['priceChangePercent']), 2)},
+            'ETH': {'price': round(float(prices_by_symbol['ETHUSDT']['lastPrice']), 2), 'change': round(float(prices_by_symbol['ETHUSDT']['priceChangePercent']), 2)},
+            'SOL': {'price': round(float(prices_by_symbol['SOLUSDT']['lastPrice']), 2), 'change': round(float(prices_by_symbol['SOLUSDT']['priceChangePercent']), 2)},
         }
         price_cache_time = now
         return price_cache
@@ -236,9 +253,9 @@ def get_live_prices():
         print(f"[PRICE ERROR] {e}")
         # Fallback to cached or default
         return price_cache or {
-            'BTC': {'price': 61186, 'change': -2.3},
-            'ETH': {'price': 1619, 'change': -2.9},
-            'SOL': {'price': 63.43, 'change': -4.1},
+            'BTC': {'price': 108000, 'change': 2.5},
+            'ETH': {'price': 3950, 'change': 1.8},
+            'SOL': {'price': 185, 'change': 3.2},
         }
 
 # Template responses for simple commands (no LLM needed)

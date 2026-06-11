@@ -22,6 +22,7 @@ class Intent(Enum):
 # Fast regex pre-filter for obvious cases
 FAST_PATTERNS = {
     Intent.GREETING: r"^(hi|hello|hey|hii|good morning|good afternoon|good evening)\b",
+    Intent.PRICE: r"(price|cost|worth|trading at|how much|current price|market price).*(btc|bitcoin|eth|ethereum|sol|solana)|(btc|bitcoin|eth|ethereum|sol|solana).*(price|cost|worth|trading at|how much|current price|market price)",
 }
 
 CLASSIFICATION_PROMPT = """You are a crypto trading assistant intent classifier.
@@ -85,9 +86,16 @@ class IntentClassifier:
         # Step 1: Fast regex pre-filter
         for intent, pattern in FAST_PATTERNS.items():
             if re.search(pattern, message.lower()):
+                # Extract asset from message
+                asset = None
+                msg_lower = message.lower()
+                for asset_name in [("btc", "bitcoin", "BTC"), ("eth", "ethereum", "ETH"), ("sol", "solana", "SOL")]:
+                    if asset_name[0] in msg_lower or asset_name[1] in msg_lower:
+                        asset = asset_name[2]
+                        break
                 return {
                     "intent": intent.value,
-                    "asset": None,
+                    "asset": asset,
                     "amount": None,
                     "amount_type": None,
                     "price": None,

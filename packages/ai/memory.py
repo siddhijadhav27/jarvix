@@ -3,7 +3,7 @@
 
 from typing import List, Optional, Dict, Any
 from datetime import datetime
-from storage import get_storage
+from ai.storage import get_storage
 
 
 # Words that refer to previously mentioned things
