@@ -109,12 +109,8 @@ def extract_entities_fast(message: str, intent: Intent) -> Dict[str, Any]:
     """Extract entities using regex"""
     entities = {}
     
-    # Extract asset
-    for pattern in ENTITY_PATTERNS["asset"]:
-        match = re.search(pattern, message, re.IGNORECASE)
-        if match:
-            entities["asset"] = match.group(1).upper()
-            break
+    # Extract asset using improved patterns
+    entities["asset"] = _extract_asset(message)
     
     # Extract amount
     for pattern in ENTITY_PATTERNS["amount"]:
@@ -139,6 +135,51 @@ def extract_entities_fast(message: str, intent: Intent) -> Dict[str, Any]:
                 break
     
     return entities
+
+
+def _extract_asset(message: str) -> Optional[str]:
+    """
+    Extract cryptocurrency asset from message.
+    Returns uppercase symbol (BTC, ETH, SOL, etc.) or None.
+    """
+    message_lower = message.lower()
+    
+    # Direct symbol matches
+    symbol_map = {
+        "btc": "BTC", "bitcoin": "BTC",
+        "eth": "ETH", "ethereum": "ETH",
+        "sol": "SOL", "solana": "SOL",
+        "ada": "ADA", "cardano": "ADA",
+        "dot": "DOT", "polkadot": "DOT",
+        "avax": "AVAX", "avalanche": "AVAX",
+        "matic": "MATIC", "polygon": "MATIC",
+        "link": "LINK", "chainlink": "LINK",
+        "uni": "UNI", "uniswap": "UNI",
+        "aave": "AAVE",
+        "snx": "SNX", "synthetix": "SNX",
+        "crv": "CRV", "curve": "CRV",
+        "comp": "COMP", "compound": "COMP",
+        "mkr": "MKR", "maker": "MKR",
+        "yfi": "YFI", "yearn": "YFI",
+        "bal": "BAL", "balancer": "BAL",
+        "lrc": "LRC", "loopring": "LRC",
+        "imx": "IMX", "immutable": "IMX",
+        "dydx": "DYDX",
+        "perp": "PERP", "perpetual": "PERP",
+        "gmx": "GMX",
+    }
+    
+    # Check for direct matches
+    for key, symbol in symbol_map.items():
+        if key in message_lower:
+            return symbol
+    
+    # Regex fallback for any uppercase crypto symbol
+    match = re.search(r"\b([A-Z]{2,5})\b", message)
+    if match:
+        return match.group(1)
+    
+    return None
 
 
 def classify_with_fallback(message: str, bridge) -> Dict[str, Any]:
