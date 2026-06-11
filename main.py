@@ -160,7 +160,7 @@ async def post_chat(request: ChatRequest):
         
         # Generate real-time price message for price intents
         intent = result.get("intent", "UNKNOWN")
-        asset = result.get("entities", {}).get("asset")
+        asset = result.get("asset") or result.get("entities", {}).get("asset")
         
         if intent == "price" and asset:
             prices = get_live_prices()
