@@ -77,6 +77,28 @@ class IntentClassifier:
     def __init__(self):
         self.use_llm = True
     
+    def _extract_asset(self, message: str) -> Optional[str]:
+        """Extract cryptocurrency asset from message"""
+        message_lower = message.lower()
+        
+        # Map of asset names to tickers
+        asset_map = {
+            'bitcoin': 'BTC', 'btc': 'BTC',
+            'ethereum': 'ETH', 'eth': 'ETH',
+            'solana': 'SOL', 'sol': 'SOL',
+            'cardano': 'ADA', 'ada': 'ADA',
+            'polkadot': 'DOT', 'dot': 'DOT',
+            'ripple': 'XRP', 'xrp': 'XRP',
+            'dogecoin': 'DOGE', 'doge': 'DOGE',
+        }
+        
+        # Check for each asset
+        for name, ticker in asset_map.items():
+            if name in message_lower:
+                return ticker
+        
+        return None
+    
     async def classify(self, message: str) -> Dict[str, Any]:
         """
         Classify user intent
@@ -87,9 +109,11 @@ class IntentClassifier:
         # Step 1: Fast regex pre-filter
         for intent, pattern in FAST_PATTERNS.items():
             if re.search(pattern, message.lower()):
+                # Extract asset from message
+                asset = self._extract_asset(message)
                 return {
                     "intent": intent.value,
-                    "asset": None,
+                    "asset": asset,
                     "amount": None,
                     "amount_type": None,
                     "price": None,
