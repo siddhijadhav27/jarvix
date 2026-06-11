@@ -22,6 +22,7 @@ class Intent(Enum):
 # Fast regex pre-filter for obvious cases
 FAST_PATTERNS = {
     Intent.GREETING: r"^(hi|hello|hey|hii|good morning|good afternoon|good evening)\b",
+    Intent.PRICE: r"(price|cost|worth|trading at|how much|current price|market price|what is|what's).*(btc|bitcoin|eth|ethereum|sol|solana)|(btc|bitcoin|eth|ethereum|sol|solana).*(price|cost|worth|trading at|how much|current price|market price)",
 }
 
 CLASSIFICATION_PROMPT = """You are a crypto trading assistant intent classifier.
