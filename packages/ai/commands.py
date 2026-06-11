@@ -292,8 +292,8 @@ class CommandExecutor:
 
     async def _get_advice(self, message: str) -> Dict[str, Any]:
         """Get trading advice"""
-        from simple_router import simple_chat
-        from response_cleaner import clean_response
+        from .simple_router import simple_chat
+        from .response_cleaner import clean_response
 
         response = await simple_chat(message)
         clean = clean_response(response)

@@ -289,7 +289,7 @@ class ChatRequest(BaseModel):
     message: str
     user_id: str
 
-class ChatResponse(BaseModel):
+class AIChatResponse(BaseModel):
     response: str
     intent: str
     asset: Optional[str] = None
@@ -313,7 +313,7 @@ async def chat(request: ChatRequest):
     time_since_last = current_time - last_request_time
     if time_since_last < MIN_REQUEST_INTERVAL:
         wait_time = MIN_REQUEST_INTERVAL - time_since_last
-        return ChatResponse(
+        return AIChatResponse(
             response=f"Sir, please wait {wait_time:.1f} seconds before sending another command.",
             intent="rate_limited",
             confidence=0.95,
@@ -565,7 +565,7 @@ async def chat(request: ChatRequest):
     memory.add_message("user", request.message, intent_data["intent"])
     memory.add_message("assistant", cleaned_response)
     
-    return ChatResponse(
+    return AIChatResponse(
         response=cleaned_response,
         intent=intent_data["intent"],
         asset=intent_data.get("asset"),
