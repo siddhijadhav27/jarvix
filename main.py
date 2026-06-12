@@ -355,7 +355,7 @@ def get_live_prices():
     try:
         res = requests.get(
             'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=usd&include_24hr_change=true',
-            headers={'Accept': 'application/json', 'User-Agent': 'Jarvix/1.0'},
+            headers={'Accept': 'application/json', 'User-Agent': 'Jarvix/1.0', 'x-cg-demo-api-key': 'CG-demo'},
             timeout=10
         )
         data = res.json()
