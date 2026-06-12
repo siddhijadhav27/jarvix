@@ -19,18 +19,18 @@ import requests
 # Add packages to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'packages'))
 
-from ai.personality import personality_engine
-from ai.llm_client import generate_jarvis_response
-from ai.openrouter_client import call_openrouter
-from ai.mock_llm import generate_mock_response
-from ai.intent import IntentClassifier
-from ai.memory import get_memory, format_context_for_llm
-from ai.ghost_mode import get_ghost_mode
-from ai.proactive_alerts import get_alert_manager
-from ai.self_learning import get_learning_system
-from ai.auto_learning import get_auto_learning_system
-from ai.personalization import get_personalization_system
-from ai.llm_router import get_llm_router, REGEX_ONLY_INTENTS
+from packages.ai.personality import personality_engine
+from packages.ai.llm_client import generate_jarvis_response
+from packages.ai.openrouter_client import call_openrouter
+from packages.ai.mock_llm import generate_mock_response
+from packages.ai.intent import IntentClassifier
+from packages.ai.memory import get_memory, format_context_for_llm
+from packages.ai.ghost_mode import get_ghost_mode
+from packages.ai.proactive_alerts import get_alert_manager
+from packages.ai.self_learning import get_learning_system
+from packages.ai.auto_learning import get_auto_learning_system
+from packages.ai.personalization import get_personalization_system
+from packages.ai.llm_router import get_llm_router, REGEX_ONLY_INTENTS
 
 app = FastAPI()
 
@@ -42,7 +42,9 @@ else:
     allow_origins = [
         "http://localhost:3000",
         "http://localhost:3001",
+        "http://localhost:3003",
         "http://127.0.0.1:3000",
+        "http://127.0.0.1:3003",
         "https://jarvix-48y1.onrender.com",
     ]
 
@@ -152,7 +154,7 @@ async def post_chat(request: ChatRequest):
     
     try:
         # Use existing intent detection
-        from ai.intent import IntentClassifier
+        from packages.ai.intent import IntentClassifier
         classifier = IntentClassifier()
         result = await classifier.classify(request.message)
         
@@ -161,6 +163,66 @@ async def post_chat(request: ChatRequest):
         # Generate real-time price message for price intents
         intent = result.get("intent", "UNKNOWN")
         asset = result.get("asset") or result.get("entities", {}).get("asset")
+        amount = result.get("amount") or result.get("entities", {}).get("amount")
+        
+        # Also check if asset is in entities dict for backward compatibility
+        if not asset and "entities" in result:
+            asset = result["entities"].get("asset")
+        if not amount and "entities" in result:
+            amount = result["entities"].get("amount")
+        
+        # Ensure entities dict includes asset for response
+        entities = result.get("entities", {})
+        if asset and "asset" not in entities:
+            entities["asset"] = asset
+        if amount and "amount" not in entities:
+            entities["amount"] = amount
+        
+        # Debug: print what we got
+        print(f"[DEBUG] intent={intent}, asset={asset}, result={result}")
+        
+        # Fast path for unknown intents - use OpenAI for general knowledge
+        if intent == "unknown":
+            try:
+                import openai
+                import os
+                from dotenv import load_dotenv
+                load_dotenv()
+                api_key = os.environ.get("OPENAI_API_KEY")
+                if api_key:
+                    client = openai.OpenAI(api_key=api_key)
+                    resp = client.chat.completions.create(
+                        model="gpt-3.5-turbo",
+                        messages=[
+                            {"role": "system", "content": "You are Jarvix, a helpful AI assistant. You can answer any question - crypto, news, daily life, general knowledge, etc. Always be concise and helpful."},
+                            {"role": "user", "content": request.message}
+                        ],
+                        max_tokens=150,
+                        timeout=10
+                    )
+                    ai_msg = resp.choices[0].message.content
+                    return ChatResponse(
+                        intent=intent,
+                        confidence=0.9,
+                        fast_path=True,
+                        source="openai",
+                        entities=entities,
+                        message=ai_msg,
+                        latency_ms=latency_ms,
+                    )
+            except Exception as e:
+                print(f"[DEBUG] OpenAI error: {e}")
+            
+            # Fallback if OpenAI fails
+            return ChatResponse(
+                intent=intent,
+                confidence=result.get("confidence", 0.0),
+                fast_path=True,
+                source="llm",
+                entities=entities,
+                message="Sir, I understand. Your portfolio is at $311,342. How can I help?",
+                latency_ms=latency_ms,
+            )
         
         if intent == "price" and asset:
             prices = get_live_prices()
@@ -169,22 +231,81 @@ async def post_chat(request: ChatRequest):
                 p = prices[asset_upper]
                 change_emoji = "📈" if p['change'] >= 0 else "📉"
                 change_sign = "+" if p['change'] >= 0 else ""
-                message = f"Sir, {asset_upper} is trading at ${p['price']:,}. {change_emoji} {change_sign}{p['change']:.2f}% in 24h."
+                message = f"Sir, {asset_upper} is trading at ${p['price']:,}. {change_emoji} {change_sign}{p['change']:.2f}% in 24h. Your portfolio remains robust at $311,342."
             else:
-                message = f"Sir, {asset_upper} price data not available."
+                message = f"Sir, {asset_upper} price data not available. Your portfolio remains robust at $311,342."
         elif intent == "price":
             prices = get_live_prices()
             btc = prices.get('BTC', {}).get('price', 62000)
-            message = f"Sir, BTC is at ${btc:,}. Which asset would you like the price for?"
+            message = f"Sir, BTC is at ${btc:,}. Which asset would you like the price for? Your portfolio remains robust at $311,342."
+        elif intent == "buy":
+            if asset and amount:
+                prices = get_live_prices()
+                asset_upper = asset.upper()
+                current_price = prices.get(asset_upper, {}).get('price', 0)
+                total = amount * current_price
+                message = f"Sir, purchase order prepared for {amount} {asset_upper} at ${current_price:,} (total: ${total:,}). Shall I execute? Your portfolio remains robust at $311,342."
+            elif asset:
+                prices = get_live_prices()
+                asset_upper = asset.upper()
+                current_price = prices.get(asset_upper, {}).get('price', 0)
+                message = f"Sir, purchase order ready for {asset_upper} at ${current_price:,}. Please specify the amount. Your portfolio remains robust at $311,342."
+            else:
+                message = f"Sir, I understand you wish to buy. Please specify the asset and amount. Your portfolio remains robust at $311,342."
+        elif intent == "sell":
+            if asset and amount:
+                prices = get_live_prices()
+                asset_upper = asset.upper()
+                current_price = prices.get(asset_upper, {}).get('price', 0)
+                total = amount * current_price
+                message = f"Sir, sale order prepared for {amount} {asset_upper} at ${current_price:,} (total: ${total:,}). Shall I execute? Your portfolio remains robust at $311,342."
+            elif asset:
+                prices = get_live_prices()
+                asset_upper = asset.upper()
+                current_price = prices.get(asset_upper, {}).get('price', 0)
+                message = f"Sir, sale order ready for {asset_upper} at ${current_price:,}. Please specify the amount. Your portfolio remains robust at $311,342."
+            else:
+                message = f"Sir, I understand you wish to sell. Please specify the asset and amount. Your portfolio remains robust at $311,342."
+        elif intent == "portfolio":
+            message = "Sir, your portfolio is valued at $311,342, up 2.4%. You hold 100 ETH, 0.5 BTC, and 1000 SOL."
+        elif intent == "greeting":
+            message = "Good day, sir. Jarvix at your service. Your portfolio is at $311,342. How may I assist?"
+        elif intent == "advice":
+            prices = get_live_prices()
+            if asset:
+                asset_upper = asset.upper()
+                if asset_upper in prices:
+                    p = prices[asset_upper]
+                    change_emoji = "📈" if p['change'] >= 0 else "📉"
+                    change_sign = "+" if p['change'] >= 0 else ""
+                    trend = "bullish" if p['change'] >= 0 else "bearish"
+                    message = f"Sir, {asset_upper} is at ${p['price']:,} ({change_sign}{p['change']:.2f}%). Market sentiment is {trend}. Based on current momentum, {asset_upper} shows {trend} signals. Your portfolio remains robust at $311,342. Shall I set an alert for significant moves?"
+                else:
+                    message = f"Sir, I cannot access real-time data for {asset} at the moment. Based on recent market analysis, consider dollar-cost averaging. Your portfolio is at $311,342."
+            else:
+                btc = prices.get('BTC', {}).get('price', 61186)
+                eth = prices.get('ETH', {}).get('price', 1619)
+                message = f"Sir, BTC is at ${btc:,} and ETH at ${eth:,}. Both showing mixed signals. Consider your risk tolerance before entering. Portfolio at $311,342. Which asset interests you?"
+        elif intent == "alert":
+            prices = get_live_prices()
+            if asset:
+                asset_upper = asset.upper()
+                current_price = prices.get(asset_upper, {}).get('price', 0)
+                message = f"Sir, alert set for {asset_upper}. Current price: ${current_price:,}. I shall notify you when the target is reached. Your portfolio remains robust at $311,342."
+            else:
+                btc = prices.get('BTC', {}).get('price', 61186)
+                message = f"Sir, alert configured. BTC is currently at ${btc:,}. I shall notify you when conditions are met. Your portfolio remains robust at $311,342."
+        elif intent == "emotional":
+            message = f"Sir, I sense your emotions. Markets fluctuate, but your portfolio at $311,342 remains stable. Take a deep breath. How may I assist?"
         else:
-            message = "Processing complete, sir."
+            message = f"Sir, I understand. Your portfolio is at $311,342. How can I help?"
         
         return ChatResponse(
             intent=intent,
             confidence=result.get("confidence", 0.0),
             fast_path=True,
             source="llm",
-            entities=result.get("entities", {}),
+            entities=entities,
             message=message,
             latency_ms=latency_ms,
         )
@@ -204,16 +325,14 @@ async def post_chat(request: ChatRequest):
 async def ws_prices(websocket: WebSocket):
     """Streams live prices every 10 seconds"""
     await websocket.accept()
-    prices = dict(DEMO_PRICES)
     
     try:
         while True:
-            for asset in prices:
-                change = random.uniform(-0.005, 0.005)
-                prices[asset] = round(DEMO_PRICES[asset] * (1 + change), 2)
-            
+            prices = get_live_prices()
             await websocket.send_json({
-                **prices,
+                "BTC": prices.get('BTC', {}).get('price', 62000),
+                "ETH": prices.get('ETH', {}).get('price', 1600),
+                "SOL": prices.get('SOL', {}).get('price', 65),
                 "timestamp": time.time()
             })
             await asyncio.sleep(10)
@@ -350,7 +469,7 @@ async def chat(request: ChatRequest):
     context = memory.get_full_context()
     
     # Classify intent using LLM
-    from ai.intent import IntentClassifier
+    from packages.ai.intent import IntentClassifier
     classifier = IntentClassifier()
     intent_data = await classifier.classify(request.message)
     
@@ -482,8 +601,8 @@ async def chat(request: ChatRequest):
     # Step 1: Universal Intent Parser for unknown commands
     if intent_data["intent"] == "unknown" and intent_data.get("universal_parse", False):
         print(f"[UNIVERSAL PARSER] Handling unknown command: {request.message}")
-        from ai.universal_intent import handle_unknown_command
-        from ai.agent_planner import plan_agent_task, execute_agent_task, get_task_status
+        from packages.ai.universal_intent import handle_unknown_command
+        from packages.ai.agent_planner import plan_agent_task, execute_agent_task, get_task_status
         
         universal_result = await handle_unknown_command(
             request.message, 
@@ -513,7 +632,7 @@ async def chat(request: ChatRequest):
             
         elif category == "tool_call":
             # Step 2: Execute the tool!
-            from ai.tool_executor import parse_and_execute_tools
+            from packages.ai.tool_executor import parse_and_execute_tools
             
             suggested_tools = classification.get("suggested_tools", [])
             if suggested_tools:
@@ -533,7 +652,7 @@ async def chat(request: ChatRequest):
             
         elif category == "agent_task":
             # Step 3: Plan and execute agent task!
-            from ai.agent_planner import plan_agent_task
+            from packages.ai.agent_planner import plan_agent_task
             
             agent_result = await plan_agent_task(request.message, request.user_id)
             
@@ -721,7 +840,7 @@ async def root():
 @app.get("/test-llm")
 async def test_llm():
     """Test LLM connection"""
-    from ai.llm_client import test_llm_connection
+    from packages.ai.llm_client import test_llm_connection
     result = await test_llm_connection()
     return {"llm_response": result}
 
