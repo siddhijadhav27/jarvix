@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
-const WS_BASE  = process.env.NEXT_PUBLIC_WS_URL  || 'ws://localhost:8000'
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001'
+const WS_BASE  = process.env.NEXT_PUBLIC_WS_URL  || 'ws://localhost:8001'
 
 // ── Types ──────────────────────────────
 export interface IntentResult {
@@ -57,7 +57,7 @@ export function useJarvixAPI() {
   // ── Fetch system health ──
   const fetchHealth = useCallback(async () => {
     try {
-      const res = await fetch(`${API_BASE}/api/health`)
+      const res = await fetch(`${API_BASE}/health`)
       if (res.ok) setHealth(await res.json())
     } catch { /* backend not running */ }
   }, [])

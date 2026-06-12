@@ -18,8 +18,8 @@ export default function Header() {
           KIMI ONLINE
         </div>
         <div className="hstat">
-          <div className="hstat-dot online" />
-          3 ONLINE
+          <div className="hstat-dot warn" />
+          2 INIT
         </div>
         <div className="hstat" style={{ color: 'var(--c3)' }}>
           SYS · NOMINAL
