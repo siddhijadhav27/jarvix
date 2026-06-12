@@ -38,8 +38,8 @@ export default function ModelStatus({ activeModel = 'KIMI VIA HERMES' }: ModelSt
       <div className="sec-title">neural router</div>
 
       <ModelRow name="Kimi via Hermes" type="cloud" latency="~8000ms" status="on" />
-      <ModelRow name="Qwen 2.5 (Local)" type="local" status="on" />
-      <ModelRow name="Llama 3.2 (Local)" type="local" status="on" />
+      <ModelRow name="Qwen 2.5 (Local)" type="local" status="dl" />
+      <ModelRow name="Llama 3.2 (Local)" type="local" status="dl" />
 
       <div style={{
         marginTop: '12px', fontFamily: 'var(--font-m)',
