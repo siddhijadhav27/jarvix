@@ -17,13 +17,20 @@ class Intent(Enum):
     TAKE_PROFIT = "take_profit"
     ADVICE = "advice"
     GREETING = "greeting"
+    ALERT = "alert"
+    EMOTIONAL = "emotional"
     UNKNOWN = "unknown"
 
 # Fast regex pre-filter for obvious cases
 FAST_PATTERNS = {
-    Intent.GREETING: r"^(hi|hello|hey|hii|good morning|good afternoon|good evening)\b",
-    Intent.PRICE: r"(price|cost|worth|trading at|how much|current price|market price|what is|what's).*(btc|bitcoin|eth|ethereum|sol|solana)|(btc|bitcoin|eth|ethereum|sol|solana).*(price|cost|worth|trading at|how much|current price|market price)",
-    Intent.ADVICE: r"(should|advice|recommend|is it good|worth buying|worth selling|buy now|sell now|hold|long|short|bullish|bearish|entry|exit)",
+    Intent.GREETING: r"^(hi+|he+y+|he+l+o+w*|hola|bonjour|salam|as salaam|salaam|namaste|namaskar|sup|yo|good morning|good afternoon|good evening|good night|morning|evening|afternoon)\b",
+    Intent.ALERT: r"\b(alert|notify|warn|watch|track|set alert|when.*hits|if.*drops|if.*rises)\b",
+    Intent.PRICE: r"(price|cost|worth|trading at|how much|current price|market price|what is|what's|kitne|ka price|ka rate|rate kya|kya hai).*?(btc|bitcoin|eth|ethereum|sol|solana)|(btc|bitcoin|eth|ethereum|sol|solana).*?(price|cost|worth|trading at|how much|current price|market price|kitne|ka price|ka rate|rate kya|kya hai)",
+    Intent.ADVICE: r"(should i|advice|recommend|is it good|worth buying|worth selling|\bhold\b|long|short|bullish|bearish|entry|exit|think about|opinion on|kya karu|salah|suggest|good investment|a good)",
+    Intent.BUY: r"\b(buy|purchase|grab|get|acquire|invest in|pick up|load up on|go heavy on|kharidna|kharido|lena)\b",
+    Intent.SELL: r"\b(sell|dump|offload|unload|liquidate|exit|dispose|bechdo|bechna|bech)\b",
+    Intent.PORTFOLIO: r"\b(portfolio|holdings|assets|what do i own|my portfolio|net worth|positions|show my)\b",
+    Intent.EMOTIONAL: r"\b(scared|afraid|worried|nervous|anxious|stressed|excited|happy|sad|angry|frustrated|panic|fear|greed|emotional|feel|feeling|dar lag|tension|ghabra)\b",
 }
 
 CLASSIFICATION_PROMPT = """You are a crypto trading assistant intent classifier.
@@ -108,14 +115,28 @@ class IntentClassifier:
         """
         # Step 1: Fast regex pre-filter
         for intent, pattern in FAST_PATTERNS.items():
-            if re.search(pattern, message.lower()):
+            match = re.search(pattern, message.lower())
+            if match:
                 # Extract asset from message
                 asset = self._extract_asset(message)
+                # Extract amount from regex groups
+                amount = None
+                if match.groups():
+                    # Try to find numeric group
+                    for group in match.groups():
+                        if group and re.match(r'^\d*\.?\d+$', group):
+                            amount = float(group)
+                            break
+                # If no amount in regex groups, try to extract from message
+                if amount is None:
+                    amount_match = re.search(r'(\d+\.?\d*)\s*(btc|eth|sol|bitcoin|ethereum|solana)', message.lower())
+                    if amount_match:
+                        amount = float(amount_match.group(1))
                 return {
                     "intent": intent.value,
                     "asset": asset,
-                    "amount": None,
-                    "amount_type": None,
+                    "amount": amount,
+                    "amount_type": "units" if amount else None,
                     "price": None,
                     "confidence": 0.99,
                     "needs_clarification": False,
