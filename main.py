@@ -1046,7 +1046,17 @@ def generate_template_response(intent_data, message, context_str):
         return "Sir, your portfolio is valued at $311,342, up 2.4%. You hold 100 ETH, 0.5 BTC, and 1000 SOL."
     
     elif intent == "greeting":
-        return "Good day, sir. Jarvix at your service. Your portfolio is at $311,342. How may I assist?"
+        from datetime import datetime
+        hour = datetime.now().hour
+        if 5 <= hour < 12:
+            time_greeting = "Good morning"
+        elif 12 <= hour < 17:
+            time_greeting = "Good afternoon"
+        elif 17 <= hour < 21:
+            time_greeting = "Good evening"
+        else:
+            time_greeting = "Good night"
+        return f"{time_greeting}, sir. Jarvix at your service. Your portfolio is at $311,342. How may I assist?"
     
     else:
         return f"Sir, I understand. Your portfolio is at $311,342. How can I help?"
