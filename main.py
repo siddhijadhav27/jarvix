@@ -15,6 +15,7 @@ import asyncio
 import json
 import random
 import requests
+from dotenv import load_dotenv
 
 # Add packages to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'packages'))
@@ -31,6 +32,472 @@ from packages.ai.self_learning import get_learning_system
 from packages.ai.auto_learning import get_auto_learning_system
 from packages.ai.personalization import get_personalization_system
 from packages.ai.llm_router import get_llm_router, REGEX_ONLY_INTENTS
+
+# Language detection and self-learning imports
+import sqlite3
+from datetime import datetime, timedelta
+
+# Groq API integration
+import requests
+import os
+from dotenv import load_dotenv
+
+async def call_groq_llm_async(messages, max_tokens=100):
+    """Call GitHub Models API for LLM responses (async)"""
+    try:
+        # Load .env file explicitly with override
+        load_dotenv('/home/siddhi/jarvix-repo/.env', override=True)
+        # GitHub token from environment
+        api_key = os.getenv('GITHUB_TOKEN')
+        if not api_key:
+            print("[DEBUG] No GitHub token found")
+            return None
+        
+        loop = asyncio.get_running_loop()
+        response = await loop.run_in_executor(None, lambda: requests.post(
+            'https://models.inference.ai.azure.com/chat/completions',
+            headers={
+                'Authorization': f'Bearer {api_key}',
+                'Content-Type': 'application/json'
+            },
+            json={
+                'model': 'Meta-Llama-3.1-8B-Instruct',
+                'messages': messages,
+                'max_tokens': max_tokens,
+                'temperature': 0.7
+            },
+            timeout=10
+        ))
+        
+        if response.status_code == 200:
+            return response.json()['choices'][0]['message']['content']
+        else:
+            print(f"[DEBUG] GitHub Models API error: {response.status_code} - {response.text}")
+            return None
+            
+    except Exception as e:
+        print(f"[DEBUG] LLM call error: {e}")
+        return None
+
+# Keep sync version for backward compatibility
+def call_groq_llm(messages, max_tokens=100):
+    """Call GitHub Models API for LLM responses (sync)"""
+    try:
+        # Load .env file explicitly with override
+        load_dotenv('/home/siddhi/jarvix-repo/.env', override=True)
+        # GitHub token from environment
+        api_key = os.getenv('GITHUB_TOKEN')
+        if not api_key:
+            print("[DEBUG] No GitHub token found")
+            return None
+        
+        response = requests.post(
+            'https://models.inference.ai.azure.com/chat/completions',
+            headers={
+                'Authorization': f'Bearer {api_key}',
+                'Content-Type': 'application/json'
+            },
+            json={
+                'model': 'Meta-Llama-3.1-8B-Instruct',
+                'messages': messages,
+                'max_tokens': max_tokens,
+                'temperature': 0.7
+            },
+            timeout=10
+        )
+        
+        if response.status_code == 200:
+            return response.json()['choices'][0]['message']['content']
+        else:
+            print(f"[DEBUG] GitHub Models API error: {response.status_code} - {response.text}")
+            return None
+            
+    except Exception as e:
+        print(f"[DEBUG] LLM call error: {e}")
+        return None
+async def detect_language_with_llm_async(text):
+    """Detect language using LLM (async)"""
+    messages = [
+        {'role': 'system', 'content': 'You are a language detection expert. Identify the language of the user text. Reply with ONLY the language code: en, hi, hinglish, es, fr, de, ja, zh, ar, ru, or other.'},
+        {'role': 'user', 'content': f'What language is this: "{text}"? Reply with only the language code.'}
+    ]
+    result = await call_groq_llm_async(messages, max_tokens=10)
+    if result:
+        return result.strip().lower()
+    return 'en'
+
+# Keep sync version for backward compatibility
+def detect_language_with_llm(text):
+    """Detect language using LLM (sync)"""
+    messages = [
+        {'role': 'system', 'content': 'You are a language detection expert. Identify the language of the user text. Reply with ONLY the language code: en, hi, hinglish, es, fr, de, ja, zh, ar, ru, or other.'},
+        {'role': 'user', 'content': f'What language is this: "{text}"? Reply with only the language code.'}
+    ]
+    result = call_groq_llm(messages, max_tokens=10)
+    if result:
+        return result.strip().lower()
+    return 'en'
+
+def generate_response_in_language(intent, user_message, portfolio_value='$311,342'):
+    """Generate response in user's detected language using LLM"""
+    detected_lang = detect_language_with_llm(user_message)
+    
+    messages = [
+        {'role': 'system', 'content': f'You are Jarvix, a helpful AI crypto assistant. The user speaks {detected_lang}. Respond naturally in their language. Keep it concise and warm. Portfolio value: {portfolio_value}.'},
+        {'role': 'user', 'content': f'User intent: {intent}. User message: "{user_message}". Generate a natural response.'}
+    ]
+    
+    response = call_groq_llm(messages, max_tokens=150)
+    if response:
+        return response.strip()
+    
+    # Fallback to English
+    return f"Sir, I understand. Your portfolio is at {portfolio_value}. How can I help?"
+
+async def generate_response_in_language_async(intent, user_message, portfolio_value='$311,342'):
+    """Async response generation using GitHub Models API"""
+    detected_lang = await detect_language_with_llm_async(user_message)
+    
+    messages = [
+        {'role': 'system', 'content': f'You are Jarvix, a helpful AI crypto assistant. The user speaks {detected_lang}. Respond naturally in their language. Keep it concise and warm. Portfolio value: {portfolio_value}.'},
+        {'role': 'user', 'content': f'User intent: {intent}. User message: "{user_message}". Generate a natural response.'}
+    ]
+    
+    response = await call_groq_llm_async(messages, max_tokens=150)
+    if response:
+        return response.strip()
+    
+    # Fallback to English
+    return f"Sir, I understand. Your portfolio is at {portfolio_value}. How can I help?"
+
+app = FastAPI()
+LANGUAGE_KNOWLEDGE = {
+    'en': {
+        'name': 'English',
+        'greetings': ['hello', 'hi', 'hey', 'good morning', 'good afternoon', 'good evening'],
+        'keywords': ['what', 'how', 'when', 'where', 'why', 'who', 'which', 'price', 'buy', 'sell', 'portfolio', 'advice', 'alert', 'help'],
+        'common_phrases': ['thank you', 'please', 'sorry', 'excuse me', 'goodbye', 'see you'],
+        'responses': {
+            'greeting': 'Hello sir, how can I help you today?',
+            'price': 'The price is {price}',
+            'buy': 'Purchase order ready',
+            'sell': 'Sale order ready',
+            'portfolio': 'Your portfolio is at {portfolio_value}',
+            'advice': 'My advice is to hold',
+            'alert': 'Alert set successfully',
+            'help': 'How can I assist you?'
+        }
+    },
+    'hi': {
+        'name': 'Hindi',
+        'greetings': ['नमस्ते', 'हैलो', 'सुप्रभात', 'शुभ अपराह्न', 'शुभ संध्या'],
+        'keywords': ['क्या', 'कैसे', 'कब', 'कहाँ', 'क्यों', 'कौन', 'कौनसा', 'कीमत', 'खरीद', 'बेच', 'पोर्टफोलियो', 'सलाह', 'अलर्ट', 'मदद'],
+        'common_phrases': ['धन्यवाद', 'कृपया', 'माफ़ करना', 'अलविदा', 'फिर मिलेंगे'],
+        'responses': {
+            'greeting': 'नमस्ते सर, मैं कैसे मदद कर सकता हूँ?',
+            'price': 'कीमत {price} है',
+            'buy': 'खरीद का आदेश तैयार',
+            'sell': 'बिक्री का आदेश तैयार',
+            'portfolio': 'आपका पोर्टफोलियो {portfolio_value} पर है',
+            'advice': 'मेरी सलाह है होल्ड करें',
+            'alert': 'अलर्ट सेट हो गया',
+            'help': 'मैं कैसे मदद कर सकता हूँ?'
+        }
+    },
+    'hinglish': {
+        'name': 'Hinglish',
+        'greetings': ['namaste', 'hello', 'hi', 'good morning', 'good afternoon', 'good evening', 'kaise ho', 'kya haal hai'],
+        'keywords': ['kya', 'kaise', 'kab', 'kahan', 'kyu', 'kaun', 'kaunsa', 'price', 'buy', 'sell', 'portfolio', 'advice', 'alert', 'help', 'batao', 'dekhna', 'karu', 'chahiye'],
+        'common_phrases': ['thank you', 'please', 'sorry', 'bye', 'see you', 'dhanyawad', 'kripya', 'maaf karna'],
+        'responses': {
+            'greeting': 'Hello sir, kaise ho?',
+            'price': 'Price {price} hai',
+            'buy': 'Buy order ready hai',
+            'sell': 'Sell order ready hai',
+            'portfolio': 'Portfolio {portfolio_value} pe hai',
+            'advice': 'Advice hai hold karo',
+            'alert': 'Alert set ho gaya',
+            'help': 'Kya help chahiye?'
+        }
+    },
+    'es': {
+        'name': 'Spanish',
+        'greetings': ['hola', 'buenos días', 'buenas tardes', 'buenas noches', 'qué tal'],
+        'keywords': ['qué', 'cómo', 'cuándo', 'dónde', 'por qué', 'quién', 'cuál', 'precio', 'comprar', 'vender', 'cartera', 'consejo', 'alerta', 'ayuda'],
+        'common_phrases': ['gracias', 'por favor', 'lo siento', 'adiós', 'hasta luego'],
+        'responses': {
+            'greeting': 'Hola señor, ¿cómo puedo ayudarle?',
+            'price': 'El precio es {price}',
+            'buy': 'Orden de compra lista',
+            'sell': 'Orden de venta lista',
+            'portfolio': 'Su cartera está en {portfolio_value}',
+            'advice': 'Mi consejo es mantener',
+            'alert': 'Alerta configurada',
+            'help': '¿Cómo puedo ayudarle?'
+        }
+    },
+    'fr': {
+        'name': 'French',
+        'greetings': ['bonjour', 'salut', 'bonsoir', 'bonne journée', 'bonne soirée'],
+        'keywords': ['quoi', 'comment', 'quand', 'où', 'pourquoi', 'qui', 'quel', 'prix', 'acheter', 'vendre', 'portefeuille', 'conseil', 'alerte', 'aide'],
+        'common_phrases': ['merci', 's\'il vous plaît', 'pardon', 'au revoir', 'à bientôt'],
+        'responses': {
+            'greeting': 'Bonjour monsieur, comment puis-je vous aider?',
+            'price': 'Le prix est {price}',
+            'buy': 'Ordre d\'achat prêt',
+            'sell': 'Ordre de vente prêt',
+            'portfolio': 'Votre portefeuille est à {portfolio_value}',
+            'advice': 'Mon conseil est de garder',
+            'alert': 'Alerte configurée',
+            'help': 'Comment puis-je vous aider?'
+        }
+    },
+    'de': {
+        'name': 'German',
+        'greetings': ['hallo', 'guten morgen', 'guten tag', 'guten abend', 'wie geht\'s'],
+        'keywords': ['was', 'wie', 'wann', 'wo', 'warum', 'wer', 'welcher', 'preis', 'kaufen', 'verkaufen', 'portfolio', 'rat', 'alarm', 'hilfe'],
+        'common_phrases': ['danke', 'bitte', 'entschuldigung', 'tschüss', 'bis bald'],
+        'responses': {
+            'greeting': 'Hallo Herr, wie kann ich Ihnen helfen?',
+            'price': 'Der Preis ist {price}',
+            'buy': 'Kaufauftrag bereit',
+            'sell': 'Verkaufsauftrag bereit',
+            'portfolio': 'Ihr Portfolio ist bei {portfolio_value}',
+            'advice': 'Mein Rat ist zu halten',
+            'alert': 'Alarm eingestellt',
+            'help': 'Wie kann ich Ihnen helfen?'
+        }
+    },
+    'ja': {
+        'name': 'Japanese',
+        'greetings': ['こんにちは', 'おはよう', 'こんばんは', 'さようなら', 'お元気ですか'],
+        'keywords': ['何', 'どう', 'いつ', 'どこ', 'なぜ', '誰', 'どの', '価格', '買う', '売る', 'ポートフォリオ', 'アドバイス', 'アラート', 'ヘルプ'],
+        'common_phrases': ['ありがとう', 'お願いします', 'ごめんなさい', 'さようなら', 'またね'],
+        'responses': {
+            'greeting': 'こんにちは、お手伝いできますか？',
+            'price': '価格は{price}です',
+            'buy': '購入注文の準備完了',
+            'sell': '売却注文の準備完了',
+            'portfolio': 'ポートフォリオは{portfolio_value}です',
+            'advice': 'アドバイスはホールドです',
+            'alert': 'アラート設定完了',
+            'help': 'お手伝いできますか？'
+        }
+    },
+    'zh': {
+        'name': 'Chinese',
+        'greetings': ['你好', '早上好', '下午好', '晚上好', '再见'],
+        'keywords': ['什么', '怎么', '什么时候', '哪里', '为什么', '谁', '哪个', '价格', '买', '卖', '投资组合', '建议', '提醒', '帮助'],
+        'common_phrases': ['谢谢', '请', '对不起', '再见', '回头见'],
+        'responses': {
+            'greeting': '你好先生，有什么可以帮您？',
+            'price': '价格是{price}',
+            'buy': '购买订单已准备好',
+            'sell': '出售订单已准备好',
+            'portfolio': '您的投资组合在{portfolio_value}',
+            'advice': '建议是持有',
+            'alert': '提醒已设置',
+            'help': '有什么可以帮您？'
+        }
+    },
+    'ar': {
+        'name': 'Arabic',
+        'greetings': ['مرحبا', 'صباح الخير', 'مساء الخير', 'تصبح على خير', 'كيف حالك'],
+        'keywords': ['ماذا', 'كيف', 'متى', 'أين', 'لماذا', 'من', 'أي', 'سعر', 'شراء', 'بيع', 'محفظة', 'نصيحة', 'تنبيه', 'مساعدة'],
+        'common_phrases': ['شكرا', 'من فضلك', 'آسف', 'وداعا', 'إلى اللقاء'],
+        'responses': {
+            'greeting': 'مرحبا سيدي، كيف يمكنني مساعدتك؟',
+            'price': 'السعر هو {price}',
+            'buy': 'أمر الشراء جاهز',
+            'sell': 'أمر البيع جاهز',
+            'portfolio': 'محفظتك في {portfolio_value}',
+            'advice': 'نصيحتي هي الاحتفاظ',
+            'alert': 'تم تعيين التنبيه',
+            'help': 'كيف يمكنني مساعدتك؟'
+        }
+    },
+    'ru': {
+        'name': 'Russian',
+        'greetings': ['привет', 'доброе утро', 'добрый день', 'добрый вечер', 'как дела'],
+        'keywords': ['что', 'как', 'когда', 'где', 'почему', 'кто', 'какой', 'цена', 'купить', 'продать', 'портфель', 'совет', 'оповещение', 'помощь'],
+        'common_phrases': ['спасибо', 'пожалуйста', 'извините', 'до свидания', 'до встречи'],
+        'responses': {
+            'greeting': 'Здравствуйте, чем могу помочь?',
+            'price': 'Цена {price}',
+            'buy': 'Ордер на покупку готов',
+            'sell': 'Ордер на продажу готов',
+            'portfolio': 'Ваш портфель на {portfolio_value}',
+            'advice': 'Мой совет держать',
+            'alert': 'Оповещение установлено',
+            'help': 'Чем могу помочь?'
+        }
+    }
+}
+
+# Supported languages list
+SUPPORTED_LANGUAGES = list(LANGUAGE_KNOWLEDGE.keys())
+
+def detect_language_advanced(text):
+    """Advanced language detection with keyword matching"""
+    text_lower = text.lower().strip()
+    words = set(text_lower.split())
+    
+    # Check each language's keywords
+    language_scores = {}
+    for lang_code, lang_data in LANGUAGE_KNOWLEDGE.items():
+        score = 0
+        
+        # Check greetings
+        for greeting in lang_data['greetings']:
+            if greeting in text_lower:
+                score += 10
+        
+        # Check keywords
+        for keyword in lang_data['keywords']:
+            if keyword in words:
+                score += 5
+        
+        # Check common phrases
+        for phrase in lang_data['common_phrases']:
+            if phrase in text_lower:
+                score += 8
+        
+        language_scores[lang_code] = score
+    
+    # Return language with highest score, or English if no match
+    if language_scores:
+        best_lang = max(language_scores, key=language_scores.get)
+        if language_scores[best_lang] > 0:
+            return best_lang
+    
+    # Fallback to basic detection
+    return detect_language(text)
+
+def get_language_response(intent, lang_code, **kwargs):
+    """Get response in user's detected language"""
+    lang_data = LANGUAGE_KNOWLEDGE.get(lang_code, LANGUAGE_KNOWLEDGE['en'])
+    response_template = lang_data['responses'].get(intent, 'Hello sir, how can I help?')
+    
+    # Format with variables
+    try:
+        return response_template.format(**kwargs)
+    except KeyError:
+        return response_template
+
+def is_language_supported(lang_code):
+    """Check if language is supported"""
+    return lang_code in SUPPORTED_LANGUAGES
+
+def get_all_language_names():
+    """Get all supported language names"""
+    return {code: data['name'] for code, data in LANGUAGE_KNOWLEDGE.items()}
+
+# Language detection functions (keep existing ones)
+def detect_language(text):
+    """Detect language from user text"""
+    text_lower = text.lower()
+    
+    # Hinglish detection (Romanized Hindi)
+    hinglish_keywords = {'hai', 'kya', 'kaise', 'namaste', 'kar', 'raha', 'tum', 'mera', 'bhai', 'aap', 'kyu', 'nahi', 'thik', 'ho', 'ka', 'ke', 'ki', 'ko', 'se', 'mein', 'pe', 'hoon', 'rahi', 'raha', 'karu', 'dekhna', 'chahiye', 'batao', 'bolo', 'bataiye', 'karo', 'jaao', 'aao', 'dekho', 'sunno', 'samajh', 'liya', 'gaya', 'hui', 'hue', 'hain', 'hun', 'hoga', 'hogi', 'honge', 'hongi', 'tha', 'thi', 'the', 'thi', 'karunga', 'karungi', 'karega', 'karegi', 'karenge', 'karegi', 'raha', 'rahi', 'rahe', 'rahi', 'sakta', 'sakti', 'sakte', 'sakti', 'chahiye', 'chahiye', 'chahiye', 'chahiye'}
+    
+    words = set(text_lower.split())
+    overlap = words & hinglish_keywords
+    
+    if len(overlap) / max(len(words), 1) > 0.2:
+        return 'hinglish'
+    
+    # Pure Hindi detection (Devanagari script)
+    hindi_chars = set('अआइईउऊऋएऐओऔंःकखगघङचछजझञटठडढणतथदधनपफबभमयरलवशषसहञ़ािीुूेोैौंः')
+    text_chars = set(text_lower)
+    if len(text_chars & hindi_chars) > 2:
+        return 'hi'
+    
+    # Default to English
+    return 'en'
+
+def update_user_language(user_id, language_code, message_length=1):
+    """Update user language preference in database with weighted confidence"""
+    try:
+        conn = sqlite3.connect('jarvix.db')
+        cursor = conn.cursor()
+        
+        # Weight short messages lower (≤2 words = 0.3x, 3-5 words = 0.7x, 6+ words = 1.0x)
+        if message_length <= 2:
+            weight = 0.3
+        elif message_length <= 5:
+            weight = 0.7
+        else:
+            weight = 1.0
+        
+        # Check if entry exists
+        cursor.execute("SELECT confidence_score, message_count FROM user_languages WHERE user_id=? AND language_code=?", 
+                      (user_id, language_code))
+        result = cursor.fetchone()
+        
+        if result:
+            # Update existing entry
+            confidence_score, message_count = result
+            # Add weighted confidence (10-15 base * weight)
+            base_increase = 15 if message_length > 2 else 10
+            new_confidence = min(confidence_score + (base_increase * weight), 100)
+            new_count = message_count + 1
+            cursor.execute("UPDATE user_languages SET confidence_score=?, message_count=?, last_used=? WHERE user_id=? AND language_code=?",
+                          (new_confidence, new_count, datetime.now(), user_id, language_code))
+        else:
+            # Create new entry with lower starting confidence for short messages
+            start_confidence = 20 * weight
+            cursor.execute("INSERT INTO user_languages (user_id, language_code, confidence_score, message_count, last_used) VALUES (?, ?, ?, ?, ?)",
+                          (user_id, language_code, start_confidence, 1, datetime.now()))
+        
+        # Update primary language
+        cursor.execute("SELECT language_code FROM user_languages WHERE user_id=? ORDER BY confidence_score DESC LIMIT 1", (user_id,))
+        primary = cursor.fetchone()
+        if primary:
+            cursor.execute("INSERT OR REPLACE INTO user_profile (user_id, primary_language, last_updated) VALUES (?, ?, ?)",
+                          (user_id, primary[0], datetime.now()))
+        
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        print(f"[DEBUG] Language update error: {e}")
+
+def apply_language_decay(user_id):
+    """Apply confidence decay for unused languages (-1 per week)"""
+    try:
+        conn = sqlite3.connect('jarvix.db')
+        cursor = conn.cursor()
+        
+        cursor.execute("SELECT language_code, confidence_score, last_used FROM user_languages WHERE user_id=?", (user_id,))
+        results = cursor.fetchall()
+        
+        for lang_code, confidence, last_used in results:
+            if last_used:
+                last_date = datetime.fromisoformat(last_used.replace('Z', '+00:00'))
+                weeks_inactive = (datetime.now() - last_date).days // 7
+                if weeks_inactive > 0:
+                    decay = weeks_inactive * 1  # -1 per week
+                    new_confidence = max(confidence - decay, 0)
+                    cursor.execute("UPDATE user_languages SET confidence_score=? WHERE user_id=? AND language_code=?",
+                                  (new_confidence, user_id, lang_code))
+        
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        print(f"[DEBUG] Language decay error: {e}")
+
+def get_known_languages(user_id, min_confidence=30):
+    """Get list of languages user knows with confidence above threshold"""
+    try:
+        conn = sqlite3.connect('jarvix.db')
+        cursor = conn.cursor()
+        cursor.execute("SELECT language_code FROM user_languages WHERE user_id=? AND confidence_score >= ?",
+                      (user_id, min_confidence))
+        result = [row[0] for row in cursor.fetchall()]
+        conn.close()
+        return result if result else ['en']
+    except Exception as e:
+        print(f"[DEBUG] Get languages error: {e}")
+        return ['en']
 
 app = FastAPI()
 
@@ -156,7 +623,7 @@ async def post_chat(request: ChatRequest):
         # Use existing intent detection
         from packages.ai.intent import IntentClassifier
         classifier = IntentClassifier()
-        result = await classifier.classify(request.message)
+        result = classifier.classify(request.message)
         
         latency_ms = int((time.time() - start) * 1000)
         
@@ -224,52 +691,214 @@ async def post_chat(request: ChatRequest):
                 latency_ms=latency_ms,
             )
         
-        if intent == "price" and asset:
-            prices = get_live_prices()
-            asset_upper = asset.upper()
-            if asset_upper in prices:
-                p = prices[asset_upper]
-                change_emoji = "📈" if p['change'] >= 0 else "📉"
-                change_sign = "+" if p['change'] >= 0 else ""
-                message = f"Sir, {asset_upper} is trading at ${p['price']:,}. {change_emoji} {change_sign}{p['change']:.2f}% in 24h. Your portfolio remains robust at $311,342."
+        # Language detection using LLM for ALL intents
+        detected_lang = await detect_language_with_llm_async(request.message)
+        message_length = len(request.message.split())
+        update_user_language(request.user_id, detected_lang, message_length)
+        apply_language_decay(request.user_id)
+        known_langs = get_known_languages(request.user_id, min_confidence=30)
+        
+        # Check if user knows non-English languages
+        knows_hinglish = 'hinglish' in known_langs or 'hi' in known_langs
+        portfolio_value = "$311,342"  # TODO: Replace with real portfolio service call
+        
+        # Try LLM-based response generation first for ALL intents
+        llm_response = await generate_response_in_language_async(intent, request.message, portfolio_value)
+        if llm_response and llm_response != f"Sir, I understand. Your portfolio is at {portfolio_value}. How can I help?":
+            message = llm_response
+        else:
+            # Fallback to pre-written responses
+            if intent == "price" and asset:
+                prices = get_live_prices()
+                asset_upper = asset.upper()
+                if asset_upper in prices:
+                    p = prices[asset_upper]
+                    change_emoji = "📈" if p['change'] >= 0 else "📉"
+                    change_sign = "+" if p['change'] >= 0 else ""
+                    if knows_hinglish:
+                        message = f"Sir, {asset_upper} ka price ${p['price']:,} hai. {change_emoji} {change_sign}{p['change']:.2f}% 24h mein. Portfolio {portfolio_value} pe robust hai."
+                    else:
+                        message = f"Sir, {asset_upper} is trading at ${p['price']:,}. {change_emoji} {change_sign}{p['change']:.2f}% in 24h. Your portfolio remains robust at $311,342."
+                else:
+                    if knows_hinglish:
+                        message = f"Sir, {asset_upper} ka price data nahi hai. Portfolio {portfolio_value} pe robust hai."
+                    else:
+                        message = f"Sir, {asset_upper} price data not available. Your portfolio remains robust at $311,342."
+            elif intent == "price":
+                prices = get_live_prices()
+                btc = prices.get('BTC', {}).get('price', 62000)
+                message = f"Sir, BTC is at ${btc:,}. Which asset would you like the price for? Your portfolio remains robust at $311,342."
+            elif intent == "buy":
+                if asset and amount:
+                    prices = get_live_prices()
+                    asset_upper = asset.upper()
+                    current_price = prices.get(asset_upper, {}).get('price', 0)
+                    total = amount * current_price
+                    message = f"Sir, purchase order prepared for {amount} {asset_upper} at ${current_price:,} (total: ${total:,}). Shall I execute? Your portfolio remains robust at $311,342."
+                elif asset:
+                    prices = get_live_prices()
+                    asset_upper = asset.upper()
+                    current_price = prices.get(asset_upper, {}).get('price', 0)
+                    message = f"Sir, purchase order ready for {asset_upper} at ${current_price:,}. Please specify the amount. Your portfolio remains robust at $311,342."
+                else:
+                    message = f"Sir, I understand you wish to buy. Please specify the asset and amount. Your portfolio remains robust at $311,342."
+            elif intent == "sell":
+                if asset and amount:
+                    prices = get_live_prices()
+                    asset_upper = asset.upper()
+                    current_price = prices.get(asset_upper, {}).get('price', 0)
+                    total = amount * current_price
+                    message = f"Sir, sell order prepared for {amount} {asset_upper} at ${current_price:,} (total: ${total:,}). Shall I execute? Your portfolio remains robust at $311,342."
+                elif asset:
+                    prices = get_live_prices()
+                    asset_upper = asset.upper()
+                    current_price = prices.get(asset_upper, {}).get('price', 0)
+                    message = f"Sir, sell order ready for {asset_upper} at ${current_price:,}. Please specify the amount. Your portfolio remains robust at $311,342."
+                else:
+                    message = f"Sir, I understand you wish to sell. Please specify the asset and amount. Your portfolio remains robust at $311,342."
+            elif intent == "portfolio":
+                message = f"Sir, your portfolio is valued at $311,342. Top holdings: BTC 40%, ETH 30%, SOL 20%, USDC 10%. All positions healthy."
+            elif intent == "advice":
+                prices = get_live_prices()
+                if asset:
+                    asset_upper = asset.upper()
+                    p = prices.get(asset_upper, {})
+                    price = p.get('price', 0)
+                    change = p.get('change', 0)
+                    change_emoji = "📈" if change >= 0 else "📉"
+                    change_sign = "+" if change >= 0 else ""
+                    if knows_hinglish:
+                        message = f"Sir, {asset_upper} ka price ${price:,} hai. {change_emoji} {change_sign}{change:.2f}% 24h mein. Portfolio {portfolio_value} pe robust hai."
+                    else:
+                        message = f"Sir, {asset_upper} is trading at ${price:,}. {change_emoji} {change_sign}{change:.2f}% in 24h. Your portfolio remains robust at $311,342."
+                else:
+                    message = f"Sir, here are the top movers: BTC {prices.get('BTC', {}).get('change', 0):.2f}%, ETH {prices.get('ETH', {}).get('change', 0):.2f}%, SOL {prices.get('SOL', {}).get('change', 0):.2f}%. Your portfolio remains robust at $311,342."
+            elif intent == "alert":
+                if asset:
+                    asset_upper = asset.upper()
+                    message = f"Sir, alert set for {asset_upper}. I'll notify you when significant price movements occur. Your portfolio remains robust at $311,342."
+                else:
+                    message = f"Sir, alert configured. I'll monitor the market and notify you of significant movements. Your portfolio remains robust at $311,342."
+            elif intent == "emotional":
+                message = f"Sir, I understand this can be stressful. Your portfolio is at $311,342. Would you like me to show you some calming market insights or shall we review your positions?"
+            elif intent == "unknown":
+                message = f"Sir, I'm not sure I understood that correctly. Could you please rephrase? Your portfolio remains robust at $311,342."
             else:
-                message = f"Sir, {asset_upper} price data not available. Your portfolio remains robust at $311,342."
-        elif intent == "price":
-            prices = get_live_prices()
-            btc = prices.get('BTC', {}).get('price', 62000)
-            message = f"Sir, BTC is at ${btc:,}. Which asset would you like the price for? Your portfolio remains robust at $311,342."
-        elif intent == "buy":
-            if asset and amount:
-                prices = get_live_prices()
-                asset_upper = asset.upper()
-                current_price = prices.get(asset_upper, {}).get('price', 0)
-                total = amount * current_price
-                message = f"Sir, purchase order prepared for {amount} {asset_upper} at ${current_price:,} (total: ${total:,}). Shall I execute? Your portfolio remains robust at $311,342."
-            elif asset:
-                prices = get_live_prices()
-                asset_upper = asset.upper()
-                current_price = prices.get(asset_upper, {}).get('price', 0)
-                message = f"Sir, purchase order ready for {asset_upper} at ${current_price:,}. Please specify the amount. Your portfolio remains robust at $311,342."
+                message = f"Sir, I understand. Your portfolio is at {portfolio_value}. How can I help?"
+        
+        if intent == "greeting":
+            from datetime import datetime
+            import random
+            hour = datetime.now().hour
+            
+            # Detect language using LLM for ALL intents
+            detected_lang = detect_language_with_llm(request.message)
+            message_length = len(request.message.split())
+            update_user_language(request.user_id, detected_lang, message_length)
+            
+            # Apply decay for unused languages
+            apply_language_decay(request.user_id)
+            
+            # Get known languages for user with confidence tiers
+            known_langs = get_known_languages(request.user_id, min_confidence=30)
+            
+            # Get portfolio value dynamically
+            portfolio_value = "$311,342"  # TODO: Replace with real portfolio service call
+            
+            # Try LLM-based response generation first
+            llm_response = generate_response_in_language(intent, request.message, portfolio_value)
+            if llm_response and llm_response != f"Sir, I understand. Your portfolio is at {portfolio_value}. How can I help?":
+                message = llm_response
             else:
-                message = f"Sir, I understand you wish to buy. Please specify the asset and amount. Your portfolio remains robust at $311,342."
-        elif intent == "sell":
-            if asset and amount:
-                prices = get_live_prices()
-                asset_upper = asset.upper()
-                current_price = prices.get(asset_upper, {}).get('price', 0)
-                total = amount * current_price
-                message = f"Sir, sale order prepared for {amount} {asset_upper} at ${current_price:,} (total: ${total:,}). Shall I execute? Your portfolio remains robust at $311,342."
-            elif asset:
-                prices = get_live_prices()
-                asset_upper = asset.upper()
-                current_price = prices.get(asset_upper, {}).get('price', 0)
-                message = f"Sir, sale order ready for {asset_upper} at ${current_price:,}. Please specify the amount. Your portfolio remains robust at $311,342."
-            else:
-                message = f"Sir, I understand you wish to sell. Please specify the asset and amount. Your portfolio remains robust at $311,342."
-        elif intent == "portfolio":
-            message = "Sir, your portfolio is valued at $311,342, up 2.4%. You hold 100 ETH, 0.5 BTC, and 1000 SOL."
-        elif intent == "greeting":
-            message = "Good day, sir. Jarvix at your service. Your portfolio is at $311,342. How may I assist?"
+                # Fallback to pre-written pools
+                if 5 <= hour < 12:
+                    # Afternoon - professional, business-as-usual
+                    messages_english = [
+                        f"Good afternoon, sir. Jarvix at your service. Portfolio is at {portfolio_value}.",
+                        f"Afternoon, sir. Everything's steady — portfolio at {portfolio_value}.",
+                        f"Good afternoon, sir. Portfolio holding at {portfolio_value}. Any updates needed?",
+                        f"Sir, halfway through the day — portfolio's at {portfolio_value}.",
+                        f"Good afternoon! Portfolio stable at {portfolio_value}, sir.",
+                        f"Afternoon, sir. How's the day going? Portfolio at {portfolio_value}.",
+                        f"Good afternoon, sir. Quick check — portfolio's at {portfolio_value}.",
+                        f"Sir, hope lunch went well. Portfolio at {portfolio_value}.",
+                        f"Good afternoon! All systems normal, sir. Portfolio at {portfolio_value}.",
+                        f"Afternoon, sir. Portfolio steady at {portfolio_value}. What's next?"
+                    ]
+                    messages_hinglish = [
+                        f"Good afternoon sir, Jarvix ready hai. Portfolio {portfolio_value} pe hai.",
+                        f"Sir, lunch ho gaya? Portfolio {portfolio_value} pe steady hai.",
+                        f"Good afternoon sir, sab kuch normal hai. Portfolio {portfolio_value}.",
+                        f"Sir, din ka half ho gaya. Portfolio {portfolio_value} pe hai.",
+                        f"Good afternoon! Portfolio {portfolio_value} pe stable, sab theek hai.",
+                        f"Sir, energy thodi low? Portfolio {portfolio_value} pe hai, koi update?",
+                        f"Good afternoon sir, kaam kaisa chal raha hai? Portfolio {portfolio_value}.",
+                        f"Sir, afternoon break ka time? Portfolio {portfolio_value} pe hai.",
+                        f"Good afternoon! Sab smooth chal raha hai sir, portfolio {portfolio_value}.",
+                        f"Sir, half day done — portfolio {portfolio_value} pe stable hai."
+                    ]
+                elif 17 <= hour < 22:
+                    # Evening - relaxed, winding-down
+                    messages_english = [
+                        f"Good evening, sir. How was your day? Portfolio's at {portfolio_value}.",
+                        f"Evening, sir. Portfolio currently at {portfolio_value}. Anything to review?",
+                        f"Good evening! Day's winding down — portfolio at {portfolio_value}.",
+                        f"Sir, hope today went smoothly. Portfolio's at {portfolio_value}.",
+                        f"Good evening, sir. Time to relax? Portfolio at {portfolio_value}.",
+                        f"Evening, sir. Portfolio holding steady at {portfolio_value}.",
+                        f"Good evening! Let's do a quick check — portfolio's at {portfolio_value}.",
+                        f"Sir, productive day? Portfolio currently at {portfolio_value}.",
+                        f"Good evening, sir. Portfolio at {portfolio_value} — any plans for tonight?",
+                        f"Evening, sir. Wrapping up the day — portfolio's at {portfolio_value}."
+                    ]
+                    messages_hinglish = [
+                        f"Good evening sir, din kaisa raha? Portfolio {portfolio_value} pe hai.",
+                        f"Sir, evening ho gayi. Portfolio {portfolio_value}. Kuch check karna hai?",
+                        f"Good evening! Portfolio {portfolio_value} pe hai, din wrap up ho raha hai.",
+                        f"Sir, kaam khatam hone wala hai? Portfolio {portfolio_value} pe stable.",
+                        f"Good evening sir, relax mode on? Portfolio {portfolio_value} pe hai.",
+                        f"Sir, shaam ho gayi — portfolio {portfolio_value} pe khada hai.",
+                        f"Good evening! Sab settle ho raha hai, portfolio {portfolio_value}.",
+                        f"Sir, din productive raha? Portfolio {portfolio_value} pe hai abhi.",
+                        f"Good evening sir, ek baar portfolio check kar lete hain — {portfolio_value}.",
+                        f"Sir, sham ka time — portfolio {portfolio_value}, kuch plan karna hai?"
+                    ]
+                else:
+                    # Late night - caring, slightly concerned
+                    messages_english = [
+                        f"You're up late, sir. Just so you know, your portfolio is at {portfolio_value}. Anything urgent, or should this wait till morning?",
+                        f"Late night session, sir? Your portfolio is at {portfolio_value}. Markets are quieter now — what's on your mind?",
+                        f"Sir, it's quite late. Your portfolio stands at {portfolio_value}. Is this urgent, or can we tackle it fresh tomorrow?",
+                        f"Still up, sir? Portfolio's at {portfolio_value}. Anything urgent?",
+                        f"It's pretty late, sir. Portfolio's at {portfolio_value} — all good?",
+                        f"Burning the midnight oil, sir? Portfolio at {portfolio_value}.",
+                        f"Sir, Jarvix is here even at this hour. Portfolio's at {portfolio_value}.",
+                        f"Sir, maybe this can wait — portfolio's at {portfolio_value} for now.",
+                        f"Night mode active, sir. Portfolio at {portfolio_value}. How can I help?",
+                        f"Sir, the night is deep — portfolio's steady at {portfolio_value}."
+                    ]
+                    messages_hinglish = [
+                        f"Sir, raat ho gayi hai. Portfolio {portfolio_value}. Koi urgent kaam hai?",
+                        f"Itni raat ko bhi active ho sir? Portfolio {portfolio_value} pe hai abhi.",
+                        f"Sir, neend nahi aa rahi kya? Portfolio {portfolio_value} pe hai.",
+                        f"Late night ho gaya sir — portfolio {portfolio_value}, sab theek hai?",
+                        f"Sir, kaafi raat ho gayi. Portfolio {portfolio_value} pe stable hai.",
+                        f"Sir, abhi tak awake? Portfolio {portfolio_value} — kuch zaroori hai?",
+                        f"Itni raat ko Jarvix hazir hai sir. Portfolio {portfolio_value} pe hai.",
+                        f"Sir, kal subah dekh lete? Abhi portfolio {portfolio_value} pe hai.",
+                        f"Sir, night mode on hai. Portfolio {portfolio_value}, kya help chahiye?",
+                        f"Sir, raat gehri hai — portfolio {portfolio_value} pe khada hai abhi."
+                    ]
+                
+                # Select messages based on known languages
+                if 'hinglish' in known_langs or 'hi' in known_langs:
+                    # User knows Hindi/Hinglish - use mixed pool
+                    messages = messages_english + messages_hinglish
+                else:
+                    # User only knows English - use English only
+                    messages = messages_english
+                
+                message = random.choice(messages)
         elif intent == "advice":
             prices = get_live_prices()
             if asset:

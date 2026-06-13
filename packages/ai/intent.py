@@ -106,9 +106,9 @@ class IntentClassifier:
         
         return None
     
-    async def classify(self, message: str) -> Dict[str, Any]:
+    def classify(self, message: str) -> Dict[str, Any]:
         """
-        Classify user intent
+        Classify user intent (sync version)
         
         Returns:
             Dict with intent, entities, confidence, etc.
@@ -145,7 +145,7 @@ class IntentClassifier:
         
         # Step 2: LLM classification for complex cases
         if self.use_llm:
-            return await self._classify_with_llm(message)
+            return self._classify_with_llm(message)
         
         # Fallback
         return {
@@ -159,8 +159,8 @@ class IntentClassifier:
             "clarification_question": "I'm not sure what you mean. Try: 'Buy 100 ETH' or 'What's my portfolio?'"
         }
     
-    async def _classify_with_llm(self, message: str) -> Dict[str, Any]:
-        """Use LLM for intent classification"""
+    def _classify_with_llm(self, message: str) -> Dict[str, Any]:
+        """Use LLM for intent classification (sync)"""
         
         from .simple_router import simple_chat
         from .response_cleaner import clean_response
@@ -168,8 +168,8 @@ class IntentClassifier:
         prompt = f"{CLASSIFICATION_PROMPT}\n'{message}'"
         
         try:
-            # Call LLM
-            raw_response = await simple_chat(prompt)
+            # Call LLM (sync version)
+            raw_response = simple_chat(prompt)
             response_text = clean_response(raw_response)
             
             # Extract JSON from response
