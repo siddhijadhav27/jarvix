@@ -42,12 +42,11 @@ import requests
 import os
 from dotenv import load_dotenv
 
+
 async def call_groq_llm_async(messages, max_tokens=100):
     """Call GitHub Models API for LLM responses (async)"""
     try:
-        # Load .env file explicitly with override
         load_dotenv('/home/siddhi/jarvix-repo/.env', override=True)
-        # GitHub token from environment
         api_key = os.getenv('GITHUB_TOKEN')
         if not api_key:
             print("[DEBUG] No GitHub token found")
@@ -70,13 +69,13 @@ async def call_groq_llm_async(messages, max_tokens=100):
         ))
         
         if response.status_code == 200:
-            return response.json()['choices'][0]['message']['content']
+            result = response.json()
+            return result['choices'][0]['message']['content'].strip()
         else:
-            print(f"[DEBUG] GitHub Models API error: {response.status_code} - {response.text}")
+            print(f"[DEBUG] API error: {response.status_code}")
             return None
-            
     except Exception as e:
-        print(f"[DEBUG] LLM call error: {e}")
+        print(f"[DEBUG] LLM error: {e}")
         return None
 
 # Keep sync version for backward compatibility
@@ -1047,16 +1046,70 @@ def generate_template_response(intent_data, message, context_str):
     
     elif intent == "greeting":
         from datetime import datetime
+        import random
         hour = datetime.now().hour
+        
+        # 10 variations per time slot
+        MORNING_MSGS = [
+            "Good morning, sir. Your portfolio stands at $311,342. What's the plan for today?",
+            "Morning, sir. Hope you rested well — portfolio's at $311,342.",
+            "Good morning, sir. Fresh start — portfolio currently at $311,342.",
+            "Good morning sir, portfolio $311,342 pe stable hai. Aaj ka plan kya hai?",
+            "Subah ho gayi sir, portfolio $311,342 pe hai. Kuch dekhna hai?",
+            "Good morning sir. Neend poori hui? Portfolio $311,342 pe khada hai.",
+            "Sir, naya din shuru — portfolio $311,342 pe hai. Chaliye shuru karte hain.",
+            "Good morning sir! Sab fresh hai, portfolio $311,342 pe stable.",
+            "Subah ka time hai sir, portfolio $311,342. Aaj kya focus karna hai?",
+            "Good morning sir, energy high rakhiye — portfolio $311,342 pe hai."
+        ]
+        
+        AFTERNOON_MSGS = [
+            "Good afternoon, sir. Jarvix at your service. Portfolio is at $311,342.",
+            "Afternoon, sir. Everything's steady — portfolio at $311,342.",
+            "Good afternoon, sir. Portfolio holding at $311,342. Any updates needed?",
+            "Good afternoon sir, Jarvix ready hai. Portfolio $311,342 pe hai.",
+            "Sir, lunch ho gaya? Portfolio $311,342 pe steady hai.",
+            "Good afternoon sir, sab kuch normal hai. Portfolio $311,342.",
+            "Sir, din ka half ho gaya. Portfolio $311,342 pe hai.",
+            "Good afternoon! Portfolio $311,342 pe stable, sab theek hai.",
+            "Sir, energy thodi low? Portfolio $311,342 pe hai, koi update?",
+            "Good afternoon sir, kaam kaisa chal raha hai? Portfolio $311,342."
+        ]
+        
+        EVENING_MSGS = [
+            "Good evening, sir. How was your day? Portfolio's at $311,342.",
+            "Evening, sir. Portfolio currently at $311,342. Anything to review?",
+            "Good evening! Day's winding down — portfolio at $311,342.",
+            "Good evening sir, din kaisa raha? Portfolio $311,342 pe hai.",
+            "Sir, evening ho gayi. Portfolio $311,342. Kuch check karna hai?",
+            "Good evening! Portfolio $311,342 pe hai, din wrap up ho raha hai.",
+            "Sir, kaam khatam hone wala hai? Portfolio $311,342 pe stable.",
+            "Good evening sir, relax mode on? Portfolio $311,342 pe hai.",
+            "Sir, shaam ho gayi — portfolio $311,342 pe khada hai.",
+            "Good evening! Sab settle ho raha hai, portfolio $311,342."
+        ]
+        
+        LATE_NIGHT_MSGS = [
+            "Still up, sir? Portfolio's at $311,342. Anything urgent?",
+            "It's quite late, sir. Portfolio stands at $311,342 — should this wait till morning?",
+            "Sir, can't sleep? Portfolio's at $311,342.",
+            "Sir, raat ho gayi hai. Portfolio $311,342. Koi urgent kaam hai?",
+            "Itni raat ko bhi active ho sir? Portfolio $311,342 pe hai abhi.",
+            "Sir, neend nahi aa rahi kya? Portfolio $311,342 pe hai.",
+            "Late night ho gaya sir — portfolio $311,342, sab theek hai?",
+            "Sir, kaafi raat ho gayi. Portfolio $311,342 pe stable hai.",
+            "Sir, abhi tak awake? Portfolio $311,342 — kuch zaroori hai?",
+            "Itni raat ko Jarvix hazir hai sir. Portfolio $311,342 pe hai."
+        ]
+        
         if 5 <= hour < 12:
-            time_greeting = "Good morning"
+            return random.choice(MORNING_MSGS)
         elif 12 <= hour < 17:
-            time_greeting = "Good afternoon"
+            return random.choice(AFTERNOON_MSGS)
         elif 17 <= hour < 21:
-            time_greeting = "Good evening"
+            return random.choice(EVENING_MSGS)
         else:
-            time_greeting = "Good night"
-        return f"{time_greeting}, sir. Jarvix at your service. Your portfolio is at $311,342. How may I assist?"
+            return random.choice(LATE_NIGHT_MSGS)
     
     else:
         return f"Sir, I understand. Your portfolio is at $311,342. How can I help?"
