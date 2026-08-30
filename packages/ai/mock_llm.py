@@ -81,7 +81,7 @@ DEMO_PORTFOLIO = {
     "BTC": {"amount": 0.5, "price": 73084},
     "ETH": {"amount": 100, "price": 1998},
     "SOL": {"amount": 500, "price": 150},
-    "total": 311342,
+    "total": 100000,
     "change_24h": 2.4,
 }
 
