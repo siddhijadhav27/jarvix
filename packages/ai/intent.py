@@ -107,6 +107,221 @@ def _get_ist_time_bucket() -> str:
     else:  # 12:00 AM - 4:59 AM — could be a night-shift user, default to morning
         return "morning"
 
+def _get_real_time_period_and_display() -> tuple:
+    """The ACTUAL current period (unlike _get_ist_time_bucket, this one can
+    genuinely say 'night') plus a human-readable time string, used only to
+    detect and gently call out a mismatch between what the user claimed
+    ('good morning') and the real clock -- not for picking response tone."""
+    now = datetime.now(IST)
+    hour = now.hour
+    if 5 <= hour < 12:
+        period = "morning"
+    elif 12 <= hour < 17:
+        period = "afternoon"
+    elif 17 <= hour < 22:  # up to 10pm still reads as "evening" colloquially
+        period = "evening"
+    else:
+        period = "night"
+    time_str = now.strftime("%I:%M %p").lstrip("0")
+    return period, time_str
+
+PERIOD_LABELS = {
+    "en": {"morning": "morning", "afternoon": "afternoon", "evening": "evening", "night": "night"},
+    "hi": {"morning": "सुबह", "afternoon": "दोपहर", "evening": "शाम", "night": "रात"},
+    "hi-en": {"morning": "subah", "afternoon": "dopahar", "evening": "shaam", "night": "raat"},
+    "es": {"morning": "mañana", "afternoon": "tarde", "evening": "tarde", "night": "noche"},
+    "fr": {"morning": "matin", "afternoon": "après-midi", "evening": "soir", "night": "nuit"},
+    "de": {"morning": "Morgen", "afternoon": "Nachmittag", "evening": "Abend", "night": "Nacht"},
+    "ja": {"morning": "朝", "afternoon": "昼", "evening": "夕方", "night": "夜"},
+}
+
+def _period_label(period: str, language: str) -> str:
+    return PERIOD_LABELS.get(language, PERIOD_LABELS["en"]).get(period, period)
+
+# Per-user tracking of how many times in a row they've insisted on a greeting
+# category that doesn't match the real clock -- see _check_greeting_mismatch.
+_greeting_mismatch_state: Dict[str, dict] = {}
+
+# {real_period}/{stated_period} get the localized period word, {time} the clock string.
+GREETING_MISMATCH_CORRECTION = {
+    "en": {
+        "stage1": [
+            "Sir, small correction — it's actually {real_period} right now ({time}), not {stated_period}.",
+            "Hold on, sir — my clock says {real_period} ({time}), not {stated_period}. Everything alright?",
+            "Sir, I hate to be that assistant, but it's {real_period} ({time}), not {stated_period}.",
+            "A gentle nudge, sir: it's {time}, which makes it {real_period}, not {stated_period}.",
+        ],
+        "stage2": [
+            "Sir, we've been over this — it's still {real_period} ({time}). Are you testing me?",
+            "I'll say it again, sir: {real_period}, not {stated_period}. The clock hasn't changed its mind.",
+            "Sir, {stated_period} again? It's {time} — that's very much {real_period}.",
+            "Persistent, aren't we, sir? Still {real_period} at {time}.",
+        ],
+        "stage3": [
+            "Alright, sir, you win — {stated_period} it is, if you insist. Though it's {time}, which I'd call {real_period}, just for the record.",
+            "Fine, sir, {stated_period} it shall be. Noting for posterity that the actual time is {time} ({real_period}).",
+            "Very well, sir — {stated_period}, as you say. Purely coincidentally, it's {time} right now.",
+            "Sir, I'll play along — {stated_period} confirmed. Though {time} does suggest {real_period}, in case that was a slip.",
+        ],
+    },
+    "hi": {
+        "stage1": [
+            "सर, छोटी सी गलती — अभी असल में {real_period} है ({time}), {stated_period} नहीं।",
+            "रुकिए सर — मेरी घड़ी {real_period} बता रही है ({time}), {stated_period} नहीं। सब ठीक है ना?",
+            "सर, बताना पड़ रहा है — अभी {real_period} है ({time}), {stated_period} नहीं।",
+            "सर, {time} हो रहे हैं, यानी अभी {real_period} है, {stated_period} नहीं।",
+        ],
+        "stage2": [
+            "सर, ये तो हम पहले भी बात कर चुके हैं — अभी भी {real_period} ही है ({time})।",
+            "फिर से बता देता हूं सर — {real_period}, {stated_period} नहीं। घड़ी नहीं बदली।",
+            "सर, फिर से {stated_period}? अभी {time} है — यानी {real_period}।",
+            "जिद्दी हैं आप सर — {time} पे अभी भी {real_period} ही है।",
+        ],
+        "stage3": [
+            "ठीक है सर, आपकी जीत — {stated_period} ही मान लेते हैं। बस रिकॉर्ड के लिए, अभी {time} हैं, यानी {real_period}।",
+            "चलिए सर, {stated_period} ही सही। बस इतना बता दूं, अभी असल समय {time} है ({real_period})।",
+            "जैसा आप कहें सर — {stated_period}। बस संयोग से अभी {time} हो रहे हैं।",
+            "सर, मान लेता हूं — {stated_period} confirm। बस {time} dekh ke lagta hai {real_period} hai, shayad galti se bola ho।",
+        ],
+    },
+    "hi-en": {
+        "stage1": [
+            "Sir, chhoti si correction — abhi actually {real_period} hai ({time}), {stated_period} nahi.",
+            "Ruko sir — mera clock {real_period} bata raha hai ({time}), {stated_period} nahi. Sab theek hai na?",
+            "Sir, batana pad raha hai — abhi {real_period} hai ({time}), {stated_period} nahi.",
+            "Sir, {time} ho rahe hain, matlab abhi {real_period} hai, {stated_period} nahi.",
+        ],
+        "stage2": [
+            "Sir, ye baat pehle bhi ho chuki hai — abhi bhi {real_period} hi hai ({time}).",
+            "Phir se bata deta hoon sir — {real_period}, {stated_period} nahi. Clock nahi badla.",
+            "Sir, phir se {stated_period}? Abhi {time} hai — matlab {real_period}.",
+            "Zidd kar rahe ho sir — {time} pe abhi bhi {real_period} hi hai.",
+        ],
+        "stage3": [
+            "Theek hai sir, aapki jeet — {stated_period} hi maan lete hain. Bas record ke liye, abhi {time} hain, matlab {real_period}.",
+            "Chaliye sir, {stated_period} hi sahi. Bas itna bata doon, abhi asal time {time} hai ({real_period}).",
+            "Jaisa aap kahein sir — {stated_period}. Bas coincidentally abhi {time} ho rahe hain.",
+            "Sir, maan leta hoon — {stated_period} confirm. Bas {time} dekh ke lagta hai {real_period} hai, shayad galti se bola ho.",
+        ],
+    },
+    "es": {
+        "stage1": [
+            "Señor, pequeña corrección — en realidad es {real_period} ahora mismo ({time}), no {stated_period}.",
+            "Un momento, señor — mi reloj dice {real_period} ({time}), no {stated_period}. ¿Todo bien?",
+            "Señor, no quiero ser pesado, pero es {real_period} ({time}), no {stated_period}.",
+            "Un pequeño aviso, señor: son las {time}, o sea que es {real_period}, no {stated_period}.",
+        ],
+        "stage2": [
+            "Señor, ya hablamos de esto — sigue siendo {real_period} ({time}). ¿Me está probando?",
+            "Lo repito, señor: {real_period}, no {stated_period}. El reloj no ha cambiado de opinión.",
+            "Señor, ¿{stated_period} otra vez? Son las {time} — eso es {real_period}.",
+            "Qué insistente, señor — sigue siendo {real_period} a las {time}.",
+        ],
+        "stage3": [
+            "Está bien, señor, usted gana — {stated_period}, si insiste. Aunque son las {time}, que yo llamaría {real_period}, para que conste.",
+            "De acuerdo, señor, {stated_period} será. Anotando para la posteridad que la hora real es {time} ({real_period}).",
+            "Muy bien, señor — {stated_period}, como usted diga. Casualmente, son las {time} en este momento.",
+            "Señor, le sigo la corriente — {stated_period} confirmado. Aunque las {time} sugieren {real_period}, por si fue un desliz.",
+        ],
+    },
+    "fr": {
+        "stage1": [
+            "Monsieur, petite correction — il est en fait {real_period} en ce moment ({time}), pas {stated_period}.",
+            "Attendez, monsieur — mon horloge indique {real_period} ({time}), pas {stated_period}. Tout va bien ?",
+            "Monsieur, je n'aime pas être cet assistant, mais il est {real_period} ({time}), pas {stated_period}.",
+            "Un petit rappel, monsieur : il est {time}, ce qui fait {real_period}, pas {stated_period}.",
+        ],
+        "stage2": [
+            "Monsieur, on en a déjà parlé — il est toujours {real_period} ({time}). Vous me testez ?",
+            "Je le répète, monsieur : {real_period}, pas {stated_period}. L'horloge n'a pas changé d'avis.",
+            "Monsieur, {stated_period} encore ? Il est {time} — c'est bien {real_period}.",
+            "Persévérant, monsieur — toujours {real_period} à {time}.",
+        ],
+        "stage3": [
+            "Très bien, monsieur, vous gagnez — {stated_period}, si vous insistez. Bien qu'il soit {time}, ce que j'appellerais {real_period}, pour mémoire.",
+            "D'accord, monsieur, ce sera {stated_period}. Je note pour la postérité que l'heure réelle est {time} ({real_period}).",
+            "Très bien, monsieur — {stated_period}, comme vous voulez. Par pure coïncidence, il est {time} en ce moment.",
+            "Monsieur, je joue le jeu — {stated_period} confirmé. Bien que {time} suggère {real_period}, au cas où ce serait un lapsus.",
+        ],
+    },
+    "de": {
+        "stage1": [
+            "Mein Herr, kleine Korrektur — es ist gerade tatsächlich {real_period} ({time}), nicht {stated_period}.",
+            "Moment, mein Herr — meine Uhr sagt {real_period} ({time}), nicht {stated_period}. Alles in Ordnung?",
+            "Mein Herr, ich will nicht kleinlich sein, aber es ist {real_period} ({time}), nicht {stated_period}.",
+            "Ein kleiner Hinweis, mein Herr: es ist {time}, das macht es {real_period}, nicht {stated_period}.",
+        ],
+        "stage2": [
+            "Mein Herr, das hatten wir schon — es ist immer noch {real_period} ({time}). Testen Sie mich?",
+            "Ich sage es nochmal, mein Herr: {real_period}, nicht {stated_period}. Die Uhr hat sich nicht geändert.",
+            "Mein Herr, schon wieder {stated_period}? Es ist {time} — das ist eindeutig {real_period}.",
+            "Hartnäckig, mein Herr — immer noch {real_period} um {time}.",
+        ],
+        "stage3": [
+            "Gut, mein Herr, Sie gewinnen — {stated_period}, wenn Sie darauf bestehen. Es ist zwar {time}, was ich {real_period} nennen würde, nur damit es vermerkt ist.",
+            "In Ordnung, mein Herr, dann eben {stated_period}. Für die Nachwelt vermerkt: die tatsächliche Zeit ist {time} ({real_period}).",
+            "Sehr wohl, mein Herr — {stated_period}, wie Sie wünschen. Rein zufällig ist es gerade {time}.",
+            "Mein Herr, ich spiele mit — {stated_period} bestätigt. Auch wenn {time} eher auf {real_period} hindeutet, falls das ein Versehen war.",
+        ],
+    },
+    "ja": {
+        "stage1": [
+            "失礼ですが、今は{stated_period}ではなく{real_period}です（{time}）。",
+            "少々お待ちを — 時計では{real_period}です（{time}）、{stated_period}ではありません。大丈夫ですか？",
+            "申し上げにくいのですが、今は{real_period}です（{time}）、{stated_period}ではありません。",
+            "念のため — 今は{time}、つまり{real_period}です、{stated_period}ではありません。",
+        ],
+        "stage2": [
+            "さっきも申し上げましたが — まだ{real_period}です（{time}）。試されているのでしょうか？",
+            "もう一度申し上げます — {real_period}です、{stated_period}ではありません。時計は変わっていません。",
+            "また{stated_period}ですか？今は{time}、つまり{real_period}です。",
+            "しつこいですね — {time}の今もまだ{real_period}です。",
+        ],
+        "stage3": [
+            "わかりました、{stated_period}ということにしましょう。ただ念のため、実際は{time}で{real_period}です。",
+            "了解しました、{stated_period}にいたします。記録のため、実際の時刻は{time}（{real_period}）です。",
+            "承知しました — {stated_period}、おっしゃる通りに。ちなみに今はちょうど{time}です。",
+            "お付き合いします — {stated_period}で確定です。ただ{time}を見ると{real_period}のようですが、言い間違いかもしれません。",
+        ],
+    },
+}
+
+def _check_greeting_mismatch(stated_category: str, user_id: str, language: str) -> Optional[str]:
+    """If the user's stated greeting category doesn't match the real clock,
+    play along with a light correction for the first two tries, then accept
+    it with a wink on the third -- after that, this category is "accepted"
+    for this user and behaves like the original backlog #1 rule (their
+    words win, no more correcting)."""
+    real_period, time_str = _get_real_time_period_and_display()
+
+    if stated_category == real_period:
+        _greeting_mismatch_state.pop(user_id, None)
+        return None
+
+    state = _greeting_mismatch_state.get(user_id)
+    if state and state["category"] == stated_category:
+        if state.get("accepted"):
+            return None
+        count = state["count"] + 1
+    else:
+        count = 1
+
+    _greeting_mismatch_state[user_id] = {
+        "category": stated_category,
+        "count": count,
+        "accepted": count >= 3,
+    }
+
+    templates = GREETING_MISMATCH_CORRECTION.get(language, GREETING_MISMATCH_CORRECTION["en"])
+    stage_key = f"stage{min(count, 3)}"
+    pool = templates.get(stage_key, templates["stage1"])
+    msg_template = random.choice(pool)
+    return msg_template.format(
+        real_period=_period_label(real_period, language),
+        stated_period=_period_label(stated_category, language),
+        time=time_str,
+    )
+
 # Tracks the last greeting shown per (user, language, category) so the same
 # line doesn't repeat back-to-back. Module-level because IntentClassifier is
 # re-instantiated on every request (see main.py post_chat).
@@ -1163,7 +1378,16 @@ class IntentClassifier:
     
     def _get_greeting_response(self, message: str, language: str, user_id: str = "anonymous", portfolio_value: Optional[float] = None) -> str:
         """Time-aware greeting. The user's own words always win over the clock —
-        Jarvix never assumes 'good night' from time alone (backlog #1)."""
+        Jarvix never assumes 'good night' from time alone (backlog #1) — but if
+        they claim a category that flatly contradicts the real clock (e.g. "good
+        morning" at 9pm), Jarvix gently, playfully corrects them for two tries
+        before accepting it on the third (see _check_greeting_mismatch)."""
+        explicit_category = _detect_explicit_greeting_category(message, language)
+        if explicit_category:
+            correction = _check_greeting_mismatch(explicit_category, user_id, language)
+            if correction is not None:
+                return correction
+
         now = time.time()
         last_greet_time = _last_greeting_time.get(user_id)
         is_repeat_greeting = last_greet_time is not None and (now - last_greet_time) < REPEAT_GREETING_WINDOW_SECONDS
@@ -1178,7 +1402,7 @@ class IntentClassifier:
             _last_greeting_shown[key] = choice
             return choice
 
-        category = _detect_explicit_greeting_category(message, language) or _get_ist_time_bucket()
+        category = explicit_category or _get_ist_time_bucket()
         lang_templates = GREETING_TEMPLATES.get(language, GREETING_TEMPLATES["en"])
         options = lang_templates.get(category, lang_templates["morning"])
 
