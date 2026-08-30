@@ -555,6 +555,157 @@ PORTFOLIO_STATUS_REMARK = {
     },
 }
 
+# "kaise ho"/"how are you" is a direct question embedded in the greeting --
+# it deserves a real, situational (portfolio-aware) answer, not the generic
+# time-of-day template or the short repeat-greeting shortcut. Checked before
+# both of those. Not time-differentiated (answering "how are you" isn't a
+# claim about the clock the way "good morning" is).
+WELLBEING_CHECK_PATTERN = {
+    "en": r"how('re| are)? you|how('s| is) it going|how you doing|how ya doing|i'?m fine",
+    "hi": r"कैसे हो|कैसी हो|कैसे हैं|क्या हाल",
+    "hi-en": r"kaise ho|kaisi ho|kaise hain|kya haal|kya chal raha",
+    "es": r"c[oó]mo est[aá]s?|qu[eé] tal",
+    "fr": r"[cç]a va|comment (allez-vous|vas-tu)",
+    "de": r"wie geht('s| es)",
+    "ja": r"元気です?か|お元気",
+}
+
+def _is_wellbeing_check(message: str, language: str) -> bool:
+    pattern = WELLBEING_CHECK_PATTERN.get(language, WELLBEING_CHECK_PATTERN["en"])
+    return bool(re.search(pattern, (message or "").lower(), re.IGNORECASE))
+
+# {value} = current portfolio value, formatted. Tiered the same way as
+# PORTFOLIO_STATUS_REMARK, but self-contained (opener + status + turning the
+# question back) since these read as one full sentence, not an append-on.
+WELLBEING_RESPONSE = {
+    "en": {
+        "up": [
+            "I'm running smoothly, sir — and the portfolio's doing even better, up nicely at {value}. How about you?",
+            "All systems nominal, sir. Portfolio's growing too, sitting pretty at {value}. And yourself?",
+        ],
+        "flat": [
+            "Can't complain, sir — portfolio's holding steady at {value}. What about you?",
+            "Doing fine, sir, much like the portfolio — steady at {value}. How are you holding up?",
+        ],
+        "down": [
+            "I'm well, sir, though the portfolio's had a rougher day at {value} — nothing to worry about. How about you?",
+            "Fully operational, sir. Portfolio's dipped a bit to {value}, but no cause for concern. And you?",
+        ],
+        "down_bad": [
+            "I'm fine, sir, though I won't sugarcoat it — the portfolio's taken quite a hit today, down to {value}. I'm on it. How are you holding up?",
+            "All good on my end, sir. The portfolio, less so — {value}, a tough day. Still, nothing to panic about. What about yourself?",
+        ],
+    },
+    "hi": {
+        "up": [
+            "मैं बढ़िया हूं सर — पोर्टफोलियो भी अच्छा चल रहा है, {value} पर, बढ़त के साथ। आप सुनाइए?",
+            "सब सिस्टम ठीक हैं सर। पोर्टफोलियो भी बढ़िया है, {value} पर। आप कैसे हैं?",
+        ],
+        "flat": [
+            "ठीक हूं सर — पोर्टफोलियो {value} पर स्थिर है। आप बताइए?",
+            "बढ़िया हूं सर, पोर्टफोलियो की तरह ही स्थिर — {value} पर। आप कैसे हैं?",
+        ],
+        "down": [
+            "ठीक हूं सर, बस पोर्टफोलियो का दिन थोड़ा मुश्किल रहा — {value} पर। चिंता की बात नहीं। आप कैसे हैं?",
+            "सब ठीक है सर। पोर्टफोलियो थोड़ा नीचे है, {value} पर, पर घबराने की बात नहीं। आप सुनाइए?",
+        ],
+        "down_bad": [
+            "मैं ठीक हूं सर, पर सच कहूं तो पोर्टफोलियो का आज बुरा दिन रहा — {value} पर आ गया। मैं संभाल रहा हूं। आप कैसे हैं?",
+            "मेरी तरफ से सब ठीक है सर। पोर्टफोलियो का नहीं — {value}, मुश्किल दिन। पर घबराने की ज़रूरत नहीं। आप बताइए?",
+        ],
+    },
+    "hi-en": {
+        "up": [
+            "Main badhiya hoon sir — portfolio bhi accha chal raha hai, {value} pe, growth ke saath. Aap sunaiye?",
+            "Sab systems theek hain sir. Portfolio bhi accha hai, {value} pe. Aap kaise hain?",
+        ],
+        "flat": [
+            "Theek hoon sir — portfolio {value} pe stable hai. Aap batao?",
+            "Badhiya hoon sir, portfolio ki tarah hi stable — {value} pe. Aap kaise ho?",
+        ],
+        "down": [
+            "Theek hoon sir, bas portfolio ka din thoda mushkil raha — {value} pe. Chinta ki baat nahi. Aap kaise ho?",
+            "Sab theek hai sir. Portfolio thoda neeche hai, {value} pe, par ghabrane ki baat nahi. Aap sunaiye?",
+        ],
+        "down_bad": [
+            "Main theek hoon sir, par sach kahu to portfolio ka aaj bura din raha — {value} pe aa gaya. Main sambhal raha hoon. Aap kaise ho?",
+            "Meri taraf se sab theek hai sir. Portfolio ka nahi — {value}, mushkil din. Par ghabrane ki zaroorat nahi. Aap batao?",
+        ],
+    },
+    "es": {
+        "up": [
+            "Estoy bien, señor — y la cartera va aún mejor, subiendo a {value}. ¿Y usted?",
+            "Todo en orden, señor. La cartera también crece, en {value}. ¿Y usted, cómo está?",
+        ],
+        "flat": [
+            "No me quejo, señor — la cartera sigue estable en {value}. ¿Y usted?",
+            "Bien, señor, igual que la cartera — estable en {value}. ¿Cómo sigue usted?",
+        ],
+        "down": [
+            "Bien, señor, aunque la cartera ha tenido un día difícil, en {value} — nada de qué preocuparse. ¿Y usted?",
+            "Todo funcionando, señor. La cartera bajó un poco a {value}, pero sin motivo de alarma. ¿Y usted?",
+        ],
+        "down_bad": [
+            "Bien, señor, aunque no se lo voy a endulzar — la cartera tuvo un mal día, cayendo a {value}. Estoy en ello. ¿Cómo está usted?",
+            "Por mi parte todo bien, señor. La cartera, no tanto — {value}, día difícil. Aun así, sin pánico. ¿Y usted?",
+        ],
+    },
+    "fr": {
+        "up": [
+            "Je vais bien, monsieur — et le portefeuille encore mieux, en hausse à {value}. Et vous ?",
+            "Tout va bien, monsieur. Le portefeuille progresse aussi, à {value}. Et vous, comment allez-vous ?",
+        ],
+        "flat": [
+            "Je ne me plains pas, monsieur — le portefeuille reste stable à {value}. Et vous ?",
+            "Ça va, monsieur, comme le portefeuille — stable à {value}. Et vous, comment ça va ?",
+        ],
+        "down": [
+            "Je vais bien, monsieur, même si le portefeuille a eu une journée difficile, à {value} — rien d'inquiétant. Et vous ?",
+            "Tout fonctionne, monsieur. Le portefeuille a un peu baissé à {value}, mais pas de quoi s'alarmer. Et vous ?",
+        ],
+        "down_bad": [
+            "Je vais bien, monsieur, mais je ne vais pas enjoliver — le portefeuille a eu une mauvaise journée, à {value}. Je m'en occupe. Et vous, comment allez-vous ?",
+            "De mon côté tout va bien, monsieur. Le portefeuille, moins — {value}, journée difficile. Mais pas de panique. Et vous ?",
+        ],
+    },
+    "de": {
+        "up": [
+            "Mir geht's gut, mein Herr — dem Portfolio sogar noch besser, im Plus bei {value}. Und Ihnen?",
+            "Alles läuft rund, mein Herr. Das Portfolio wächst auch, bei {value}. Und wie geht es Ihnen?",
+        ],
+        "flat": [
+            "Kann nicht klagen, mein Herr — das Portfolio bleibt stabil bei {value}. Und Ihnen?",
+            "Mir geht's gut, mein Herr, genau wie dem Portfolio — stabil bei {value}. Wie geht es Ihnen?",
+        ],
+        "down": [
+            "Mir geht's gut, mein Herr, auch wenn das Portfolio einen schwierigeren Tag hatte, bei {value} — kein Grund zur Sorge. Und Ihnen?",
+            "Alles funktioniert, mein Herr. Das Portfolio ist etwas gefallen, auf {value}, aber kein Grund zur Beunruhigung. Und Ihnen?",
+        ],
+        "down_bad": [
+            "Mir geht's gut, mein Herr, auch wenn ich es nicht beschönigen will — das Portfolio hatte einen schlechten Tag, gefallen auf {value}. Ich kümmere mich darum. Wie geht es Ihnen?",
+            "Mir persönlich geht es gut, mein Herr. Dem Portfolio weniger — {value}, ein schwieriger Tag. Aber kein Grund zur Panik. Und Ihnen?",
+        ],
+    },
+    "ja": {
+        "up": [
+            "私は元気です、そしてポートフォリオはさらに好調で{value}まで上昇しています。あなたはいかがですか？",
+            "すべて順調です。ポートフォリオも成長していて{value}です。ご自身はいかがですか？",
+        ],
+        "flat": [
+            "問題ありません、ポートフォリオも{value}で安定しています。あなたはいかがですか？",
+            "元気です、ポートフォリオ同様に安定していて{value}です。調子はどうですか？",
+        ],
+        "down": [
+            "元気です、ただポートフォリオは今日少し厳しく{value}でした — 心配はいりません。あなたはいかがですか？",
+            "すべて正常に動いています。ポートフォリオは少し下がって{value}ですが、心配するほどではありません。あなたは？",
+        ],
+        "down_bad": [
+            "元気です、ただ正直に言うと今日はポートフォリオにとって厳しい日で{value}まで下がりました。対応していますのでご安心を。あなたはいかがですか？",
+            "私自身は問題ありません。ポートフォリオの方は — {value}、厳しい一日でした。それでもパニックになる必要はありません。あなたは？",
+        ],
+    },
+}
+
 REPEAT_GREETING_TEMPLATES = {
     "en": [
         "Yes, sir?", "Go ahead, sir.", "Listening, sir.", "How can I help, sir?",
@@ -1624,6 +1775,12 @@ class IntentClassifier:
         they claim a category that flatly contradicts the real clock (e.g. "good
         morning" at 9pm), Jarvix gently, playfully corrects them for two tries
         before accepting it on the third (see _check_greeting_mismatch)."""
+        if _is_wellbeing_check(message, language):
+            tier = _portfolio_status_tier(portfolio_change_pct) if portfolio_change_pct is not None else "flat"
+            pool = WELLBEING_RESPONSE.get(language, WELLBEING_RESPONSE["en"])[tier]
+            value_str = f"${portfolio_value:,.0f}" if portfolio_value is not None else "—"
+            return random.choice(pool).format(value=value_str)
+
         explicit_category = _detect_explicit_greeting_category(message, language)
         if explicit_category:
             correction = _check_greeting_mismatch(explicit_category, user_id, language)
