@@ -61,10 +61,10 @@ async def main():
                 detected = f"EXCEPTION: {e}"
 
             # Groq's free tier caps at 8000 tokens/minute (confirmed via the
-            # x-ratelimit-limit-tokens response header) -- the classification
-            # prompt alone is ~530 tokens, so ~5s between calls keeps total
-            # usage safely under that per-minute budget.
-            await asyncio.sleep(5.0)
+            # x-ratelimit-limit-tokens response header). The classification
+            # prompt is ~774 tokens plus ~90 completion tokens per call, so
+            # 7s between calls keeps total usage safely under that budget.
+            await asyncio.sleep(7.0)
 
             results[expected_intent]["total"] += 1
             if detected == expected_intent:
