@@ -150,7 +150,7 @@ async def post_chat(request: ChatRequest):
         # Use hybrid intent detection
         from ai.intent import IntentClassifier
         classifier = IntentClassifier()
-        result = await classifier.detect_intent_hybrid(request.message, user_id=request.user_id, portfolio_value=get_portfolio_value())
+        result = await classifier.detect_intent_hybrid(request.message, user_id=request.user_id, portfolio_value=get_portfolio_value(), portfolio_change_pct=get_portfolio_change_pct())
         
         latency_ms = int((time.time() - start) * 1000)
         
@@ -238,10 +238,16 @@ def get_live_prices():
 # Template responses for simple commands (no LLM needed)
 # Portfolio value - single source of truth
 PORTFOLIO_VALUE = 100000.00
+PORTFOLIO_CHANGE_PCT = 2.4  # matches DEMO_PORTFOLIO.change_pct -- same single source of truth
 
 def get_portfolio_value():
     """Get current portfolio value (demo mode)"""
     return PORTFOLIO_VALUE
+
+def get_portfolio_change_pct():
+    """Get current portfolio change % (demo mode) -- used to pick a
+    reassuring vs concern-acknowledging tone in greetings"""
+    return PORTFOLIO_CHANGE_PCT
 
 def generate_template_response(intent_data, message, context_str, prices=None):
     """Generate template response for simple commands"""

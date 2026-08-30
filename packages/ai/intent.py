@@ -353,6 +353,208 @@ PORTFOLIO_SUFFIX = {
     "ja": " ポートフォリオは{value}。",
 }
 
+def _portfolio_status_tier(change_pct: float) -> str:
+    """Which reassurance/concern tier a portfolio move falls into -- used to
+    make the greeting sound like it actually knows what's going on, not just
+    reciting a number. Siddhi's request: night greeting especially should
+    reassure ("sab control me hai") when things are fine, or acknowledge
+    concern (without panicking the user) when they're genuinely not."""
+    if change_pct >= 1.0:
+        return "up"
+    elif change_pct > -1.0:
+        return "flat"
+    elif change_pct >= -10.0:
+        return "down"
+    else:
+        return "down_bad"
+
+# Appended right after the portfolio value, tone-matched to how the
+# portfolio's actually doing rather than a flat "up 2.4%" recitation.
+PORTFOLIO_STATUS_REMARK = {
+    "en": {
+        "up": [
+            " Growing nicely, sir — nothing to worry about.",
+            " Trending up, sir. All clear.",
+            " Green across the board, sir.",
+            " Things are looking good, sir.",
+        ],
+        "flat": [
+            " Holding steady, sir — nothing alarming.",
+            " Nice and stable, sir.",
+            " Steady as she goes, sir.",
+            " All quiet on that front, sir.",
+        ],
+        "down": [
+            " A bit rough today, sir, but nothing outside normal swings.",
+            " Down for now, sir — I wouldn't lose sleep over it.",
+            " Rough patch, sir, but markets recover. Try not to worry.",
+            " A dip, sir, nothing more. Everything's under control.",
+        ],
+        "down_bad": [
+            " It's been a hard day, sir — down sharply, but I'm watching closely.",
+            " Sir, I won't sugarcoat it — today stung. Still, no need to panic; I'm on it.",
+            " A tough session, sir. Worth keeping an eye on, but no cause to spiral.",
+            " Sir, it's rough out there today. I'm on top of it — try to rest easy regardless.",
+        ],
+    },
+    "hi": {
+        "up": [
+            " अच्छी बढ़त है सर, चिंता की कोई बात नहीं।",
+            " ऊपर जा रहा है सर, सब ठीक है।",
+            " हर तरफ हरा ही हरा है सर।",
+            " सब कुछ अच्छा लग रहा है सर।",
+        ],
+        "flat": [
+            " स्थिर है सर, कुछ भी चिंताजनक नहीं।",
+            " सब शांत है सर।",
+            " ठीक-ठाक चल रहा है सर।",
+            " कोई हलचल नहीं है सर।",
+        ],
+        "down": [
+            " आज थोड़ा उतार है सर, पर सामान्य ही है।",
+            " अभी नीचे है सर, इसकी चिंता मत कीजिए।",
+            " थोड़ी मुश्किल है सर, पर बाज़ार वापस आता है। परेशान मत होइए।",
+            " बस एक गिरावट है सर, और कुछ नहीं। सब नियंत्रण में है।",
+        ],
+        "down_bad": [
+            " आज मुश्किल दिन था सर — काफी गिरावट है, पर मैं नज़र रखे हूं।",
+            " सर, सच बताऊं तो आज तकलीफ हुई। फिर भी घबराने की बात नहीं, मैं देख रहा हूं।",
+            " कठिन सत्र रहा सर। नज़र रखनी होगी, पर परेशान होने की ज़रूरत नहीं।",
+            " सर, आज हालात मुश्किल हैं। मैं संभाल रहा हूं — आप आराम कीजिए।",
+        ],
+    },
+    "hi-en": {
+        "up": [
+            " Accha growth hai sir, chinta ki koi baat nahi.",
+            " Upar ja raha hai sir, sab theek hai.",
+            " Sab green hai sir.",
+            " Sab kuch accha lag raha hai sir.",
+        ],
+        "flat": [
+            " Stable hai sir, kuch bhi chintajanak nahi.",
+            " Sab shaant hai sir.",
+            " Theek-thaak chal raha hai sir.",
+            " Koi halchal nahi hai sir.",
+        ],
+        "down": [
+            " Aaj thoda down hai sir, par normal hi hai.",
+            " Abhi neeche hai sir, iski chinta mat kijiye.",
+            " Thodi mushkil hai sir, par market wapas aata hai. Pareshan mat hoiye.",
+            " Bas ek dip hai sir, aur kuch nahi. Sab control mein hai.",
+        ],
+        "down_bad": [
+            " Aaj mushkil din tha sir — kaafi giravat hai, par main nazar rakhe hoon.",
+            " Sir, sach batau to aaj takleef hui. Phir bhi ghabrane ki baat nahi, main dekh raha hoon.",
+            " Kathin session raha sir. Nazar rakhni hogi, par pareshan hone ki zaroorat nahi.",
+            " Sir, aaj halaat mushkil hain. Main sambhal raha hoon — aap aaram kijiye.",
+        ],
+    },
+    "es": {
+        "up": [
+            " Creciendo bien, señor — nada de qué preocuparse.",
+            " Tendencia al alza, señor. Todo despejado.",
+            " Todo en verde, señor.",
+            " Las cosas van bien, señor.",
+        ],
+        "flat": [
+            " Estable, señor — nada alarmante.",
+            " Todo tranquilo, señor.",
+            " Firme y sereno, señor.",
+            " Todo en calma por ese lado, señor.",
+        ],
+        "down": [
+            " Un poco difícil hoy, señor, pero dentro de lo normal.",
+            " Bajo por ahora, señor — no perdería el sueño por eso.",
+            " Momento complicado, señor, pero el mercado se recupera. No se preocupe.",
+            " Solo una caída, señor, nada más. Todo bajo control.",
+        ],
+        "down_bad": [
+            " Ha sido un día duro, señor — bajó bastante, pero lo estoy vigilando de cerca.",
+            " Señor, no se lo voy a endulzar — hoy dolió. Aun así, sin pánico; estoy en ello.",
+            " Sesión difícil, señor. Vale la pena vigilarlo, pero sin motivo para alarmarse.",
+            " Señor, el día ha sido complicado. Yo me encargo — descanse tranquilo de todas formas.",
+        ],
+    },
+    "fr": {
+        "up": [
+            " En bonne progression, monsieur — rien à craindre.",
+            " Tendance à la hausse, monsieur. Tout va bien.",
+            " Tout est au vert, monsieur.",
+            " Les choses vont bien, monsieur.",
+        ],
+        "flat": [
+            " Stable, monsieur — rien d'alarmant.",
+            " Tout est calme, monsieur.",
+            " Ferme et stable, monsieur.",
+            " Rien à signaler de ce côté, monsieur.",
+        ],
+        "down": [
+            " Un peu difficile aujourd'hui, monsieur, mais dans la normale.",
+            " En baisse pour l'instant, monsieur — je n'en perdrais pas le sommeil.",
+            " Passage difficile, monsieur, mais les marchés se redressent. Ne vous inquiétez pas.",
+            " Juste une baisse, monsieur, rien de plus. Tout est sous contrôle.",
+        ],
+        "down_bad": [
+            " La journée a été rude, monsieur — forte baisse, mais je surveille de près.",
+            " Monsieur, je ne vais pas enjoliver — ça a fait mal aujourd'hui. Pas de panique pour autant, je m'en occupe.",
+            " Séance difficile, monsieur. À surveiller, mais pas de quoi paniquer.",
+            " Monsieur, la journée est difficile. Je gère — reposez-vous tout de même.",
+        ],
+    },
+    "de": {
+        "up": [
+            " Wächst schön, mein Herr — kein Grund zur Sorge.",
+            " Aufwärtstrend, mein Herr. Alles im grünen Bereich.",
+            " Überall im Plus, mein Herr.",
+            " Es läuft gut, mein Herr.",
+        ],
+        "flat": [
+            " Stabil, mein Herr — nichts Beunruhigendes.",
+            " Alles ruhig, mein Herr.",
+            " Fest und stabil, mein Herr.",
+            " Auf dieser Seite ist alles ruhig, mein Herr.",
+        ],
+        "down": [
+            " Heute etwas holprig, mein Herr, aber im normalen Rahmen.",
+            " Gerade im Minus, mein Herr — ich würde deswegen nicht schlecht schlafen.",
+            " Schwierige Phase, mein Herr, aber die Märkte erholen sich. Machen Sie sich keine Sorgen.",
+            " Nur ein Rückgang, mein Herr, sonst nichts. Alles unter Kontrolle.",
+        ],
+        "down_bad": [
+            " Es war ein harter Tag, mein Herr — deutlich im Minus, aber ich behalte es genau im Blick.",
+            " Mein Herr, ich beschönige es nicht — heute tat es weh. Trotzdem kein Grund zur Panik, ich kümmere mich darum.",
+            " Schwierige Sitzung, mein Herr. Beobachtenswert, aber kein Grund zur Panik.",
+            " Mein Herr, es ist heute schwierig. Ich habe es im Griff — ruhen Sie sich trotzdem aus.",
+        ],
+    },
+    "ja": {
+        "up": [
+            " 順調に伸びています、心配いりません。",
+            " 上昇傾向です、問題ありません。",
+            " 全体的に好調です。",
+            " 状況は良好です。",
+        ],
+        "flat": [
+            " 安定しています、心配なことはありません。",
+            " 落ち着いています。",
+            " 堅調に推移しています。",
+            " その点は静かなものです。",
+        ],
+        "down": [
+            " 今日は少し厳しいですが、通常の範囲内です。",
+            " 現在下落中ですが、心配しすぎることはありません。",
+            " 厳しい局面ですが、市場は回復するものです。ご心配なく。",
+            " ちょっとした下落だけです。すべて管理下にあります。",
+        ],
+        "down_bad": [
+            " 今日は厳しい一日でした — 大きく下落していますが、注意深く見守っています。",
+            " 正直に申し上げますと、今日は痛手でした。それでもパニックになる必要はありません、対応しています。",
+            " 厳しいセッションでした。注視が必要ですが、慌てる必要はありません。",
+            " 今日は状況が厳しいです。私が対応していますので、どうかご安心ください。",
+        ],
+    },
+}
+
 REPEAT_GREETING_TEMPLATES = {
     "en": [
         "Yes, sir?", "Go ahead, sir.", "Listening, sir.", "How can I help, sir?",
@@ -1271,7 +1473,7 @@ class IntentClassifier:
         instead of '"confidence":0.95}'. json.loads would reject that as-is."""
         return re.sub(r'(-?\d+\.?\d*|null|true|false)"(\s*[,}])', r'\1\2', text)
 
-    async def classify(self, message: str, user_id: str = "anonymous", portfolio_value: Optional[float] = None) -> Dict[str, Any]:
+    async def classify(self, message: str, user_id: str = "anonymous", portfolio_value: Optional[float] = None, portfolio_change_pct: Optional[float] = None) -> Dict[str, Any]:
         """Hybrid intent classification"""
 
         # Normalize message
@@ -1282,7 +1484,7 @@ class IntentClassifier:
         for intent, pattern in FAST_PATTERNS.items():
             if re.search(pattern, normalized_msg_lower, re.IGNORECASE):
                 # Generate response using hybrid system
-                response_data = await self.generate_response(intent.value, message, user_id, portfolio_value)
+                response_data = await self.generate_response(intent.value, message, user_id, portfolio_value, portfolio_change_pct)
                 return {
                     "intent": intent.value,
                     "asset": None,
@@ -1312,13 +1514,13 @@ class IntentClassifier:
             result["is_english"] = lang_result["english"]
             # Ensure message field present
             if "message" not in result or not result["message"]:
-                result["message"] = self._get_fast_response(result.get("intent", "unknown"), lang_result["language"], message, user_id, portfolio_value)
+                result["message"] = self._get_fast_response(result.get("intent", "unknown"), lang_result["language"], message, user_id, portfolio_value, portfolio_change_pct)
             return result
-        
+
         # 3. Fallback
         return self._fallback_response(message)
-    
-    async def generate_response(self, intent: str, message: str, user_id: str = None, portfolio_value: Optional[float] = None) -> Dict[str, Any]:
+
+    async def generate_response(self, intent: str, message: str, user_id: str = None, portfolio_value: Optional[float] = None, portfolio_change_pct: Optional[float] = None) -> Dict[str, Any]:
         """Hybrid response generation - Fast path + LLM fallback"""
 
         uid = user_id or "anonymous"
@@ -1351,7 +1553,7 @@ class IntentClassifier:
 
         # 2. Confidence check - High confidence (>0.8) -> Fast path
         if confidence > 0.8:
-            fast_response = self._get_fast_response(intent, detected_lang, message, uid, portfolio_value)
+            fast_response = self._get_fast_response(intent, detected_lang, message, uid, portfolio_value, portfolio_change_pct)
             return {
                 "intent": intent,
                 "message": fast_response,
@@ -1375,7 +1577,7 @@ class IntentClassifier:
         except Exception as e:
             print(f"⚠️ LLM fallback failed: {e}")
             # Fallback to fast path if LLM fails
-            fast_response = self._get_fast_response(intent, detected_lang, message, uid, portfolio_value)
+            fast_response = self._get_fast_response(intent, detected_lang, message, uid, portfolio_value, portfolio_change_pct)
             return {
                 "intent": intent,
                 "message": fast_response,
@@ -1385,7 +1587,7 @@ class IntentClassifier:
                 "latency_ms": 2
             }
     
-    def _get_greeting_response(self, message: str, language: str, user_id: str = "anonymous", portfolio_value: Optional[float] = None) -> str:
+    def _get_greeting_response(self, message: str, language: str, user_id: str = "anonymous", portfolio_value: Optional[float] = None, portfolio_change_pct: Optional[float] = None) -> str:
         """Time-aware greeting. The user's own words always win over the clock —
         Jarvix never assumes 'good night' from time alone (backlog #1) — but if
         they claim a category that flatly contradicts the real clock (e.g. "good
@@ -1425,6 +1627,11 @@ class IntentClassifier:
             suffix = PORTFOLIO_SUFFIX.get(language, PORTFOLIO_SUFFIX["en"])
             choice = choice + suffix.format(value=f"${portfolio_value:,.0f}")
 
+            if portfolio_change_pct is not None:
+                tier = _portfolio_status_tier(portfolio_change_pct)
+                remark_options = PORTFOLIO_STATUS_REMARK.get(language, PORTFOLIO_STATUS_REMARK["en"])[tier]
+                choice = choice + random.choice(remark_options)
+
         if random.random() < MARKET_CONTEXT_APPEND_CHANCE:
             market_bucket = _get_market_context_bucket()
             market_options = MARKET_CONTEXT.get(language, MARKET_CONTEXT["en"]).get(market_bucket, MARKET_CONTEXT["en"][market_bucket])
@@ -1432,11 +1639,11 @@ class IntentClassifier:
 
         return choice
 
-    def _get_fast_response(self, intent: str, language: str, message: str = "", user_id: str = "anonymous", portfolio_value: Optional[float] = None) -> str:
+    def _get_fast_response(self, intent: str, language: str, message: str = "", user_id: str = "anonymous", portfolio_value: Optional[float] = None, portfolio_change_pct: Optional[float] = None) -> str:
         """Get hardcoded response for fast path"""
 
         if intent == "greeting":
-            return self._get_greeting_response(message, language, user_id, portfolio_value)
+            return self._get_greeting_response(message, language, user_id, portfolio_value, portfolio_change_pct)
 
         # Multi-language responses
         responses = {
@@ -1545,9 +1752,9 @@ Respond naturally in {lang_name} language. Keep it short and professional."""
             print(f"⚠️ LLM response generation failed: {e}")
             raise
     
-    async def detect_intent_hybrid(self, message: str, context: Optional[Dict[str, Any]] = None, user_id: str = "anonymous", portfolio_value: Optional[float] = None) -> Dict[str, Any]:
+    async def detect_intent_hybrid(self, message: str, context: Optional[Dict[str, Any]] = None, user_id: str = "anonymous", portfolio_value: Optional[float] = None, portfolio_change_pct: Optional[float] = None) -> Dict[str, Any]:
         """Hybrid intent detection - combines fast regex + LLM fallback"""
-        return await self.classify(message, user_id, portfolio_value)
+        return await self.classify(message, user_id, portfolio_value, portfolio_change_pct)
     
     def _fallback_response(self, message: str) -> Dict[str, Any]:
         """Fallback when LLM fails"""
