@@ -1480,9 +1480,36 @@ class IntentClassifier:
         normalized_msg = unicodedata.normalize('NFKC', message)
         normalized_msg_lower = normalized_msg.casefold()
 
+        async def _fast_greeting_result():
+            response_data = await self.generate_response("greeting", message, user_id, portfolio_value, portfolio_change_pct)
+            return {
+                "intent": "greeting",
+                "asset": None,
+                "amount": None,
+                "amount_type": None,
+                "price": None,
+                "confidence": 0.99,
+                "needs_clarification": False,
+                "clarification_question": None,
+                "message": response_data["message"],
+                "source": response_data["source"],
+                "language": response_data["language"],
+                "language_confidence": response_data["language_confidence"],
+                "latency_ms": response_data["latency_ms"]
+            }
+
+        # Bare "Jarvix" (just the name, nothing else) is a wake-word-style
+        # greeting -- like "Hey Siri". But "Jarvix, buy 100 ETH" must NOT be
+        # swallowed as a greeting, so this only matches when nothing real
+        # follows the name (just trailing punctuation/whitespace allowed).
+        if re.match(r'^jarvix[\s!.,?]*$', normalized_msg_lower):
+            return await _fast_greeting_result()
+
         # 1. Fast pattern matching (regex)
         for intent, pattern in FAST_PATTERNS.items():
             if re.search(pattern, normalized_msg_lower, re.IGNORECASE):
+                if intent.value == "greeting":
+                    return await _fast_greeting_result()
                 # Generate response using hybrid system
                 response_data = await self.generate_response(intent.value, message, user_id, portfolio_value, portfolio_change_pct)
                 return {
@@ -1500,7 +1527,7 @@ class IntentClassifier:
                     "language_confidence": response_data["language_confidence"],
                     "latency_ms": response_data["latency_ms"]
                 }
-        
+
         # 2. LLM fallback for complex queries
         print(f"🔍 [DEBUG] use_llm={self.use_llm}, checking LLM fallback...")
         if self.use_llm:
