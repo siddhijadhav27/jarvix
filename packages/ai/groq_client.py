@@ -13,26 +13,39 @@ from typing import Optional
 
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 GROQ_MODEL = "openai/gpt-oss-20b"
-GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
-GROQ_API_KEY_BACKUP = os.getenv("GROQ_API_KEY_BACKUP", "")
 
 
 def _load_tokens() -> list:
-    """Primary key first, then backup -- both read fresh from .env if the
-    process env vars weren't set, since main.py loads this before any
-    dotenv-style loader might run."""
-    primary, backup = GROQ_API_KEY, GROQ_API_KEY_BACKUP
-    if not primary or not backup:
-        try:
-            with open(os.path.join(os.path.dirname(__file__), "../../.env")) as f:
-                for line in f:
-                    if not primary and line.startswith("GROQ_API_KEY="):
-                        primary = line.strip().split("=", 1)[1]
-                    elif not backup and line.startswith("GROQ_API_KEY_BACKUP="):
-                        backup = line.strip().split("=", 1)[1]
-        except Exception:
-            pass
-    return [t for t in (primary, backup) if t]
+    """Every GROQ_API_KEY* var, primary first then backups in order
+    (GROQ_API_KEY, GROQ_API_KEY_BACKUP, GROQ_API_KEY_BACKUP2, ...) -- so
+    adding another fallback key later is just one more .env line, no code
+    change. Reads fresh from .env (not just os.environ) since main.py
+    doesn't load dotenv before importing this module."""
+    found = {}
+
+    for key, value in os.environ.items():
+        if key == "GROQ_API_KEY" or key.startswith("GROQ_API_KEY_BACKUP"):
+            if value:
+                found[key] = value
+
+    try:
+        with open(os.path.join(os.path.dirname(__file__), "../../.env")) as f:
+            for line in f:
+                if "=" not in line:
+                    continue
+                name, _, value = line.strip().partition("=")
+                if name and value and (name == "GROQ_API_KEY" or name.startswith("GROQ_API_KEY_BACKUP")):
+                    found.setdefault(name, value)
+    except Exception:
+        pass
+
+    def sort_key(name):
+        if name == "GROQ_API_KEY":
+            return (0, "")
+        return (1, name)  # BACKUP, BACKUP2, BACKUP3... sort naturally after primary
+
+    ordered_names = sorted(found.keys(), key=sort_key)
+    return [found[name] for name in ordered_names]
 
 
 async def call_llm(prompt: str, timeout: float = 30.0) -> str:
