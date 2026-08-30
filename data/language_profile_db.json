@@ -1,30 +1,5 @@
 {
-  "profiles": {
-    "pattern_check": {
-      "en": {
-        "confidence_score": 24.0,
-        "message_count": 7,
-        "last_used": "2026-08-30T17:32:43.671013"
-      },
-      "hi-en": {
-        "confidence_score": 7.800000000000001,
-        "message_count": 1,
-        "last_used": "2026-08-30T17:32:44.183925"
-      },
-      "es": {
-        "confidence_score": 7.800000000000001,
-        "message_count": 1,
-        "last_used": "2026-08-30T17:32:44.192454"
-      },
-      "fr": {
-        "confidence_score": 7.800000000000001,
-        "message_count": 1,
-        "last_used": "2026-08-30T17:32:44.193007"
-      }
-    }
-  },
-  "last_response_language": {
-    "pattern_check": "fr"
-  },
-  "last_updated": "2026-08-30T17:32:44.202113"
+  "profiles": {},
+  "last_response_language": {},
+  "last_updated": null
 }

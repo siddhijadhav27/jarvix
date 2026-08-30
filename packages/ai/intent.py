@@ -877,7 +877,7 @@ CLASSIFICATION_PROMPT = """You are a crypto trading assistant. Analyze the user 
 Return ONLY a JSON object. No explanation. No markdown. Just raw JSON.
 
 Format:
-{"intent": "buy|sell|price|portfolio|advice|greeting|unknown", "asset": "BTC|ETH|SOL|null", "amount": number|null, "price": number|null, "confidence": 0.0-1.0}
+{"intent": "buy|sell|price|portfolio|advice|alert|greeting|unknown", "asset": "BTC|ETH|SOL|null", "amount": number|null, "price": number|null, "confidence": 0.0-1.0}
 
 Examples:
 "Buy 100 ETH" → {"intent": "buy", "asset": "ETH", "amount": 100, "price": null, "confidence": 0.95}
@@ -885,6 +885,8 @@ Examples:
 "Hi there" → {"intent": "greeting", "asset": null, "amount": null, "price": null, "confidence": 0.95}
 "What is the best time to buy Bitcoin?" → {"intent": "advice", "asset": "BTC", "amount": null, "price": null, "confidence": 0.92}
 "Should I invest in Ethereum now?" → {"intent": "advice", "asset": "ETH", "amount": null, "price": null, "confidence": 0.93}
+"Alert me when BTC hits 100k" → {"intent": "alert", "asset": "BTC", "amount": null, "price": 100000, "confidence": 0.95}
+"Notify me when ETH drops" → {"intent": "alert", "asset": "ETH", "amount": null, "price": null, "confidence": 0.9}
 
 Now classify this message:"""
 
@@ -950,11 +952,11 @@ class IntentClassifier:
         prompt = f"{CLASSIFICATION_PROMPT}\n'{message}'"
         
         try:
-            # Call LLM via GitHub Models (GPT-4o)
-            print(f"🔍 [DEBUG] Calling GPT-4o for: {message}")
-            from .github_models_client import call_llm
+            # Call LLM via Groq (GitHub Models was retired July 30, 2026)
+            print(f"🔍 [DEBUG] Calling Groq for: {message}")
+            from .groq_client import call_llm
             raw_response = await call_llm(prompt)
-            print(f"🔍 [DEBUG] Raw GPT-4o response: {raw_response[:200]}")
+            print(f"🔍 [DEBUG] Raw Groq response: {raw_response[:200]}")
             response_text = clean_response(raw_response)
             print(f"🔍 [DEBUG] Cleaned response: {response_text[:200]}")
             
@@ -1020,15 +1022,21 @@ class IntentClassifier:
         # Find JSON with intent field (most reliable pattern)
         match = re.search(r'\{[^{}]*"intent"[^{}]*\}', text, re.DOTALL)
         if match:
-            return match.group(0)
-        
+            return self._repair_json(match.group(0))
+
         # Fallback: find any JSON object
         match = re.search(r'\{.*\}', text, re.DOTALL)
         if match:
-            return match.group(0)
-        
+            return self._repair_json(match.group(0))
+
         return text.strip()
-    
+
+    def _repair_json(self, text: str) -> str:
+        """Fix a common LLM quirk seen from Groq's gpt-oss models: a stray
+        quote right after a numeric/null/bool value, e.g. '"confidence":0.95"}'
+        instead of '"confidence":0.95}'. json.loads would reject that as-is."""
+        return re.sub(r'(-?\d+\.?\d*|null|true|false)"(\s*[,}])', r'\1\2', text)
+
     async def classify(self, message: str, user_id: str = "anonymous", portfolio_value: Optional[float] = None) -> Dict[str, Any]:
         """Hybrid intent classification"""
 
