@@ -1399,7 +1399,14 @@ class IntentClassifier:
 
         now = time.time()
         last_greet_time = _last_greeting_time.get(user_id)
-        is_repeat_greeting = last_greet_time is not None and (now - last_greet_time) < REPEAT_GREETING_WINDOW_SECONDS
+        # Only a GENERIC repeat ("hi" spam) gets the short "yes sir?" reply --
+        # an explicit category ("good night" again) is meaningful content each
+        # time and always gets the full contextual response, never the short one.
+        is_repeat_greeting = (
+            explicit_category is None
+            and last_greet_time is not None
+            and (now - last_greet_time) < REPEAT_GREETING_WINDOW_SECONDS
+        )
         _last_greeting_time[user_id] = now
 
         if is_repeat_greeting:
