@@ -108,20 +108,21 @@ def _get_ist_time_bucket() -> str:
         return "morning"
 
 def _get_real_time_period_and_display() -> tuple:
-    """The ACTUAL current period (unlike _get_ist_time_bucket, this one can
-    genuinely say 'night') plus a human-readable time string, used only to
-    detect and gently call out a mismatch between what the user claimed
-    ('good morning') and the real clock -- not for picking response tone."""
+    """The ACTUAL current period, for catching a mismatch between what the
+    user claimed ('good morning') and the real clock. Deliberately never
+    returns 'night' on its own -- same rule as backlog #1's original design:
+    Jarvix doesn't autonomously decide it's night, only the user's own
+    explicit "night"/"good night" claim can introduce that category (handled
+    as an unconditional pass in _check_greeting_mismatch). So "evening" here
+    just runs all the way through to sunrise."""
     now = datetime.now(IST)
     hour = now.hour
     if 5 <= hour < 12:
         period = "morning"
     elif 12 <= hour < 17:
         period = "afternoon"
-    elif 17 <= hour < 22:  # up to 10pm still reads as "evening" colloquially
+    else:  # 17:00 through 4:59 -- "evening" the whole way, never autonomous "night"
         period = "evening"
-    else:
-        period = "night"
     time_str = now.strftime("%I:%M %p").lstrip("0")
     return period, time_str
 
@@ -291,7 +292,15 @@ def _check_greeting_mismatch(stated_category: str, user_id: str, language: str) 
     play along with a light correction for the first two tries, then accept
     it with a wink on the third -- after that, this category is "accepted"
     for this user and behaves like the original backlog #1 rule (their
-    words win, no more correcting)."""
+    words win, no more correcting).
+
+    "night"/"good night" is always exempt, never corrected -- same as
+    backlog #1's original rule that Jarvix never autonomously decides it's
+    night; only the user's own explicit claim can introduce that category."""
+    if stated_category == "night":
+        _greeting_mismatch_state.pop(user_id, None)
+        return None
+
     real_period, time_str = _get_real_time_period_and_display()
 
     if stated_category == real_period:
