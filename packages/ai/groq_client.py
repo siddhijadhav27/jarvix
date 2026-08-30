@@ -65,6 +65,7 @@ async def call_llm(prompt: str, timeout: float = 30.0) -> str:
                 ],
                 "temperature": 0.1,
                 "max_tokens": 150,  # a classification response is ~30-50 tokens; capped tighter to stay well under the 8000 TPM free-tier limit
+                "reasoning_effort": "low",  # gpt-oss is a reasoning model -- without this it can burn the whole max_tokens budget on hidden chain-of-thought and return empty content (finish_reason "length") instead of the JSON
             }
 
             async with httpx.AsyncClient() as client:
