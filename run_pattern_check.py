@@ -60,11 +60,11 @@ async def main():
             except Exception as e:
                 detected = f"EXCEPTION: {e}"
 
-            # Groq's free tier has a strict requests-per-minute limit; a real
-            # chat user won't fire 346 messages back to back, but this test
-            # script does, so pace it to get an accurate read instead of a
-            # wall of 429s.
-            await asyncio.sleep(2.1)
+            # Groq's free tier caps at 8000 tokens/minute (confirmed via the
+            # x-ratelimit-limit-tokens response header) -- the classification
+            # prompt alone is ~530 tokens, so ~5s between calls keeps total
+            # usage safely under that per-minute budget.
+            await asyncio.sleep(5.0)
 
             results[expected_intent]["total"] += 1
             if detected == expected_intent:
