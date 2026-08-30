@@ -874,10 +874,13 @@ MARKET_CONTEXT = {
 
 CLASSIFICATION_PROMPT = """You are a crypto trading assistant. Analyze the user message and classify intent.
 
+Messages may be written in English, Hindi (Devanagari or romanized/Hinglish), Spanish,
+French, German, or Japanese. Classify by meaning regardless of language.
+
 Return ONLY a JSON object. No explanation. No markdown. Just raw JSON.
 
 Format:
-{"intent": "buy|sell|price|portfolio|advice|alert|greeting|unknown", "asset": "BTC|ETH|SOL|null", "amount": number|null, "price": number|null, "confidence": 0.0-1.0}
+{"intent": "buy|sell|price|portfolio|advice|alert|stop_loss|take_profit|greeting|unknown", "asset": "BTC|ETH|SOL|null", "amount": number|null, "price": number|null, "confidence": 0.0-1.0}
 
 Examples:
 "Buy 100 ETH" → {"intent": "buy", "asset": "ETH", "amount": 100, "price": null, "confidence": 0.95}
@@ -887,6 +890,13 @@ Examples:
 "Should I invest in Ethereum now?" → {"intent": "advice", "asset": "ETH", "amount": null, "price": null, "confidence": 0.93}
 "Alert me when BTC hits 100k" → {"intent": "alert", "asset": "BTC", "amount": null, "price": 100000, "confidence": 0.95}
 "Notify me when ETH drops" → {"intent": "alert", "asset": "ETH", "amount": null, "price": null, "confidence": 0.9}
+"Stop loss at 40k" → {"intent": "stop_loss", "asset": "BTC", "amount": null, "price": 40000, "confidence": 0.9}
+"Set take profit for ETH at 3000" → {"intent": "take_profit", "asset": "ETH", "amount": null, "price": 3000, "confidence": 0.93}
+"BTC becho" → {"intent": "sell", "asset": "BTC", "amount": null, "price": null, "confidence": 0.9}
+"ETH kharido" → {"intent": "buy", "asset": "ETH", "amount": null, "price": null, "confidence": 0.9}
+"Kitna paisa hai" → {"intent": "portfolio", "asset": null, "amount": null, "price": null, "confidence": 0.9}
+"Mera portfolio dikhao" → {"intent": "portfolio", "asset": null, "amount": null, "price": null, "confidence": 0.92}
+"BTC ka rate kya hai" → {"intent": "price", "asset": "BTC", "amount": null, "price": null, "confidence": 0.9}
 
 Now classify this message:"""
 
