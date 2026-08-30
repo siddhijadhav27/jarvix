@@ -12,7 +12,7 @@ from enum import Enum
 import json
 import time
 
-from response_cleaner import clean_response
+from .response_cleaner import clean_response
 
 class ModelProvider(Enum):
     KIMI = "kimi"
@@ -198,6 +198,34 @@ class LLMRouter:
             "overall": "healthy" if any(h == "healthy" for h in health.values()) else "critical",
             "models": health
         }
+
+# Singleton instance
+_llm_router = None
+
+def get_llm_router():
+    global _llm_router
+    if _llm_router is None:
+        _llm_router = LLMRouter()
+    return _llm_router
+
+# Intents that don't need LLM (regex/template only)
+REGEX_ONLY_INTENTS = ["greeting", "price", "portfolio", "buy", "sell", "alert", "advice"]
+
+# Add should_use_llm method to LLMRouter for compatibility
+if not hasattr(LLMRouter, 'should_use_llm'):
+    def should_use_llm(self, message, intent):
+        """Determine if LLM should be used for this message"""
+        if intent in REGEX_ONLY_INTENTS:
+            return False, f"Regex handles {intent}"
+        return True, "Complex query needs LLM"
+    LLMRouter.should_use_llm = should_use_llm
+
+# Add record_request method to LLMRouter for compatibility
+if not hasattr(LLMRouter, 'record_request'):
+    def record_request(self, message, intent, used_llm):
+        """Record request for analytics"""
+        pass
+    LLMRouter.record_request = record_request
 
 # Test
 async def test():

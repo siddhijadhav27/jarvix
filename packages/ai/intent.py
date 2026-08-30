@@ -5,7 +5,13 @@ Uses LLM for natural language understanding with regex as fast pre-filter
 
 import json
 import re
+import random
+import time
+import unicodedata
+from datetime import datetime
+from zoneinfo import ZoneInfo
 from typing import Dict, Any, Optional
+from .language_profile import get_language_profile_system, is_language_neutral_message
 from enum import Enum
 
 class Intent(Enum):
@@ -21,46 +27,864 @@ class Intent(Enum):
 
 # Fast regex pre-filter for obvious cases
 FAST_PATTERNS = {
-    Intent.GREETING: r"^(hi|hello|hey|hii|good morning|good afternoon|good evening)\b",
+    Intent.GREETING: (
+        r"^(hi|hello|hey|hii|namaste|namaskar|नमस्ते|नमस्कार|सुप्रभात|शुभ संध्या|शुभ रात्रि|"
+        r"good morning|good afternoon|good evening|good night|"
+        r"hola|buenos días|buenos dias|buenas tardes|buenas noches|"
+        r"bonjour|bonsoir|bonne nuit|salut|"
+        r"hallo|guten morgen|guten tag|guten nachmittag|guten abend|gute nacht|"
+        r"おはよう|こんにちは|こんばんは|おやすみ)\b"
+    ),
 }
 
-CLASSIFICATION_PROMPT = """You are a crypto trading assistant intent classifier.
-Analyze the user message and return ONLY valid JSON. No explanation. No markdown. Just raw JSON.
+IST = ZoneInfo("Asia/Kolkata")
 
-{
-  "intent": "buy|sell|portfolio|price|stop_loss|take_profit|advice|greeting|unknown",
-  "asset": "BTC|ETH|SOL|ADA|DOT|XRP|DOGE|null",
-  "amount": number|null,
-  "amount_type": "fixed|percentage|all|half|null",
-  "price": number|null,
-  "confidence": 0.0-1.0,
-  "needs_clarification": true|false,
-  "clarification_question": "string|null"
+# Explicit greeting phrases that ALWAYS override the clock (backlog #1 decision:
+# Jarvix never assumes "good night" from time alone — only when the user says it,
+# since a user could genuinely be on a night shift at 2 AM saying "good morning").
+# Checked in order per language, most specific phrase first.
+EXPLICIT_GREETING_PHRASES = {
+    "en": [
+        ("night", r"good\s*night"),
+        ("morning", r"good\s*morning"),
+        ("afternoon", r"good\s*afternoon"),
+        ("evening", r"good\s*evening"),
+    ],
+    "hi": [
+        ("night", r"शुभ\s*रात्रि"),
+        ("morning", r"सुप्रभात"),
+        ("evening", r"शुभ\s*संध्या"),
+    ],
+    "hi-en": [
+        ("night", r"good\s*night|shubh\s*raatri"),
+        ("morning", r"good\s*morning"),
+        ("afternoon", r"good\s*afternoon"),
+        ("evening", r"good\s*evening"),
+    ],
+    "es": [
+        ("night", r"buenas\s*noches"),
+        ("morning", r"buenos\s*d[ií]as"),
+        ("afternoon", r"buenas\s*tardes"),
+    ],
+    "fr": [
+        ("night", r"bonne\s*nuit"),
+        ("evening", r"bonsoir"),
+        ("morning", r"bonjour"),
+    ],
+    "de": [
+        ("night", r"gute\s*nacht"),
+        ("morning", r"guten\s*morgen"),
+        ("evening", r"guten\s*abend"),
+        ("afternoon", r"guten\s*(tag|nachmittag)"),
+    ],
+    "ja": [
+        ("night", r"おやすみ"),
+        ("morning", r"おはよう"),
+        ("evening", r"こんばんは"),
+    ],
 }
 
-Rules:
-- intent: Classify the user's primary goal
-- asset: Extract cryptocurrency name/ticker (BTC, ETH, SOL, etc.)
-- amount: Numeric value only (100, 0.5, etc.)
-- amount_type: "fixed" (100 ETH), "percentage" (50%), "all" (all my ETH), "half" (half my BTC)
-- price: Target price if mentioned ($60k → 60000, $2,500 → 2500)
-- confidence: How sure you are (0.0-1.0)
-- needs_clarification: true if missing critical info (amount, asset)
-- clarification_question: Ask user for missing info
+def _detect_explicit_greeting_category(message: str, language: str) -> Optional[str]:
+    """Return 'morning'/'afternoon'/'evening'/'night' if the user's own words said so, else None."""
+    msg = (message or "").strip().lower()
+    for lang_key in (language, "en"):
+        for category, pattern in EXPLICIT_GREETING_PHRASES.get(lang_key, []):
+            if re.search(pattern, msg, re.IGNORECASE):
+                return category
+    return None
+
+def _get_ist_time_bucket() -> str:
+    """Clock-based fallback bucket, used only when the user's greeting is generic
+    (hi/hello/hey/namaste with no explicit time-word). Never returns 'night' —
+    that only ever comes from an explicit user phrase, per backlog #1 design."""
+    hour = datetime.now(IST).hour
+    if 5 <= hour < 12:
+        return "morning"
+    elif 12 <= hour < 17:
+        return "afternoon"
+    elif 17 <= hour < 24:
+        return "evening"
+    else:  # 12:00 AM - 4:59 AM — could be a night-shift user, default to morning
+        return "morning"
+
+# Tracks the last greeting shown per (user, language, category) so the same
+# line doesn't repeat back-to-back. Module-level because IntentClassifier is
+# re-instantiated on every request (see main.py post_chat).
+_last_greeting_shown: Dict[tuple, str] = {}
+
+# If the same user greets again within this window, Jarvix gives a short
+# "yes sir?" style acknowledgment instead of a full greeting again.
+REPEAT_GREETING_WINDOW_SECONDS = 300
+_last_greeting_time: Dict[str, float] = {}
+
+# Appended after a full (non-repeat) greeting with the CURRENT portfolio value —
+# never hardcoded, always whatever the caller passes in at request time.
+PORTFOLIO_SUFFIX = {
+    "en": " Portfolio's at {value}.",
+    "hi": " पोर्टफोलियो {value} पर है।",
+    "hi-en": " Portfolio {value} pe hai.",
+    "es": " Cartera en {value}.",
+    "fr": " Portefeuille à {value}.",
+    "de": " Portfolio bei {value}.",
+    "ja": " ポートフォリオは{value}。",
+}
+
+REPEAT_GREETING_TEMPLATES = {
+    "en": [
+        "Yes, sir?", "Go ahead, sir.", "Listening, sir.", "How can I help, sir?",
+        "Sir, I'm here.", "Ready, sir.", "What do you need, sir?", "Sir, what's next?",
+        "At your service, sir.", "Yes sir, please go on.",
+    ],
+    "hi": [
+        "बोलिए सर", "जी सर, बताइए", "हांजी सर?", "सर, क्या करूं?",
+        "बताइए सर, क्या चाहिए?", "सर, हुक्म कीजिए", "हां सर, सुन रहा हूं", "सर, तैयार हूं",
+        "बोलो सर", "सर, किस काम के लिए बुलाया?",
+    ],
+    "hi-en": [
+        "Boliye sir", "Yes sir, bataiye", "Haanji sir?", "Sir, kya karu?",
+        "Bataiye sir, kya chahiye?", "Sir, hukum kariye", "Haan sir, sun raha hoon", "Sir, ready hoon",
+        "Bolo sir", "Sir, kis kaam ke liye bulaya?",
+    ],
+    "es": [
+        "Dígame, señor.", "Adelante, señor.", "Escuchando, señor.", "¿Cómo puedo ayudar, señor?",
+        "Aquí estoy, señor.", "Listo, señor.", "¿Qué necesita, señor?", "Señor, ¿qué sigue?",
+        "A su servicio, señor.", "Sí señor, continúe.",
+    ],
+    "fr": [
+        "Dites-moi, monsieur.", "Allez-y, monsieur.", "Je vous écoute, monsieur.", "Comment puis-je aider, monsieur ?",
+        "Je suis là, monsieur.", "Prêt, monsieur.", "De quoi avez-vous besoin, monsieur ?", "Monsieur, et ensuite ?",
+        "À votre service, monsieur.", "Oui monsieur, continuez.",
+    ],
+    "de": [
+        "Sagen Sie es mir, mein Herr.", "Nur zu, mein Herr.", "Ich höre, mein Herr.", "Wie kann ich helfen, mein Herr?",
+        "Ich bin da, mein Herr.", "Bereit, mein Herr.", "Was brauchen Sie, mein Herr?", "Mein Herr, was als Nächstes?",
+        "Zu Ihren Diensten, mein Herr.", "Ja mein Herr, fahren Sie fort.",
+    ],
+    "ja": [
+        "はい、どうぞ。", "お聞きしています。", "何かご用ですか？", "お手伝いします。",
+        "ここにおります。", "準備できています。", "何が必要ですか？", "次は何をしましょうか？",
+        "いつでもお待ちしております。", "はい、続けてください。",
+    ],
+}
+
+GREETING_TEMPLATES = {
+    "en": {
+        "morning": [
+            "Good morning, sir. Ready to conquer the markets today?",
+            "Morning, sir. Hope you rested well — shall we take a look at the markets?",
+            "Good morning. Fresh start, sir — what's on the agenda?",
+            "Rise and shine, sir. Crypto never sleeps, and neither do we.",
+            "Good morning, sir. Markets are already moving.",
+            "Morning, sir. Ready for today's action?",
+            "Good morning. Let's check those gains, sir.",
+            "Top of the morning, sir. Where would you like to start?",
+            "Good morning, sir. New day, clean slate — what shall we do first?",
+            "Morning, sir. Energy up — the markets are waiting.",
+        ],
+        "afternoon": [
+            "Good afternoon, sir. How can I help?",
+            "Afternoon, sir. Any trades on your mind?",
+            "Good afternoon. Mid-day check-in, sir — all well?",
+            "Good afternoon, sir. Markets are active — shall we take a look?",
+            "Afternoon, sir. What would you like to do?",
+            "Good afternoon. Ready for some crypto action, sir?",
+            "Good afternoon, sir. Things are moving — need an update?",
+            "Afternoon, sir. Standing by for your instructions.",
+            "Good afternoon. Halfway through the day, sir — how's it going?",
+            "Good afternoon, sir. What can I do for you?",
+        ],
+        "evening": [
+            "Good evening, sir. Winding down, or one more trade?",
+            "Evening, sir. Shall we review today's activity?",
+            "Good evening. Markets never sleep, sir — anything you need?",
+            "Good evening, sir. How was your day?",
+            "Evening, sir. Ready for a quick summary?",
+            "Good evening. Any final moves before the day wraps up, sir?",
+            "Good evening, sir. Standing by, as always.",
+            "Evening, sir. What's on your mind?",
+            "Good evening. Day's winding down, sir — need anything?",
+            "Good evening, sir. Jarvix at your service.",
+        ],
+        "night": [
+            "Good night, sir. I'll keep watch while you rest.",
+            "Good night. Sleep well, sir — I've got the markets covered.",
+            "Good night, sir. Anything urgent before you turn in?",
+            "Good night. Rest easy, sir, I'll flag anything important.",
+            "Good night, sir. I'll be here if you need me.",
+            "Good night. Sweet dreams, sir — markets will still be here tomorrow.",
+            "Good night, sir. I'll keep an eye on things overnight.",
+            "Good night. Take care, sir — see you soon.",
+            "Good night, sir. Everything's under control, rest well.",
+            "Good night. I've got it from here, sir.",
+        ],
+    },
+    "hi": {
+        "morning": [
+            "सुप्रभात सर! आज मार्केट देखते हैं?",
+            "सुप्रभात! उम्मीद है अच्छी नींद आई, सर।",
+            "सुप्रभात सर, नया दिन शुरू — क्या करना है आज?",
+            "सुप्रभात! मार्केट पहले से ही चल रहा है, सर।",
+            "सुप्रभात सर, आज का प्लान क्या है?",
+            "सुप्रभात! ऊर्जा से भरपूर दिन हो, सर।",
+            "सुप्रभात सर, चलिए शुरू करते हैं।",
+            "सुप्रभात! क्या हाल है आज, सर?",
+            "सुप्रभात सर, ताज़ा शुरुआत — कहाँ से शुरू करें?",
+            "सुप्रभात! सर, आज कुछ खास देखना है?",
+        ],
+        "afternoon": [
+            "नमस्कार सर, दोपहर का हाल कैसा है?",
+            "दोपहर की नमस्ते सर, क्या मदद कर सकता हूँ?",
+            "नमस्कार! बाज़ार सक्रिय है, सर।",
+            "दोपहर हो गई सर, कुछ ट्रेड करना है?",
+            "नमस्कार सर, आधा दिन बीत गया — सब ठीक?",
+            "दोपहर की जानकारी चाहिए, सर?",
+            "नमस्कार! सर, क्या आदेश है?",
+            "दोपहर सर, मैं तैयार हूँ।",
+            "नमस्कार सर, कैसे मदद करूँ?",
+            "दोपहर हो गई, सर — कुछ खास चाहिए?",
+        ],
+        "evening": [
+            "शुभ संध्या सर, आज का दिन कैसा रहा?",
+            "शुभ संध्या! सारांश चाहिए, सर?",
+            "शुभ संध्या सर, कुछ आखिरी ट्रेड बाकी है?",
+            "शुभ संध्या! मैं यहीं हूँ, सर।",
+            "शुभ संध्या सर, दिन ढल रहा है — कुछ चाहिए?",
+            "शुभ संध्या! क्या मदद करूँ, सर?",
+            "शुभ संध्या सर, आज की समीक्षा करें?",
+            "शुभ संध्या! सब ठीक है, सर?",
+            "शुभ संध्या सर, बताइए क्या करना है।",
+            "शुभ संध्या! सर, मैं तैयार हूँ।",
+        ],
+        "night": [
+            "शुभ रात्रि सर, मैं ध्यान रखूँगा जब तक आप आराम करें।",
+            "शुभ रात्रि! अच्छी नींद लीजिए, सर।",
+            "शुभ रात्रि सर, कुछ ज़रूरी हो तो बताइए।",
+            "शुभ रात्रि! सब कुछ संभला हुआ है, सर।",
+            "शुभ रात्रि सर, मैं यहीं हूँ अगर ज़रूरत हो।",
+            "शुभ रात्रि! मीठे सपने, सर।",
+            "शुभ रात्रि सर, रातभर नज़र रखूँगा।",
+            "शुभ रात्रि! ध्यान रखिए, सर।",
+            "शुभ रात्रि सर, सब कुछ नियंत्रण में है।",
+            "शुभ रात्रि! सर, बाकी मैं देख लूँगा।",
+        ],
+    },
+    "hi-en": {
+        "morning": [
+            "Good morning sir! Aaj market dekhein?",
+            "Morning sir, neend poori hui? Ready ho jaiye.",
+            "Good morning sir, naya din shuru — aaj ka plan kya hai?",
+            "Subah ho gayi sir, market already move kar raha hai.",
+            "Good morning sir, energy high rakhiye — chaliye shuru karte hain.",
+            "Morning sir! Aaj kya focus karna hai?",
+            "Good morning sir, fresh start hai — kahan se shuru karein?",
+            "Subah ka time hai sir, kuch dekhna hai?",
+            "Good morning! Sir, aaj ka din accha ho.",
+            "Morning sir, sab ready hai — bataiye kya karna hai.",
+        ],
+        "afternoon": [
+            "Good afternoon sir, kaam kaisa chal raha hai?",
+            "Afternoon sir, koi trade karna hai?",
+            "Good afternoon! Sir, market active hai abhi.",
+            "Sir, lunch ho gaya? Kuch update chahiye?",
+            "Good afternoon sir, aadha din ho gaya — sab theek?",
+            "Afternoon sir, kya madad karoon?",
+            "Good afternoon! Standing by hoon, sir.",
+            "Sir, dopahar ho gayi — kuch dekhna hai?",
+            "Good afternoon sir, batao kya chahiye.",
+            "Afternoon sir, main ready hoon.",
+        ],
+        "evening": [
+            "Good evening sir, din kaisa raha?",
+            "Evening sir, aaj ka summary chahiye?",
+            "Good evening! Koi last trade baaki hai, sir?",
+            "Sir, shaam ho gayi — kuch update karoon?",
+            "Good evening sir, main yahin hoon.",
+            "Evening sir, din wrap up ho raha hai — kuch chahiye?",
+            "Good evening! Sir, aaj ka review karein?",
+            "Sir, sab theek hai? Evening check-in.",
+            "Good evening sir, bataiye kya karna hai.",
+            "Evening sir, hazir hoon jaisa hamesha.",
+        ],
+        "night": [
+            "Good night sir, main dekh loonga jab tak aap rest karein.",
+            "Good night! Achi neend aaye, sir.",
+            "Good night sir, kuch urgent hai kya sone se pehle?",
+            "Good night! Sab kuch sambhla hua hai, sir.",
+            "Good night sir, zaroorat ho to bata dena.",
+            "Good night! Sweet dreams, sir.",
+            "Good night sir, raat bhar nazar rakhoonga.",
+            "Good night! Dhyan rakhiye, sir.",
+            "Good night sir, sab control mein hai.",
+            "Good night! Baaki main dekh loonga, sir.",
+        ],
+    },
+    "es": {
+        "morning": [
+            "Buenos días, señor. ¿Listo para conquistar los mercados hoy?",
+            "Buenos días. Espero que haya descansado bien, señor.",
+            "Buenos días, señor. Nuevo día — ¿cuál es el plan?",
+            "Buenos días, señor. Los mercados ya se están moviendo.",
+            "Buenos días. ¿Todo listo para hoy, señor?",
+            "Buenos días, señor. Energía al máximo — empecemos.",
+            "Buenos días. ¿Qué necesita revisar hoy, señor?",
+            "Buenos días, señor. Comienzo fresco, ¿por dónde empezamos?",
+            "Buenos días. Señor, ¿cómo le puedo ayudar hoy?",
+            "Buenos días, señor. Listo para las órdenes del día.",
+        ],
+        "afternoon": [
+            "Buenas tardes, señor. ¿En qué puedo ayudarle?",
+            "Buenas tardes. ¿Algún movimiento en mente, señor?",
+            "Buenas tardes, señor. Los mercados están activos.",
+            "Buenas tardes. ¿Todo bien a mitad del día, señor?",
+            "Buenas tardes, señor. Aquí para lo que necesite.",
+            "Buenas tardes. ¿Alguna actualización, señor?",
+            "Buenas tardes, señor. ¿Qué desea hacer?",
+            "Buenas tardes. A la espera de sus instrucciones, señor.",
+            "Buenas tardes, señor. ¿Cómo va su día?",
+            "Buenas tardes. Dígame qué necesita, señor.",
+        ],
+        "night": [
+            "Buenas noches, señor. Vigilaré mientras usted descansa.",
+            "Buenas noches. Que descanse bien, señor.",
+            "Buenas noches, señor. ¿Algo urgente antes de dormir?",
+            "Buenas noches. Todo está bajo control, señor.",
+            "Buenas noches, señor. Aquí estaré si me necesita.",
+            "Buenas noches. Dulces sueños, señor.",
+            "Buenas noches, señor. Vigilaré todo durante la noche.",
+            "Buenas noches. Cuídese, señor.",
+            "Buenas noches, señor. Descanse tranquilo.",
+            "Buenas noches. Yo me encargo de aquí, señor.",
+        ],
+    },
+    # Spanish has no distinct "good evening" greeting — "buenas tardes" (afternoon)
+    # naturally extends into the evening, so it doubles for that slot below.
+    "fr": {
+        "morning": [
+            "Bonjour, monsieur. Prêt à conquérir les marchés aujourd'hui ?",
+            "Bonjour. J'espère que vous avez bien dormi, monsieur.",
+            "Bonjour, monsieur. Nouveau jour — quel est le programme ?",
+            "Bonjour, monsieur. Les marchés bougent déjà.",
+            "Bonjour. Tout est prêt pour aujourd'hui, monsieur ?",
+            "Bonjour, monsieur. Énergie au maximum — commençons.",
+            "Bonjour. Que souhaitez-vous vérifier aujourd'hui, monsieur ?",
+            "Bonjour, monsieur. Nouveau départ, par où commence-t-on ?",
+            "Bonjour. Monsieur, comment puis-je vous aider ?",
+            "Bonjour, monsieur. Prêt pour vos instructions.",
+        ],
+        "afternoon": [
+            "Bon après-midi, monsieur. Comment puis-je vous aider ?",
+            "Bon après-midi. Une opération en tête, monsieur ?",
+            "Bon après-midi, monsieur. Les marchés sont actifs.",
+            "Bon après-midi. Tout va bien, monsieur ?",
+            "Bon après-midi, monsieur. Je suis à votre disposition.",
+            "Bon après-midi. Une mise à jour, monsieur ?",
+            "Bon après-midi, monsieur. Que voulez-vous faire ?",
+            "Bon après-midi. En attente de vos instructions, monsieur.",
+            "Bon après-midi, monsieur. Comment se passe votre journée ?",
+            "Bon après-midi. Dites-moi ce qu'il vous faut, monsieur.",
+        ],
+        "evening": [
+            "Bonsoir, monsieur. Comment s'est passée votre journée ?",
+            "Bonsoir. Souhaitez-vous un résumé, monsieur ?",
+            "Bonsoir, monsieur. Une dernière opération avant la fin de journée ?",
+            "Bonsoir. Je suis là, monsieur.",
+            "Bonsoir, monsieur. La journée touche à sa fin — besoin de quelque chose ?",
+            "Bonsoir. Comment puis-je vous aider, monsieur ?",
+            "Bonsoir, monsieur. Passons en revue la journée ?",
+            "Bonsoir. Tout va bien, monsieur ?",
+            "Bonsoir, monsieur. Dites-moi ce qu'il vous faut.",
+            "Bonsoir. Toujours à votre service, monsieur.",
+        ],
+        "night": [
+            "Bonne nuit, monsieur. Je veille pendant que vous vous reposez.",
+            "Bonne nuit. Reposez-vous bien, monsieur.",
+            "Bonne nuit, monsieur. Quelque chose d'urgent avant de dormir ?",
+            "Bonne nuit. Tout est sous contrôle, monsieur.",
+            "Bonne nuit, monsieur. Je serai là si besoin.",
+            "Bonne nuit. Faites de beaux rêves, monsieur.",
+            "Bonne nuit, monsieur. Je surveille tout cette nuit.",
+            "Bonne nuit. Prenez soin de vous, monsieur.",
+            "Bonne nuit, monsieur. Reposez-vous tranquillement.",
+            "Bonne nuit. Je m'occupe de tout, monsieur.",
+        ],
+    },
+    "de": {
+        "morning": [
+            "Guten Morgen, mein Herr. Bereit, die Märkte zu erobern?",
+            "Guten Morgen. Ich hoffe, Sie haben gut geschlafen, mein Herr.",
+            "Guten Morgen, mein Herr. Neuer Tag — was steht an?",
+            "Guten Morgen, mein Herr. Die Märkte bewegen sich bereits.",
+            "Guten Morgen. Alles bereit für heute, mein Herr?",
+            "Guten Morgen, mein Herr. Voller Energie — fangen wir an.",
+            "Guten Morgen. Was möchten Sie heute prüfen, mein Herr?",
+            "Guten Morgen, mein Herr. Frischer Start, wo fangen wir an?",
+            "Guten Morgen. Wie kann ich Ihnen helfen, mein Herr?",
+            "Guten Morgen, mein Herr. Bereit für Ihre Anweisungen.",
+        ],
+        "afternoon": [
+            "Guten Tag, mein Herr. Wie kann ich helfen?",
+            "Guten Tag. Etwas im Sinn, mein Herr?",
+            "Guten Tag, mein Herr. Die Märkte sind aktiv.",
+            "Guten Tag. Alles in Ordnung, mein Herr?",
+            "Guten Tag, mein Herr. Ich stehe zur Verfügung.",
+            "Guten Tag. Ein Update gefällig, mein Herr?",
+            "Guten Tag, mein Herr. Was möchten Sie tun?",
+            "Guten Tag. Ich warte auf Ihre Anweisungen, mein Herr.",
+            "Guten Tag, mein Herr. Wie läuft Ihr Tag?",
+            "Guten Tag. Sagen Sie mir, was Sie brauchen, mein Herr.",
+        ],
+        "evening": [
+            "Guten Abend, mein Herr. Wie war Ihr Tag?",
+            "Guten Abend. Möchten Sie eine Zusammenfassung, mein Herr?",
+            "Guten Abend, mein Herr. Noch ein letzter Trade vor Tagesende?",
+            "Guten Abend. Ich bin da, mein Herr.",
+            "Guten Abend, mein Herr. Der Tag neigt sich dem Ende zu — brauchen Sie etwas?",
+            "Guten Abend. Wie kann ich helfen, mein Herr?",
+            "Guten Abend, mein Herr. Lassen Sie uns den Tag durchgehen.",
+            "Guten Abend. Alles in Ordnung, mein Herr?",
+            "Guten Abend, mein Herr. Sagen Sie mir, was Sie brauchen.",
+            "Guten Abend. Immer zu Ihren Diensten, mein Herr.",
+        ],
+        "night": [
+            "Gute Nacht, mein Herr. Ich wache, während Sie sich ausruhen.",
+            "Gute Nacht. Schlafen Sie gut, mein Herr.",
+            "Gute Nacht, mein Herr. Etwas Dringendes vor dem Schlafengehen?",
+            "Gute Nacht. Alles ist unter Kontrolle, mein Herr.",
+            "Gute Nacht, mein Herr. Ich bin da, falls Sie mich brauchen.",
+            "Gute Nacht. Süße Träume, mein Herr.",
+            "Gute Nacht, mein Herr. Ich behalte über Nacht alles im Blick.",
+            "Gute Nacht. Passen Sie auf sich auf, mein Herr.",
+            "Gute Nacht, mein Herr. Ruhen Sie sich gut aus.",
+            "Gute Nacht. Ich übernehme von hier, mein Herr.",
+        ],
+    },
+    "ja": {
+        "morning": [
+            "おはようございます。今日も市場をチェックしましょう。",
+            "おはようございます。よく眠れましたか？",
+            "おはようございます。新しい一日です、今日の予定は？",
+            "おはようございます。市場はすでに動いています。",
+            "おはようございます。準備はいいですか？",
+            "おはようございます。今日も張り切っていきましょう。",
+            "おはようございます。今日は何を確認しますか？",
+            "おはようございます。フレッシュスタートです、どこから始めましょうか。",
+            "おはようございます。何かお手伝いしましょうか？",
+            "おはようございます。ご指示をお待ちしています。",
+        ],
+        "evening": [
+            "こんばんは。今日はどうでしたか？",
+            "こんばんは。今日のまとめが必要ですか？",
+            "こんばんは。一日の終わりに、何か取引しますか？",
+            "こんばんは。ここにおります。",
+            "こんばんは。一日お疲れさまでした、何か必要ですか？",
+            "こんばんは。何かお手伝いできますか？",
+            "こんばんは。今日のレビューをしましょうか。",
+            "こんばんは。すべて順調ですか？",
+            "こんばんは。ご用件をお聞かせください。",
+            "こんばんは。いつでもお待ちしております。",
+        ],
+        "night": [
+            "おやすみなさい。お休みの間、見守っております。",
+            "おやすみなさい。ゆっくりお休みください。",
+            "おやすみなさい。寝る前に急ぎの用件はありますか？",
+            "おやすみなさい。すべて管理下にあります。",
+            "おやすみなさい。必要な時はいつでもお呼びください。",
+            "おやすみなさい。良い夢を。",
+            "おやすみなさい。夜間も見守っております。",
+            "おやすみなさい。お大事に。",
+            "おやすみなさい。安心してお休みください。",
+            "おやすみなさい。あとは私にお任せください。",
+        ],
+    },
+}
+# Japanese has no distinct "good afternoon" greeting in common use — こんにちは
+# covers general daytime, so we fall back to the morning set for that slot.
+GREETING_TEMPLATES["ja"]["afternoon"] = GREETING_TEMPLATES["ja"]["morning"]
+GREETING_TEMPLATES["es"]["evening"] = GREETING_TEMPLATES["es"]["afternoon"]
+
+# Optional flavor line appended after a greeting, describing market conditions
+# by time of day. Crypto trades 24/7 — unlike the traditional stock-market
+# phrasing this was drafted from, nothing here says markets are "closed" or
+# "reopen tomorrow"; the quiet_hours bucket describes lower volume, not a close.
+MARKET_CONTEXT_APPEND_CHANCE = 0.35  # shown sometimes, not every greeting -- keeps it from feeling scripted
+
+def _get_market_context_bucket() -> str:
+    hour = datetime.now(IST).hour
+    if 5 <= hour < 12:
+        return "opening"
+    elif 12 <= hour < 17:
+        return "active"
+    elif 17 <= hour < 24:
+        return "evening"
+    else:
+        return "quiet_hours"
+
+MARKET_CONTEXT = {
+    "en": {
+        "opening": [
+            "Markets are just waking up for the day, sir.",
+            "Fresh session starting, sir — let's see how today shapes up.",
+            "Trading's picking up for the day, sir.",
+            "Sir, early movement showing in the markets.",
+            "Markets are gearing up, sir.",
+            "Sir, the day's trading is just getting started.",
+            "Fresh candles forming, sir — early signals coming in.",
+            "Sir, volumes are building as the day starts.",
+            "Markets are stirring, sir — let's keep an eye on it.",
+            "Sir, today's session is underway.",
+        ],
+        "active": [
+            "Markets are active right now, sir.",
+            "Trading volumes are decent today, sir.",
+            "Sir, things are moving steadily.",
+            "Sir, no major swings yet — markets are calm.",
+            "Trading's in full swing, sir.",
+            "Sir, market sentiment seems stable right now.",
+            "Mid-day activity is normal, sir.",
+            "Sir, the market's holding its pace.",
+            "Steady movement across the board, sir.",
+            "Sir, nothing unusual — markets ticking along.",
+        ],
+        "evening": [
+            "Your day's winding down, sir — markets are still ticking along, as always.",
+            "Sir, volumes tend to ease up around this time, but crypto never really stops.",
+            "Sir, a quieter stretch usually kicks in about now.",
+            "Sir, the pace tends to slow a touch in the evenings.",
+            "Sir, markets are settling into a calmer rhythm.",
+            "Evening lull setting in, sir — still worth keeping an eye on.",
+            "Sir, activity's a bit lighter this time of day.",
+            "Sir, things are calming down, though crypto's always live.",
+            "Sir, a good time to review today before it gets quieter.",
+            "Sir, the evening drift is starting — markets stay open though.",
+        ],
+        "quiet_hours": [
+            "Quiet hours right now, sir — crypto never fully sleeps, just slows down.",
+            "Sir, volumes are thin at this hour, but the markets are still live.",
+            "Sir, it's the low-volume stretch — still worth a glance if something matters.",
+            "Sir, things are unusually quiet, though trading never really stops.",
+            "Sir, overnight volumes are light, but I'm still watching.",
+            "Sir, this is the quietest window of the day — nothing urgent showing.",
+            "Sir, markets are ticking along at a slower pace right now.",
+            "Sir, it's calm out there — I'll flag anything that changes.",
+            "Sir, low activity at this hour, but I'm keeping watch regardless.",
+            "Sir, the quiet hours are usually a good time to just let things run.",
+        ],
+    },
+    "hi-en": {
+        "opening": [
+            "Markets abhi open hue hain, sir — action shuru hone wala hai.",
+            "Sir, naya session start ho raha hai, aaj dekhte hain kya hota hai.",
+            "Trading pick up ho rahi hai, sir.",
+            "Sir, early movement dikh raha hai market mein.",
+            "Markets gear up ho rahe hain, sir.",
+            "Sir, aaj ka trading abhi shuru hua hai.",
+            "Fresh candles ban rahe hain, sir — early signals aa rahe hain.",
+            "Sir, volumes build ho rahe hain din shuru hote hi.",
+            "Markets stir ho rahe hain, sir — nazar rakhte hain.",
+            "Sir, aaj ka session shuru ho chuka hai.",
+        ],
+        "active": [
+            "Market mein thoda movement chal raha hai abhi, sir.",
+            "Sir, trading volumes aaj decent hain.",
+            "Sir, sab steady chal raha hai.",
+            "Sir, koi bada swing nahi abhi — market calm hai.",
+            "Trading full swing mein hai, sir.",
+            "Sir, market sentiment stable lag raha hai abhi.",
+            "Mid-day activity normal hai, sir.",
+            "Sir, market apni pace pe hai.",
+            "Sab kuch steady chal raha hai, sir.",
+            "Sir, kuch unusual nahi — market normal chal raha hai.",
+        ],
+        "evening": [
+            "Sir, aapka din wind down ho raha hai — market to hamesha ki tarah chal raha hai.",
+            "Sir, volumes is time thode kam ho jaate hain, par crypto kabhi rukta nahi.",
+            "Sir, is time thoda quiet phase shuru ho jata hai usually.",
+            "Sir, evening mein pace thodi slow ho jati hai.",
+            "Sir, market ek calm rhythm mein settle ho raha hai.",
+            "Evening lull shuru ho raha hai, sir — phir bhi nazar rakhna theek hai.",
+            "Sir, is time activity thodi light hai.",
+            "Sir, sab calm ho raha hai, par crypto hamesha live rehta hai.",
+            "Sir, ye accha time hai aaj ka review karne ka, quiet hone se pehle.",
+            "Sir, evening drift shuru ho rahi hai — market phir bhi open rehta hai.",
+        ],
+        "quiet_hours": [
+            "Sir, abhi quiet hours hain — crypto kabhi pura sota nahi, bas slow ho jata hai.",
+            "Sir, is time volumes thin hain, par market live hai abhi bhi.",
+            "Sir, ye low-volume stretch hai — kuch zaroori ho to bata dena.",
+            "Sir, sab kuch unusually quiet hai, par trading kabhi rukta nahi.",
+            "Sir, overnight volumes light hain, par main dekh raha hoon.",
+            "Sir, ye din ka sabse quiet window hai — kuch urgent nahi dikh raha.",
+            "Sir, market slow pace pe chal raha hai abhi.",
+            "Sir, sab kuch calm hai — kuch change hua to bata dunga.",
+            "Sir, is time activity kam hai, par main phir bhi dekh raha hoon.",
+            "Sir, quiet hours usually accha time hote hain bas cheezein chalne dene ka.",
+        ],
+    },
+    "hi": {
+        "opening": [
+            "सर, बाज़ार अभी खुले हैं — आज की शुरुआत हो रही है।",
+            "सर, नया सत्र शुरू हो रहा है, देखते हैं आज क्या होता है।",
+            "सर, ट्रेडिंग शुरू हो रही है।",
+            "सर, बाज़ार में शुरुआती हलचल दिख रही है।",
+            "सर, बाज़ार तैयार हो रहे हैं।",
+            "सर, आज का कारोबार अभी शुरू हुआ है।",
+            "सर, शुरुआती संकेत आ रहे हैं।",
+            "सर, दिन शुरू होते ही वॉल्यूम बढ़ रहा है।",
+            "सर, बाज़ार सक्रिय हो रहे हैं — नज़र रखते हैं।",
+            "सर, आज का सत्र शुरू हो चुका है।",
+        ],
+        "active": [
+            "सर, बाज़ार अभी सक्रिय है।",
+            "सर, आज ट्रेडिंग वॉल्यूम ठीक है।",
+            "सर, सब कुछ स्थिर चल रहा है।",
+            "सर, अभी कोई बड़ा उतार-चढ़ाव नहीं — बाज़ार शांत है।",
+            "सर, ट्रेडिंग पूरे जोश में है।",
+            "सर, बाज़ार का रुख स्थिर लग रहा है।",
+            "सर, दोपहर की गतिविधि सामान्य है।",
+            "सर, बाज़ार अपनी गति बनाए हुए है।",
+            "सर, सब कुछ स्थिर चल रहा है।",
+            "सर, कुछ असामान्य नहीं — बाज़ार सामान्य है।",
+        ],
+        "evening": [
+            "सर, आपका दिन ढल रहा है — बाज़ार हमेशा की तरह चल रहा है।",
+            "सर, इस समय वॉल्यूम थोड़ा कम हो जाता है, पर क्रिप्टो कभी रुकता नहीं।",
+            "सर, इस समय आमतौर पर शांत दौर शुरू होता है।",
+            "सर, शाम को गति थोड़ी धीमी हो जाती है।",
+            "सर, बाज़ार एक शांत लय में बस रहा है।",
+            "सर, शाम की शांति शुरू हो रही है — फिर भी नज़र रखना ठीक है।",
+            "सर, इस समय गतिविधि थोड़ी हल्की है।",
+            "सर, सब शांत हो रहा है, पर क्रिप्टो हमेशा जीवंत रहता है।",
+            "सर, शांत होने से पहले आज की समीक्षा का अच्छा समय है।",
+            "सर, शाम की सुस्ती शुरू हो रही है — बाज़ार फिर भी खुला रहता है।",
+        ],
+        "quiet_hours": [
+            "सर, अभी शांत घड़ी है — क्रिप्टो कभी पूरी तरह सोता नहीं, बस धीमा हो जाता है।",
+            "सर, इस समय वॉल्यूम कम है, पर बाज़ार अभी भी जीवंत है।",
+            "सर, यह कम-वॉल्यूम वाला दौर है — कुछ ज़रूरी हो तो बताइए।",
+            "सर, सब कुछ असामान्य रूप से शांत है, पर ट्रेडिंग कभी रुकती नहीं।",
+            "सर, रात भर का वॉल्यूम हल्का है, पर मैं नज़र रखे हुए हूं।",
+            "सर, यह दिन का सबसे शांत समय है — कुछ ज़रूरी नहीं दिख रहा।",
+            "सर, बाज़ार धीमी गति से चल रहा है अभी।",
+            "सर, सब शांत है — कुछ बदला तो बता दूंगा।",
+            "सर, इस समय गतिविधि कम है, पर मैं फिर भी नज़र रखे हूं।",
+            "सर, शांत घड़ियां आमतौर पर चीज़ों को चलने देने का अच्छा समय होती हैं।",
+        ],
+    },
+    "es": {
+        "opening": [
+            "Los mercados se están despertando, señor.",
+            "Nueva sesión comenzando, señor — veamos cómo va el día.",
+            "El trading está tomando impulso, señor.",
+            "Señor, se ve movimiento temprano en los mercados.",
+            "Los mercados se están preparando, señor.",
+            "Señor, la sesión del día apenas comienza.",
+            "Señor, primeras señales llegando.",
+            "Señor, los volúmenes están creciendo con el inicio del día.",
+            "Los mercados se están activando, señor — vigilemos.",
+            "Señor, la sesión de hoy está en marcha.",
+        ],
+        "active": [
+            "Los mercados están activos ahora, señor.",
+            "Los volúmenes de hoy son decentes, señor.",
+            "Señor, las cosas se mueven con constancia.",
+            "Señor, sin grandes movimientos aún — los mercados están tranquilos.",
+            "El trading está en pleno apogeo, señor.",
+            "Señor, el sentimiento del mercado parece estable ahora.",
+            "La actividad de mediodía es normal, señor.",
+            "Señor, el mercado mantiene su ritmo.",
+            "Movimiento constante en general, señor.",
+            "Señor, nada inusual — los mercados siguen su curso.",
+        ],
+        "evening": [
+            "Su día está terminando, señor — los mercados siguen su curso, como siempre.",
+            "Señor, los volúmenes suelen bajar a esta hora, pero el cripto nunca se detiene.",
+            "Señor, suele empezar un momento más tranquilo por ahora.",
+            "Señor, el ritmo suele bajar un poco por las tardes.",
+            "Señor, los mercados se están asentando en un ritmo más calmado.",
+            "Empieza la calma vespertina, señor — aun así vale la pena vigilar.",
+            "Señor, la actividad es un poco más ligera a esta hora.",
+            "Señor, las cosas se calman, aunque el cripto siempre está activo.",
+            "Señor, buen momento para revisar el día antes de que se calme más.",
+            "Señor, empieza la calma nocturna — los mercados siguen abiertos igual.",
+        ],
+        "quiet_hours": [
+            "Horas tranquilas ahora, señor — el cripto nunca duerme del todo, solo se ralentiza.",
+            "Señor, los volúmenes son bajos a esta hora, pero los mercados siguen activos.",
+            "Señor, es el tramo de bajo volumen — avíseme si algo importa.",
+            "Señor, todo está inusualmente tranquilo, aunque el trading nunca se detiene.",
+            "Señor, los volúmenes nocturnos son ligeros, pero sigo vigilando.",
+            "Señor, esta es la ventana más tranquila del día — nada urgente por ahora.",
+            "Señor, los mercados avanzan a un ritmo más lento ahora.",
+            "Señor, todo está en calma — le avisaré de cualquier cambio.",
+            "Señor, poca actividad a esta hora, pero sigo atento igualmente.",
+            "Señor, las horas tranquilas suelen ser un buen momento para dejar que las cosas fluyan.",
+        ],
+    },
+    "fr": {
+        "opening": [
+            "Les marchés se réveillent tout juste, monsieur.",
+            "Nouvelle séance qui commence, monsieur — voyons comment se déroule la journée.",
+            "Le trading prend de l'ampleur, monsieur.",
+            "Monsieur, on voit un mouvement matinal sur les marchés.",
+            "Les marchés se préparent, monsieur.",
+            "Monsieur, la séance du jour vient de commencer.",
+            "Monsieur, les premiers signaux arrivent.",
+            "Monsieur, les volumes montent en ce début de journée.",
+            "Les marchés s'activent, monsieur — restons attentifs.",
+            "Monsieur, la séance du jour est en cours.",
+        ],
+        "active": [
+            "Les marchés sont actifs en ce moment, monsieur.",
+            "Les volumes du jour sont corrects, monsieur.",
+            "Monsieur, les choses bougent régulièrement.",
+            "Monsieur, pas de grands mouvements encore — les marchés sont calmes.",
+            "Le trading bat son plein, monsieur.",
+            "Monsieur, le sentiment du marché semble stable en ce moment.",
+            "L'activité de milieu de journée est normale, monsieur.",
+            "Monsieur, le marché garde son rythme.",
+            "Mouvement régulier dans l'ensemble, monsieur.",
+            "Monsieur, rien d'inhabituel — les marchés suivent leur cours.",
+        ],
+        "evening": [
+            "Votre journée touche à sa fin, monsieur — les marchés continuent, comme toujours.",
+            "Monsieur, les volumes ont tendance à baisser à cette heure, mais la crypto ne s'arrête jamais vraiment.",
+            "Monsieur, une période plus calme commence généralement maintenant.",
+            "Monsieur, le rythme ralentit un peu le soir.",
+            "Monsieur, les marchés s'installent dans un rythme plus calme.",
+            "Le calme du soir s'installe, monsieur — ça vaut quand même la peine de surveiller.",
+            "Monsieur, l'activité est un peu plus légère à cette heure.",
+            "Monsieur, les choses se calment, même si la crypto reste toujours active.",
+            "Monsieur, bon moment pour faire le point avant que ça se calme davantage.",
+            "Monsieur, la dérive du soir commence — les marchés restent ouverts quand même.",
+        ],
+        "quiet_hours": [
+            "Heures calmes en ce moment, monsieur — la crypto ne dort jamais complètement, elle ralentit juste.",
+            "Monsieur, les volumes sont faibles à cette heure, mais les marchés restent actifs.",
+            "Monsieur, c'est la période de faible volume — prévenez-moi si quelque chose compte.",
+            "Monsieur, tout est étrangement calme, mais le trading ne s'arrête jamais vraiment.",
+            "Monsieur, les volumes nocturnes sont légers, mais je surveille toujours.",
+            "Monsieur, c'est la fenêtre la plus calme de la journée — rien d'urgent pour l'instant.",
+            "Monsieur, les marchés avancent à un rythme plus lent en ce moment.",
+            "Monsieur, tout est calme — je vous signalerai tout changement.",
+            "Monsieur, peu d'activité à cette heure, mais je reste attentif quand même.",
+            "Monsieur, les heures calmes sont généralement un bon moment pour laisser les choses suivre leur cours.",
+        ],
+    },
+    "de": {
+        "opening": [
+            "Die Märkte wachen gerade erst auf, mein Herr.",
+            "Neue Sitzung beginnt, mein Herr — mal sehen, wie sich der Tag entwickelt.",
+            "Der Handel nimmt Fahrt auf, mein Herr.",
+            "Mein Herr, es zeigt sich frühe Bewegung an den Märkten.",
+            "Die Märkte machen sich bereit, mein Herr.",
+            "Mein Herr, die heutige Sitzung fängt gerade erst an.",
+            "Mein Herr, frühe Signale kommen herein.",
+            "Mein Herr, die Volumina steigen zu Tagesbeginn.",
+            "Die Märkte regen sich, mein Herr — bleiben wir aufmerksam.",
+            "Mein Herr, die heutige Sitzung läuft bereits.",
+        ],
+        "active": [
+            "Die Märkte sind gerade aktiv, mein Herr.",
+            "Die heutigen Handelsvolumina sind ordentlich, mein Herr.",
+            "Mein Herr, die Dinge bewegen sich stetig.",
+            "Mein Herr, noch keine großen Ausschläge — die Märkte sind ruhig.",
+            "Der Handel läuft auf Hochtouren, mein Herr.",
+            "Mein Herr, die Marktstimmung wirkt gerade stabil.",
+            "Die Aktivität zur Mittagszeit ist normal, mein Herr.",
+            "Mein Herr, der Markt hält sein Tempo.",
+            "Insgesamt stetige Bewegung, mein Herr.",
+            "Mein Herr, nichts Ungewöhnliches — die Märkte laufen normal weiter.",
+        ],
+        "evening": [
+            "Ihr Tag klingt aus, mein Herr — die Märkte laufen wie immer weiter.",
+            "Mein Herr, die Volumina lassen um diese Zeit meist nach, aber Krypto stoppt nie wirklich.",
+            "Mein Herr, um diese Zeit beginnt meist eine ruhigere Phase.",
+            "Mein Herr, das Tempo verlangsamt sich abends etwas.",
+            "Mein Herr, die Märkte finden zu einem ruhigeren Rhythmus.",
+            "Die abendliche Ruhe setzt ein, mein Herr — trotzdem lohnt sich ein Blick.",
+            "Mein Herr, die Aktivität ist zu dieser Zeit etwas geringer.",
+            "Mein Herr, es beruhigt sich, obwohl Krypto immer aktiv bleibt.",
+            "Mein Herr, guter Zeitpunkt, den Tag zu überprüfen, bevor es ruhiger wird.",
+            "Mein Herr, die abendliche Flaute beginnt — die Märkte bleiben trotzdem offen.",
+        ],
+        "quiet_hours": [
+            "Ruhige Stunden gerade, mein Herr — Krypto schläft nie ganz, wird nur langsamer.",
+            "Mein Herr, die Volumina sind zu dieser Stunde dünn, aber die Märkte sind weiterhin aktiv.",
+            "Mein Herr, das ist die Phase mit geringem Volumen — sagen Sie Bescheid, falls etwas wichtig ist.",
+            "Mein Herr, alles ist ungewöhnlich ruhig, aber der Handel stoppt nie wirklich.",
+            "Mein Herr, die nächtlichen Volumina sind gering, aber ich behalte alles im Blick.",
+            "Mein Herr, das ist das ruhigste Fenster des Tages — nichts Dringendes in Sicht.",
+            "Mein Herr, die Märkte laufen gerade in einem langsameren Tempo.",
+            "Mein Herr, es ist ruhig da draußen — ich melde jede Änderung.",
+            "Mein Herr, wenig Aktivität zu dieser Stunde, aber ich behalte trotzdem alles im Blick.",
+            "Mein Herr, die ruhigen Stunden sind meist ein guter Zeitpunkt, die Dinge einfach laufen zu lassen.",
+        ],
+    },
+    "ja": {
+        "opening": [
+            "市場はちょうど動き始めたところです。",
+            "新しいセッションが始まります、今日はどうなるか見てみましょう。",
+            "取引が勢いづいてきています。",
+            "市場に早い動きが見られます。",
+            "市場が準備を整えています。",
+            "本日のセッションが始まったばかりです。",
+            "早い段階のシグナルが入ってきています。",
+            "一日の始まりとともに出来高が増えています。",
+            "市場が動き出しています、注視しましょう。",
+            "本日のセッションが進行中です。",
+        ],
+        "active": [
+            "市場は今活発です。",
+            "本日の出来高はまずまずです。",
+            "着実に動いています。",
+            "大きな変動はまだありません、市場は落ち着いています。",
+            "取引が最も活発な時間帯です。",
+            "市場心理は今のところ安定しているようです。",
+            "昼間の活動は通常通りです。",
+            "市場はペースを保っています。",
+            "全体的に安定した動きです。",
+            "特に異常なし、市場は通常通り推移しています。",
+        ],
+        "evening": [
+            "一日が終わりに近づいていますが、市場はいつも通り動いています。",
+            "この時間帯は出来高が落ち着く傾向がありますが、暗号資産は完全には止まりません。",
+            "この時間はいつも少し静かな時間帯になります。",
+            "夕方はペースが少し落ちる傾向があります。",
+            "市場は落ち着いたリズムに入りつつあります。",
+            "夕方の落ち着きが始まっています、それでも見ておく価値はあります。",
+            "この時間は活動がやや軽めです。",
+            "落ち着いてきていますが、暗号資産は常に動いています。",
+            "静かになる前に、今日を振り返る良い時間です。",
+            "夕方の緩やかな流れが始まっています、市場は開いたままです。",
+        ],
+        "quiet_hours": [
+            "今は静かな時間帯です、暗号資産は完全には眠らず、ただ緩やかになるだけです。",
+            "この時間は出来高が少ないですが、市場はまだ動いています。",
+            "出来高の少ない時間帯です、何か重要なことがあればお知らせください。",
+            "普段より静かですが、取引が完全に止まることはありません。",
+            "夜間の出来高は少ないですが、引き続き見守っています。",
+            "一日で最も静かな時間帯です、緊急なものは見当たりません。",
+            "市場は今、ゆっくりとしたペースで動いています。",
+            "落ち着いています、変化があればお知らせします。",
+            "この時間は活動が少ないですが、引き続き見守っています。",
+            "静かな時間帯は物事をそのまま進ませるのに良い時間です。",
+        ],
+    },
+}
+
+CLASSIFICATION_PROMPT = """You are a crypto trading assistant. Analyze the user message and classify intent.
+
+Return ONLY a JSON object. No explanation. No markdown. Just raw JSON.
+
+Format:
+{"intent": "buy|sell|price|portfolio|advice|greeting|unknown", "asset": "BTC|ETH|SOL|null", "amount": number|null, "price": number|null, "confidence": 0.0-1.0}
 
 Examples:
-"Buy 100 ETH" → {"intent":"buy","asset":"ETH","amount":100,"amount_type":"fixed","price":null,"confidence":0.99,"needs_clarification":false,"clarification_question":null}
-"Get some bitcoin" → {"intent":"buy","asset":"BTC","amount":null,"amount_type":null,"price":null,"confidence":0.85,"needs_clarification":true,"clarification_question":"How much Bitcoin would you like to buy?"}
-"Should I buy SOL now?" → {"intent":"advice","asset":"SOL","amount":null,"amount_type":null,"price":null,"confidence":0.95,"needs_clarification":false,"clarification_question":null}
-"Sell half my ETH at $3000" → {"intent":"sell","asset":"ETH","amount":50,"amount_type":"percentage","price":3000,"confidence":0.97,"needs_clarification":false,"clarification_question":null}
-"What's my portfolio?" → {"intent":"portfolio","asset":null,"amount":null,"amount_type":null,"price":null,"confidence":0.99,"needs_clarification":false,"clarification_question":null}
-"Price of Bitcoin" → {"intent":"price","asset":"BTC","amount":null,"amount_type":null,"price":null,"confidence":0.98,"needs_clarification":false,"clarification_question":null}
-"Set stop-loss for BTC at $55k" → {"intent":"stop_loss","asset":"BTC","amount":null,"amount_type":null,"price":55000,"confidence":0.96,"needs_clarification":false,"clarification_question":null}
-"Hi Jarvix" → {"intent":"greeting","asset":null,"amount":null,"amount_type":null,"price":null,"confidence":1.0,"needs_clarification":false,"clarification_question":null}
-"I want to get some ETH" → {"intent":"buy","asset":"ETH","amount":null,"amount_type":null,"price":null,"confidence":0.88,"needs_clarification":true,"clarification_question":"How much ETH would you like to buy?"}
-"Can you grab me some SOL?" → {"intent":"buy","asset":"SOL","amount":null,"amount_type":null,"price":null,"confidence":0.87,"needs_clarification":true,"clarification_question":"How much SOL would you like to buy?"}
-"Let's go heavy on Bitcoin" → {"intent":"buy","asset":"BTC","amount":null,"amount_type":null,"price":null,"confidence":0.82,"needs_clarification":true,"clarification_question":"How much Bitcoin would you like to buy?"}
-"ETH looks good, buy it" → {"intent":"buy","asset":"ETH","amount":null,"amount_type":null,"price":null,"confidence":0.84,"needs_clarification":true,"clarification_question":"How much ETH would you like to buy?"}
+"Buy 100 ETH" → {"intent": "buy", "asset": "ETH", "amount": 100, "price": null, "confidence": 0.95}
+"What's BTC price?" → {"intent": "price", "asset": "BTC", "amount": null, "price": null, "confidence": 0.95}
+"Hi there" → {"intent": "greeting", "asset": null, "amount": null, "price": null, "confidence": 0.95}
+"What is the best time to buy Bitcoin?" → {"intent": "advice", "asset": "BTC", "amount": null, "price": null, "confidence": 0.92}
+"Should I invest in Ethereum now?" → {"intent": "advice", "asset": "ETH", "amount": null, "price": null, "confidence": 0.93}
 
 Now classify this message:"""
 
@@ -75,69 +899,93 @@ class IntentClassifier:
     def __init__(self):
         self.use_llm = True
     
-    async def classify(self, message: str) -> Dict[str, Any]:
-        """
-        Classify user intent
+    def _detect_language(self, message: str) -> Dict[str, Any]:
+        """Detect language with confidence score. `is_default` is True only
+        when nothing matched and we fell through to English -- a truly
+        ambiguous message, as opposed to a message we're confident is English."""
+
+        # Simple language detection based on character patterns
+        import re
+
+        # Check for Hindi characters
+        if re.search(r'[\u0900-\u097F]', message):
+            return {"language": "hi", "confidence": 0.95, "english": False, "is_default": False}
+
+        # Check for Hinglish (English + Hindi mixed)
+        if re.search(r'\b(hai|kya|kaise|kyu|nahi|acha|bhai|sir|ji|namaste|namaskar)\b', message.lower()):
+            return {"language": "hi-en", "confidence": 0.90, "english": False, "is_default": False}
+
+        # Check for Japanese
+        if re.search(r'[\u3040-\u309F\u30A0-\u30FF]', message):
+            return {"language": "ja", "confidence": 0.95, "english": False, "is_default": False}
+
+        # Check for Spanish
+        if re.search(r'\b(hola|como|estas|buenos|buenas|d[ií]as|tardes|noches|gracias)\b', message.lower()):
+            return {"language": "es", "confidence": 0.85, "english": False, "is_default": False}
+
+        # Check for French
+        if re.search(r'\b(bonjour|bonsoir|bonne|nuit|salut|comment|ca va|merci)\b', message.lower()):
+            return {"language": "fr", "confidence": 0.85, "english": False, "is_default": False}
+
+        # Check for German
+        if re.search(r'\b(hallo|guten|tag|abend|nacht|morgen|danke|wie|geht)\b', message.lower()):
+            return {"language": "de", "confidence": 0.85, "english": False, "is_default": False}
+
+        # Check for confidently-English words (so real English outranks a blind default)
+        if re.search(r'\b(hi|hello|hey|good morning|good afternoon|good evening|good night|thanks|thank you|please)\b', message.lower()):
+            return {"language": "en", "confidence": 0.9, "english": True, "is_default": False}
         
-        Returns:
-            Dict with intent, entities, confidence, etc.
-        """
-        # Step 1: Fast regex pre-filter
-        for intent, pattern in FAST_PATTERNS.items():
-            if re.search(pattern, message.lower()):
-                return {
-                    "intent": intent.value,
-                    "asset": None,
-                    "amount": None,
-                    "amount_type": None,
-                    "price": None,
-                    "confidence": 0.99,
-                    "needs_clarification": False,
-                    "clarification_question": None
-                }
-        
-        # Step 2: LLM classification for complex cases
-        if self.use_llm:
-            return await self._classify_with_llm(message)
-        
-        # Fallback
-        return {
-            "intent": "unknown",
-            "asset": None,
-            "amount": None,
-            "amount_type": None,
-            "price": None,
-            "confidence": 0.0,
-            "needs_clarification": True,
-            "clarification_question": "I'm not sure what you mean. Try: 'Buy 100 ETH' or 'What's my portfolio?'"
-        }
+        # Default: English (no real signal found -- caller may consult
+        # the user's known-language profile instead of trusting this blindly).
+        # Confidence stays 0.95 so routing for non-greeting intents is unchanged;
+        # `is_default` is the separate signal the greeting path acts on.
+        return {"language": "en", "confidence": 0.95, "english": True, "is_default": True}
     
     async def _classify_with_llm(self, message: str) -> Dict[str, Any]:
         """Use LLM for intent classification"""
         
-        from simple_router import simple_chat
-        from response_cleaner import clean_response
+        from .simple_router import simple_chat
+        from .response_cleaner import clean_response
         
         prompt = f"{CLASSIFICATION_PROMPT}\n'{message}'"
         
         try:
-            # Call LLM
-            raw_response = await simple_chat(prompt)
+            # Call LLM via GitHub Models (GPT-4o)
+            print(f"🔍 [DEBUG] Calling GPT-4o for: {message}")
+            from .github_models_client import call_llm
+            raw_response = await call_llm(prompt)
+            print(f"🔍 [DEBUG] Raw GPT-4o response: {raw_response[:200]}")
             response_text = clean_response(raw_response)
+            print(f"🔍 [DEBUG] Cleaned response: {response_text[:200]}")
             
             # Extract JSON from response
             cleaned = self._extract_json(response_text)
+            print(f"🔍 [DEBUG] Extracted JSON: {cleaned[:200]}")
             
             # Parse JSON
             parsed = json.loads(cleaned)
+            print(f"🔍 [DEBUG] Parsed JSON: {parsed}")
             
-            # Validate required fields
-            required = ["intent", "asset", "amount", "amount_type", 
-                       "price", "confidence", "needs_clarification"]
+            # Validate required fields - use defaults if missing
+            required_defaults = {
+                "intent": "unknown",
+                "asset": None,
+                "amount": None,
+                "amount_type": None,
+                "price": None,
+                "confidence": 0.5,
+                "needs_clarification": False,
+                "clarification_question": None
+            }
             
-            for field in required:
+            for field, default in required_defaults.items():
                 if field not in parsed:
-                    parsed[field] = None
+                    parsed[field] = default
+            
+            # Add message field if missing
+            if "message" not in parsed:
+                lang_result = self._detect_language(message)
+                parsed["message"] = self._get_fast_response(parsed.get("intent", "unknown"), lang_result["language"])
             
             return parsed
             
@@ -156,8 +1004,21 @@ class IntentClassifier:
         text = re.sub(r'```json\s*', '', text)
         text = re.sub(r'```\s*', '', text)
         
+        # Remove TUI artifacts
+        text = re.sub(r'⚕.*?\n', '', text)
+        text = re.sub(r'─.*?\n', '', text)
+        text = re.sub(r'╭.*?\n', '', text)
+        text = re.sub(r'╰.*?\n', '', text)
+        text = re.sub(r'│.*?\n', '', text)
+        text = re.sub(r'❯.*?\n', '', text)
+        text = re.sub(r'⏲.*?\n', '', text)
+        text = re.sub(r'⏱.*?\n', '', text)
+        text = re.sub(r'●.*?\n', '', text)
+        text = re.sub(r'\(⌐■_■\).*?\n', '', text)
+        text = re.sub(r'ಠ_ಠ.*?\n', '', text)
+        
         # Find JSON with intent field (most reliable pattern)
-        match = re.search(r'\{.*"intent".*\}', text, re.DOTALL)
+        match = re.search(r'\{[^{}]*"intent"[^{}]*\}', text, re.DOTALL)
         if match:
             return match.group(0)
         
@@ -167,6 +1028,275 @@ class IntentClassifier:
             return match.group(0)
         
         return text.strip()
+    
+    async def classify(self, message: str, user_id: str = "anonymous", portfolio_value: Optional[float] = None) -> Dict[str, Any]:
+        """Hybrid intent classification"""
+
+        # Normalize message
+        normalized_msg = unicodedata.normalize('NFKC', message)
+        normalized_msg_lower = normalized_msg.casefold()
+
+        # 1. Fast pattern matching (regex)
+        for intent, pattern in FAST_PATTERNS.items():
+            if re.search(pattern, normalized_msg_lower, re.IGNORECASE):
+                # Generate response using hybrid system
+                response_data = await self.generate_response(intent.value, message, user_id, portfolio_value)
+                return {
+                    "intent": intent.value,
+                    "asset": None,
+                    "amount": None,
+                    "amount_type": None,
+                    "price": None,
+                    "confidence": 0.99,
+                    "needs_clarification": False,
+                    "clarification_question": None,
+                    "message": response_data["message"],
+                    "source": response_data["source"],
+                    "language": response_data["language"],
+                    "language_confidence": response_data["language_confidence"],
+                    "latency_ms": response_data["latency_ms"]
+                }
+        
+        # 2. LLM fallback for complex queries
+        print(f"🔍 [DEBUG] use_llm={self.use_llm}, checking LLM fallback...")
+        if self.use_llm:
+            print(f"🔍 [DEBUG] Calling _classify_with_llm for: {message}")
+            result = await self._classify_with_llm(message)
+            print(f"🔍 [DEBUG] LLM result: {result}")
+            # Detect language and generate response
+            lang_result = self._detect_language(message)
+            result["detected_language"] = lang_result["language"]
+            result["language_confidence"] = lang_result["confidence"]
+            result["is_english"] = lang_result["english"]
+            # Ensure message field present
+            if "message" not in result or not result["message"]:
+                result["message"] = self._get_fast_response(result.get("intent", "unknown"), lang_result["language"], message, user_id, portfolio_value)
+            return result
+        
+        # 3. Fallback
+        return self._fallback_response(message)
+    
+    async def generate_response(self, intent: str, message: str, user_id: str = None, portfolio_value: Optional[float] = None) -> Dict[str, Any]:
+        """Hybrid response generation - Fast path + LLM fallback"""
+
+        uid = user_id or "anonymous"
+
+        # 1. Language detection with confidence
+        lang_result = self._detect_language(message)
+        detected_lang = lang_result["language"]
+        confidence = lang_result["confidence"]
+
+        # 1b. For greetings specifically: if this message gave no real language
+        # signal (e.g. an emoji, a bare "ok"), fall back to a language we already
+        # know this user is comfortable in — rather than defaulting to English —
+        # before trusting the current message's own language when it IS a real signal.
+        # Weighted (not always the single top language) so a bilingual user's
+        # profile stays reflected over time rather than locking onto just #1.
+        profile = get_language_profile_system()
+        neutral_message = is_language_neutral_message(message)
+        if intent == "greeting" and lang_result.get("is_default") and not neutral_message:
+            profile.apply_decay(uid)
+            known_lang = profile.get_weighted_language_choice(uid)
+            if known_lang:
+                detected_lang = known_lang
+
+        # Language-neutral messages ("ok", "lol", a bare emoji) carry no real
+        # signal either way -- skip updating the profile so they don't add noise.
+        if intent == "greeting" and not neutral_message:
+            word_count = len((message or "").split())
+            profile.update_language(uid, detected_lang, message_length=word_count)
+            profile.record_response_language(uid, detected_lang)
+
+        # 2. Confidence check - High confidence (>0.8) -> Fast path
+        if confidence > 0.8:
+            fast_response = self._get_fast_response(intent, detected_lang, message, uid, portfolio_value)
+            return {
+                "intent": intent,
+                "message": fast_response,
+                "source": "fast_path",
+                "language": detected_lang,
+                "language_confidence": confidence,
+                "latency_ms": 1
+            }
+
+        # 3. Low confidence (<0.8) -> LLM fallback
+        try:
+            llm_response = await self._llm_generate_response(intent, message, detected_lang, user_id)
+            return {
+                "intent": intent,
+                "message": llm_response,
+                "source": "llm_fallback",
+                "language": detected_lang,
+                "language_confidence": confidence,
+                "latency_ms": 500
+            }
+        except Exception as e:
+            print(f"⚠️ LLM fallback failed: {e}")
+            # Fallback to fast path if LLM fails
+            fast_response = self._get_fast_response(intent, detected_lang, message, uid, portfolio_value)
+            return {
+                "intent": intent,
+                "message": fast_response,
+                "source": "fast_path_fallback",
+                "language": detected_lang,
+                "language_confidence": confidence,
+                "latency_ms": 2
+            }
+    
+    def _get_greeting_response(self, message: str, language: str, user_id: str = "anonymous", portfolio_value: Optional[float] = None) -> str:
+        """Time-aware greeting. The user's own words always win over the clock —
+        Jarvix never assumes 'good night' from time alone (backlog #1)."""
+        now = time.time()
+        last_greet_time = _last_greeting_time.get(user_id)
+        is_repeat_greeting = last_greet_time is not None and (now - last_greet_time) < REPEAT_GREETING_WINDOW_SECONDS
+        _last_greeting_time[user_id] = now
+
+        if is_repeat_greeting:
+            repeat_options = REPEAT_GREETING_TEMPLATES.get(language, REPEAT_GREETING_TEMPLATES["en"])
+            key = (user_id, language, "repeat")
+            last_shown = _last_greeting_shown.get(key)
+            pool = [o for o in repeat_options if o != last_shown] or repeat_options
+            choice = random.choice(pool)
+            _last_greeting_shown[key] = choice
+            return choice
+
+        category = _detect_explicit_greeting_category(message, language) or _get_ist_time_bucket()
+        lang_templates = GREETING_TEMPLATES.get(language, GREETING_TEMPLATES["en"])
+        options = lang_templates.get(category, lang_templates["morning"])
+
+        key = (user_id, language, category)
+        last_shown = _last_greeting_shown.get(key)
+        pool = [o for o in options if o != last_shown] or options
+        choice = random.choice(pool)
+        _last_greeting_shown[key] = choice
+
+        if portfolio_value is not None:
+            suffix = PORTFOLIO_SUFFIX.get(language, PORTFOLIO_SUFFIX["en"])
+            choice = choice + suffix.format(value=f"${portfolio_value:,.0f}")
+
+        if random.random() < MARKET_CONTEXT_APPEND_CHANCE:
+            market_bucket = _get_market_context_bucket()
+            market_options = MARKET_CONTEXT.get(language, MARKET_CONTEXT["en"]).get(market_bucket, MARKET_CONTEXT["en"][market_bucket])
+            choice = choice + " " + random.choice(market_options)
+
+        return choice
+
+    def _get_fast_response(self, intent: str, language: str, message: str = "", user_id: str = "anonymous", portfolio_value: Optional[float] = None) -> str:
+        """Get hardcoded response for fast path"""
+
+        if intent == "greeting":
+            return self._get_greeting_response(message, language, user_id, portfolio_value)
+
+        # Multi-language responses
+        responses = {
+            "buy": {
+                "en": "Processing your buy request...",
+                "hi": "खरीदारी प्रोसेस हो रही है...",
+                "hi-en": "Buy request process ho rahi hai...",
+                "es": "Procesando tu orden de compra...",
+                "fr": "Traitement de votre achat...",
+                "de": "Verarbeite deinen Kauf...",
+                "ja": "購入処理中..."
+            },
+            "sell": {
+                "en": "Processing your sell request...",
+                "hi": "बिक्री प्रोसेस हो रही है...",
+                "hi-en": "Sell request process ho rahi hai...",
+                "es": "Procesando tu orden de venta...",
+                "fr": "Traitement de votre vente...",
+                "de": "Verarbeite deinen Verkauf...",
+                "ja": "売却処理中..."
+            },
+            "price": {
+                "en": "Fetching live prices for you...",
+                "hi": "लाइव प्राइस ला रहा हूँ...",
+                "hi-en": "Live price la raha hoon...",
+                "es": "Obteniendo precios en vivo...",
+                "fr": "Récupération des prix en direct...",
+                "de": "Hole aktuelle Preise...",
+                "ja": "価格を取得中..."
+            },
+            "portfolio": {
+                "en": "Sir, your portfolio is valued at $100,000, up 2.4%. You hold 100 ETH, 0.5 BTC, and 1000 SOL.",
+                "hi": "सर, आपका पोर्टफोलियो $100,000 है, 2.4% बढ़ा। आपके पास 100 ETH, 0.5 BTC, और 1000 SOL हैं।",
+                "hi-en": "Sir, aapka portfolio $100,000 hai, 2.4% up. Aapke paas 100 ETH, 0.5 BTC, aur 1000 SOL hain.",
+                "es": "Señor, su cartera vale $100,000, sube 2.4%. Tiene 100 ETH, 0.5 BTC y 1000 SOL.",
+                "fr": "Monsieur, votre portefeuille vaut $100,000, +2.4%. Vous détenez 100 ETH, 0.5 BTC et 1000 SOL.",
+                "de": "Herr, Ihr Portfolio ist $100.000 wert, +2,4%. Sie halten 100 ETH, 0,5 BTC und 1000 SOL.",
+                "ja": "ポートフォリオは$100,000、2.4%上昇。100 ETH、0.5 BTC、1000 SOLを保有。"
+            },
+            "advice": {
+                "en": "Analyzing market conditions for your request...",
+                "hi": "मार्केट एनालिसिस हो रहा है...",
+                "hi-en": "Market analysis ho raha hai...",
+                "es": "Analizando condiciones del mercado...",
+                "fr": "Analyse des conditions du marché...",
+                "de": "Marktbedingungen analysieren...",
+                "ja": "市場分析中..."
+            },
+            "alert": {
+                "en": "Setting up your alert...",
+                "hi": "अलर्ट सेट हो रहा है...",
+                "hi-en": "Alert set ho raha hai...",
+                "es": "Configurando tu alerta...",
+                "fr": "Configuration de votre alerte...",
+                "de": "Richte deinen Alarm ein...",
+                "ja": "アラート設定中..."
+            },
+            "stop_loss": {
+                "en": "Configuring stop loss...",
+                "hi": "स्टॉप लॉस कॉन्फिगर हो रहा है...",
+                "hi-en": "Stop loss configure ho raha hai...",
+                "es": "Configurando stop loss...",
+                "fr": "Configuration du stop loss...",
+                "de": "Konfiguriere Stop-Loss...",
+                "ja": "損切り設定中..."
+            },
+            "take_profit": {
+                "en": "Configuring take profit...",
+                "hi": "टेक प्रॉफिट कॉन्फिगर हो रहा है...",
+                "hi-en": "Take profit configure ho raha hai...",
+                "es": "Configurando take profit...",
+                "fr": "Configuration du take profit...",
+                "de": "Konfiguriere Take-Profit...",
+                "ja": "利確設定中..."
+            }
+        }
+        
+        # Get response for intent and language, fallback to English
+        intent_responses = responses.get(intent, {})
+        return intent_responses.get(language, intent_responses.get("en", "Processing complete, sir."))
+    
+    async def _llm_generate_response(self, intent: str, message: str, language: str, user_id: str = None) -> str:
+        """Generate dynamic response using LLM"""
+        
+        from .simple_router import simple_chat
+        
+        # Build prompt for LLM
+        lang_names = {
+            "en": "English", "hi": "Hindi", "hi-en": "Hinglish",
+            "es": "Spanish", "fr": "French", "de": "German", "ja": "Japanese"
+        }
+        
+        lang_name = lang_names.get(language, "English")
+        
+        prompt = f"""You are a crypto trading assistant. Respond in {lang_name}.
+
+User intent: {intent}
+User message: {message}
+
+Respond naturally in {lang_name} language. Keep it short and professional."""
+        
+        try:
+            response = await simple_chat(prompt)
+            return response.strip()
+        except Exception as e:
+            print(f"⚠️ LLM response generation failed: {e}")
+            raise
+    
+    async def detect_intent_hybrid(self, message: str, context: Optional[Dict[str, Any]] = None, user_id: str = "anonymous", portfolio_value: Optional[float] = None) -> Dict[str, Any]:
+        """Hybrid intent detection - combines fast regex + LLM fallback"""
+        return await self.classify(message, user_id, portfolio_value)
     
     def _fallback_response(self, message: str) -> Dict[str, Any]:
         """Fallback when LLM fails"""

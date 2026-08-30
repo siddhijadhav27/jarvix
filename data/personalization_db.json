@@ -3347,24 +3347,25 @@
         "detail_level": "standard"
       },
       "behavior": {
-        "total_commands": 18,
+        "total_commands": 20,
         "intent_counts": {
           "buy": 2,
-          "price": 10,
+          "price": 11,
           "portfolio": 1,
           "advice": 3,
-          "alert": 2
+          "alert": 3
         },
         "asset_counts": {
-          "BTC": 14,
+          "BTC": 15,
           "ETH": 3
         },
         "time_distribution": {
-          "15": 17,
-          "16": 1
+          "15": 18,
+          "16": 1,
+          "0": 1
         },
         "avg_trade_size": 0,
-        "last_active": "2026-06-10T16:01:02.735053"
+        "last_active": "2026-06-12T15:32:54.326189"
       },
       "portfolio_history": [],
       "favorite_commands": [
@@ -3400,7 +3401,50 @@
         }
       ],
       "suggestions_enabled": true
+    },
+    "test": {
+      "user_id": "test",
+      "created_at": "2026-06-12T13:52:03.013393",
+      "preferences": {
+        "risk_level": "low",
+        "preferred_assets": [],
+        "auto_confirm": false,
+        "notifications": true,
+        "response_style": "detailed",
+        "detail_level": "standard"
+      },
+      "behavior": {
+        "total_commands": 9,
+        "intent_counts": {
+          "unknown": 6,
+          "price": 3
+        },
+        "asset_counts": {},
+        "time_distribution": {
+          "13": 3,
+          "14": 5,
+          "15": 1
+        },
+        "avg_trade_size": 0,
+        "last_active": "2026-06-12T15:16:44.718963"
+      },
+      "portfolio_history": [],
+      "favorite_commands": [
+        {
+          "message": "BTC price",
+          "count": 8,
+          "first_used": "2026-06-12T13:56:21.518734",
+          "last_used": "2026-06-12T15:16:44.718988"
+        },
+        {
+          "message": "What is BTC price?",
+          "count": 1,
+          "first_used": "2026-06-12T13:52:03.043171",
+          "last_used": "2026-06-12T13:52:03.043179"
+        }
+      ],
+      "suggestions_enabled": true
     }
   },
-  "last_updated": "2026-06-10T16:01:02.735326"
+  "last_updated": "2026-06-12T15:32:54.326522"
 }

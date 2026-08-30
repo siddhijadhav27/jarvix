@@ -87,7 +87,7 @@ class ConversationMemory:
             "BTC": {"amount": 0.5, "value": 36542},
             "ETH": {"amount": 100, "value": 199800},
             "SOL": {"amount": 500, "value": 75000},
-            "total_value": 311342,
+            "total_value": 100000,
             "total_change_24h": 2.4
         }
     

@@ -17,7 +17,7 @@ from ai.personality import personality_engine
 from ai.llm_client import generate_jarvis_response
 from ai.openrouter_client import call_openrouter
 from ai.mock_llm import generate_mock_response
-from ai.intent import detect_intent_hybrid
+from ai.intent import IntentClassifier
 from ai.memory import get_memory, format_context_for_llm
 from ai.ghost_mode import get_ghost_mode
 from ai.proactive_alerts import get_alert_manager
@@ -108,6 +108,12 @@ async def get_portfolio():
     """Returns portfolio data (demo for now)"""
     return DEMO_PORTFOLIO
 
+# Also add /portfolio endpoint for compatibility
+@app.get("/portfolio")
+async def get_portfolio_compat():
+    """Simple portfolio endpoint"""
+    return {"total_value": 100000, "holdings": []}
+
 @app.get("/api/health", response_model=HealthResponse)
 async def get_health():
     """Returns system health + self-learning stats"""
@@ -128,22 +134,29 @@ async def get_health():
         uptime_seconds=uptime,
     )
 
+# Also add /health endpoint for compatibility
+@app.get("/health")
+async def get_health_compat():
+    """Simple health check"""
+    return {"status": "healthy", "service": "jarvix-backend", "version": "1.0.0"}
+
 @app.post("/api/ai/chat", response_model=ChatResponse)
 async def post_chat(request: ChatRequest):
     """Main command handler — calls intent detection"""
     start = time.time()
     
     try:
-        # Use existing intent detection
-        from ai.intent import detect_intent_hybrid
-        result = detect_intent_hybrid(request.message)
+        # Use hybrid intent detection
+        from ai.intent import IntentClassifier
+        classifier = IntentClassifier()
+        result = await classifier.detect_intent_hybrid(request.message, user_id=request.user_id, portfolio_value=get_portfolio_value())
         
         latency_ms = int((time.time() - start) * 1000)
         
         return ChatResponse(
             intent=result.get("intent", "UNKNOWN"),
             confidence=result.get("confidence", 0.0),
-            fast_path=result.get("fast_path", False),
+            fast_path=result.get("source") == "fast_path",
             source=result.get("source", "regex"),
             entities=result.get("entities", {}),
             message=result.get("message", "Processing complete, sir."),
@@ -165,13 +178,18 @@ async def post_chat(request: ChatRequest):
 async def ws_prices(websocket: WebSocket):
     """Streams live prices every 10 seconds"""
     await websocket.accept()
-    prices = dict(DEMO_PRICES)
     
     try:
         while True:
-            for asset in prices:
-                change = random.uniform(-0.005, 0.005)
-                prices[asset] = round(DEMO_PRICES[asset] * (1 + change), 2)
+            # Fetch real prices from CoinGecko
+            raw_prices = get_live_prices()
+            
+            # Flatten format for frontend compatibility
+            prices = {
+                'BTC': raw_prices['BTC']['price'],
+                'ETH': raw_prices['ETH']['price'],
+                'SOL': raw_prices['SOL']['price'],
+            }
             
             await websocket.send_json({
                 **prices,
@@ -217,30 +235,41 @@ def get_live_prices():
         }
 
 # Template responses for simple commands (no LLM needed)
-def generate_template_response(intent_data, message, context_str):
+# Portfolio value - single source of truth
+PORTFOLIO_VALUE = 100000.00
+
+def get_portfolio_value():
+    """Get current portfolio value (demo mode)"""
+    return PORTFOLIO_VALUE
+
+def generate_template_response(intent_data, message, context_str, prices=None):
     """Generate template response for simple commands"""
     intent = intent_data["intent"]
     asset = intent_data.get("asset")
     amount = intent_data.get("amount")
+    portfolio = get_portfolio_value()
+    
+    # Fetch prices only if not provided (avoid double API calls)
+    if prices is None:
+        prices = get_live_prices()
     
     if intent == "price":
-        prices = get_live_prices()
         if asset:
             asset_upper = asset.upper()
             if asset_upper in prices:
                 p = prices[asset_upper]
                 change_emoji = "📈" if p['change'] >= 0 else "📉"
                 change_sign = "+" if p['change'] >= 0 else ""
-                return f"Sir, {asset_upper} is trading at ${p['price']:,}. {change_emoji} {change_sign}{p['change']:.2f}% in 24h. Your portfolio remains robust at $311,342."
+                return f"Sir, {asset_upper} is trading at ${p['price']:,}. {change_emoji} {change_sign}{p['change']:.2f}% in 24h. Your portfolio remains robust at ${portfolio:,}."
             else:
-                return f"Sir, {asset} is currently trading at $1,998. Your portfolio remains robust at $311,342."
+                return f"Sir, {asset} is currently trading at $1,998. Your portfolio remains robust at ${portfolio:,}."
         else:
             btc = prices.get('BTC', {}).get('price', 61186)
             return f"Sir, BTC is at ${btc:,}. Which asset would you like the price for?"
     
     elif intent == "buy":
         if asset and amount:
-            return f"Sir, you wish to buy {amount} {asset}? I shall prepare the transaction. Your portfolio is at $311,342."
+            return f"Sir, you wish to buy {amount} {asset}? I shall prepare the transaction. Your portfolio is at ${portfolio:,}."
         elif asset:
             return f"Sir, you wish to buy {asset}? How much would you like to purchase?"
         else:
@@ -248,31 +277,28 @@ def generate_template_response(intent_data, message, context_str):
     
     elif intent == "sell":
         if asset and amount:
-            return f"Sir, you wish to sell {amount} {asset}? I shall prepare the transaction. Your portfolio is at $311,342."
+            return f"Sir, you wish to sell {amount} {asset}? I shall prepare the transaction. Your portfolio is at ${portfolio:,}."
         elif asset:
             return f"Sir, you wish to sell {asset}? How much would you like to sell?"
         else:
             return "Sir, what would you like to sell?"
     
     elif intent == "portfolio":
-        return "Sir, your portfolio is valued at $311,342, up 2.4%. You hold 100 ETH, 0.5 BTC, and 1000 SOL."
+        return f"Sir, your portfolio is valued at ${portfolio:,}, up 2.4%. You hold 100 ETH, 0.5 BTC, and 1000 SOL."
     
     elif intent == "greeting":
-        return "Good day, sir. Jarvix at your service. Your portfolio is at $311,342. How may I assist?"
+        return f"Good day, sir. Jarvix at your service. Your portfolio is at ${portfolio:,}. How may I assist?"
     
     else:
-        return f"Sir, I understand. Your portfolio is at $311,342. How can I help?"
-
-app = FastAPI(title="Jarvix AI Backend", version="1.0.0")
+        return f"Sir, I understand. Your portfolio is at ${portfolio:,}. How can I help?"
 
 # Rate limiting - track last request time
 last_request_time = 0
-MIN_REQUEST_INTERVAL = 5  # 5 seconds between requests
 
-# CORS for frontend connection
+# Add CORS middleware - allow all origins for development
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["http://localhost:3000", "http://localhost:3001", "http://localhost:3002", "http://localhost:3003"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -282,21 +308,16 @@ class ChatRequest(BaseModel):
     message: str
     user_id: str
 
-class ChatResponse(BaseModel):
-    response: str
-    intent: str
-    asset: str | None = None
-    amount: float | None = None
-    price: float | None = None
-    confidence: float = 0.95
-    behavioral_warning: dict | None = None
-    status: str = "complete"
+# Use the ChatResponse from line 50 (has message field, not response)
+# This class is already defined above
 
 @app.post("/api/ai/chat")
 async def chat(request: ChatRequest):
     """
     Main chat endpoint - handles all user commands with JARVIS personality via LLM
     """
+    start_time = time.time()
+    
     # Rate limiting check (disabled - no external API calls needed)
     # All responses use regex/templates (instant, no rate limits)
     # TODO: Re-enable if using OpenRouter in future
@@ -307,10 +328,13 @@ async def chat(request: ChatRequest):
     if time_since_last < MIN_REQUEST_INTERVAL:
         wait_time = MIN_REQUEST_INTERVAL - time_since_last
         return ChatResponse(
-            response=f"Sir, please wait {wait_time:.1f} seconds before sending another command.",
+            message=f"Sir, please wait {wait_time:.1f} seconds before sending another command.",
             intent="rate_limited",
             confidence=0.95,
-            status="rate_limited"
+            fast_path=True,
+            source="rate_limiter",
+            entities={},
+            latency_ms=0,
         )
     last_request_time = current_time
     """
@@ -322,7 +346,8 @@ async def chat(request: ChatRequest):
     context = memory.get_full_context()
     
     # Classify intent using hybrid approach (regex + LLM fallback)
-    intent_data = await detect_intent_hybrid(request.message, context)
+    classifier = IntentClassifier()
+    intent_data = await classifier.detect_intent_hybrid(request.message, context)
     
     # Check learned patterns (self-learning Phase 1)
     learning = get_learning_system()
@@ -370,9 +395,12 @@ async def chat(request: ChatRequest):
         intent_data.get("asset")
     )
     
+    # Pre-fetch prices once to avoid double API calls
+    prices = get_live_prices()
+    portfolio = get_portfolio_value()
+    
     # Override with real-time data for price intents
     if intent_data["intent"] == "price":
-        prices = get_live_prices()
         asset = intent_data.get("asset")
         if asset:
             asset_upper = asset.upper()
@@ -380,16 +408,15 @@ async def chat(request: ChatRequest):
                 p = prices[asset_upper]
                 change_emoji = "📈" if p['change'] >= 0 else "📉"
                 change_sign = "+" if p['change'] >= 0 else ""
-                personalized_response = f"Sir, {asset_upper} is trading at ${p['price']:,}. {change_emoji} {change_sign}{p['change']:.2f}% in 24h. Your portfolio remains robust at $311,342."
+                personalized_response = f"Sir, {asset_upper} is trading at ${p['price']:,}. {change_emoji} {change_sign}{p['change']:.2f}% in 24h. Your portfolio remains robust at ${portfolio:,}."
             else:
-                personalized_response = f"Sir, {asset} is currently trading at $1,998. Your portfolio remains robust at $311,342."
+                personalized_response = f"Sir, {asset} is currently trading at $1,998. Your portfolio remains robust at ${portfolio:,}."
         else:
             btc = prices.get('BTC', {}).get('price', 61186)
             personalized_response = f"Sir, BTC is at ${btc:,}. Which asset would you like the price for?"
     
     # Override for advice intents - give real analysis without LLM
     elif intent_data["intent"] == "advice":
-        prices = get_live_prices()
         asset = intent_data.get("asset")
         if asset:
             asset_upper = asset.upper()
@@ -398,37 +425,34 @@ async def chat(request: ChatRequest):
                 change_emoji = "📈" if p['change'] >= 0 else "📉"
                 change_sign = "+" if p['change'] >= 0 else ""
                 trend = "bullish" if p['change'] >= 0 else "bearish"
-                personalized_response = f"Sir, {asset_upper} is at ${p['price']:,} ({change_sign}{p['change']:.2f}%). Market sentiment is {trend}. Based on current momentum, {asset_upper} shows {trend} signals. Your portfolio remains robust at $311,342. Shall I set an alert for significant moves?"
+                personalized_response = f"Sir, {asset_upper} is at ${p['price']:,} ({change_sign}{p['change']:.2f}%). Market sentiment is {trend}. Based on current momentum, {asset_upper} shows {trend} signals. Your portfolio remains robust at ${portfolio:,}. Shall I set an alert for significant moves?"
             else:
-                personalized_response = f"Sir, I cannot access real-time data for {asset} at the moment. Based on recent market analysis, consider dollar-cost averaging. Your portfolio is at $311,342."
+                personalized_response = f"Sir, I cannot access real-time data for {asset} at the moment. Based on recent market analysis, consider dollar-cost averaging. Your portfolio is at ${portfolio:,}."
         else:
             btc = prices.get('BTC', {}).get('price', 61186)
             eth = prices.get('ETH', {}).get('price', 1619)
-            personalized_response = f"Sir, BTC is at ${btc:,} and ETH at ${eth:,}. Both showing mixed signals. Consider your risk tolerance before entering. Portfolio at $311,342. Which asset interests you?"
+            personalized_response = f"Sir, BTC is at ${btc:,} and ETH at ${eth:,}. Both showing mixed signals. Consider your risk tolerance before entering. Portfolio at ${portfolio:,}. Which asset interests you?"
     
     # Override for alert intents
     elif intent_data["intent"] == "alert":
-        prices = get_live_prices()
         asset = intent_data.get("asset")
         if asset:
             asset_upper = asset.upper()
             current_price = prices.get(asset_upper, {}).get('price', 0)
-            personalized_response = f"Sir, alert set for {asset_upper}. Current price: ${current_price:,}. I shall notify you when the target is reached. Your portfolio remains robust at $311,342."
+            personalized_response = f"Sir, alert set for {asset_upper}. Current price: ${current_price:,}. I shall notify you when the target is reached. Your portfolio remains robust at ${portfolio:,}."
         else:
             btc = prices.get('BTC', {}).get('price', 61186)
-            personalized_response = f"Sir, alert configured. BTC is currently at ${btc:,}. I shall notify you when conditions are met. Your portfolio remains robust at $311,342."
+            personalized_response = f"Sir, alert configured. BTC is currently at ${btc:,}. I shall notify you when conditions are met. Your portfolio remains robust at ${portfolio:,}."
     
     # Override for portfolio intent
     elif intent_data["intent"] == "portfolio":
-        prices = get_live_prices()
         btc = prices.get('BTC', {}).get('price', 61186)
         eth = prices.get('ETH', {}).get('price', 1619)
         sol = prices.get('SOL', {}).get('price', 63)
-        personalized_response = f"Sir, your portfolio is valued at $311,342. Holdings: BTC at ${btc:,}, ETH at ${eth:,}, SOL at ${sol:,}. All systems optimal."
+        personalized_response = f"Sir, your portfolio is valued at ${portfolio:,}. Holdings: BTC at ${btc:,}, ETH at ${eth:,}, SOL at ${sol:,}. All systems optimal."
     
     # Override for buy/sell intents
     elif intent_data["intent"] in ["buy", "sell"]:
-        prices = get_live_prices()
         asset = intent_data.get("asset")
         amount = intent_data.get("amount")
         if asset and amount:
@@ -436,14 +460,14 @@ async def chat(request: ChatRequest):
             current_price = prices.get(asset_upper, {}).get('price', 0)
             total = amount * current_price
             action = "purchase" if intent_data["intent"] == "buy" else "sale"
-            personalized_response = f"Sir, {action} order prepared for {amount} {asset_upper} at ${current_price:,} (total: ${total:,}). Shall I execute? Your portfolio remains robust at $311,342."
+            personalized_response = f"Sir, {action} order prepared for {amount} {asset_upper} at ${current_price:,} (total: ${total:,}). Shall I execute? Your portfolio remains robust at ${portfolio:,}."
         elif asset:
             asset_upper = asset.upper()
             current_price = prices.get(asset_upper, {}).get('price', 0)
             action = "purchase" if intent_data["intent"] == "buy" else "sale"
-            personalized_response = f"Sir, {action} order ready for {asset_upper} at ${current_price:,}. Please specify the amount. Your portfolio remains robust at $311,342."
+            personalized_response = f"Sir, {action} order ready for {asset_upper} at ${current_price:,}. Please specify the amount. Your portfolio remains robust at ${portfolio:,}."
         else:
-            personalized_response = f"Sir, I understand you wish to {intent_data['intent']}. Please specify the asset and amount. Your portfolio remains robust at $311,342."
+            personalized_response = f"Sir, I understand you wish to {intent_data['intent']}. Please specify the asset and amount. Your portfolio remains robust at ${portfolio:,}."
     
     # LLM Router (Step 3): Decide if LLM is needed
     llm_router = get_llm_router()
@@ -536,12 +560,12 @@ async def chat(request: ChatRequest):
         llm_router.record_request(request.message, intent_data["intent"], False)
     elif intent_data["intent"] in REGEX_ONLY_INTENTS:
         # Regex-only intents: no LLM needed
-        response_text = generate_template_response(intent_data, request.message, context_str)
+        response_text = generate_template_response(intent_data, request.message, context_str, prices)
         llm_router.record_request(request.message, intent_data["intent"], False)
     else:
         # Complex queries: would use LLM if available
         # For now, use template with note
-        response_text = generate_template_response(intent_data, request.message, context_str)
+        response_text = generate_template_response(intent_data, request.message, context_str, prices)
         llm_router.record_request(request.message, intent_data["intent"], False)
         print(f"[LLM ROUTER] Would use LLM for: {request.message} (Reason: {reason})")
     
@@ -550,21 +574,22 @@ async def chat(request: ChatRequest):
     
     # Fallback if response is empty
     if not cleaned_response.strip():
-        cleaned_response = f"Sir, I understand. Your portfolio is at $311,342. How can I help?"
+        cleaned_response = f"Sir, I understand. Your portfolio is at ${portfolio:,}. How can I help?"
     
     # Store in memory
     memory.add_message("user", request.message, intent_data["intent"])
     memory.add_message("assistant", cleaned_response)
     
+    latency_ms = int((time.time() - start_time) * 1000)
+    
     return ChatResponse(
-        response=cleaned_response,
+        message=cleaned_response,
         intent=intent_data["intent"],
-        asset=intent_data.get("asset"),
-        amount=intent_data.get("amount"),
-        price=intent_data.get("price"),
         confidence=intent_data.get("confidence", 0.95),
-        behavioral_warning={"detected_emotion": emotion, "secondary_intent": intent_data.get("secondary_intent")} if intent_data.get("secondary_intent") else {"detected_emotion": emotion} if emotion != "neutral" else None,
-        status="complete"
+        fast_path=True,
+        source=intent_data.get("source", "regex"),
+        entities={"asset": intent_data.get("asset"), "amount": intent_data.get("amount"), "price": intent_data.get("price"), "detected_emotion": emotion, "secondary_intent": intent_data.get("secondary_intent")},
+        latency_ms=latency_ms,
     )
 
 @app.post("/api/ai/feedback")
