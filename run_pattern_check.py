@@ -60,6 +60,12 @@ async def main():
             except Exception as e:
                 detected = f"EXCEPTION: {e}"
 
+            # Groq's free tier has a strict requests-per-minute limit; a real
+            # chat user won't fire 346 messages back to back, but this test
+            # script does, so pace it to get an accurate read instead of a
+            # wall of 429s.
+            await asyncio.sleep(2.1)
+
             results[expected_intent]["total"] += 1
             if detected == expected_intent:
                 results[expected_intent]["correct"] += 1
