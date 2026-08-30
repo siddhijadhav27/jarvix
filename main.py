@@ -149,7 +149,7 @@ async def post_chat(request: ChatRequest):
         # Use hybrid intent detection
         from ai.intent import IntentClassifier
         classifier = IntentClassifier()
-        result = await classifier.detect_intent_hybrid(request.message)
+        result = await classifier.detect_intent_hybrid(request.message, user_id=request.user_id, portfolio_value=get_portfolio_value())
         
         latency_ms = int((time.time() - start) * 1000)
         
