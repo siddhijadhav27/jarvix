@@ -45,10 +45,10 @@ IST = ZoneInfo("Asia/Kolkata")
 # Checked in order per language, most specific phrase first.
 EXPLICIT_GREETING_PHRASES = {
     "en": [
-        ("night", r"good\s*night"),
-        ("morning", r"good\s*morning"),
-        ("afternoon", r"good\s*afternoon"),
-        ("evening", r"good\s*evening"),
+        ("night", r"(good\s*)?night"),
+        ("morning", r"(good\s*)?morning"),
+        ("afternoon", r"(good\s*)?afternoon"),
+        ("evening", r"(good\s*)?evening"),
     ],
     "hi": [
         ("night", r"शुभ\s*रात्रि"),
@@ -56,10 +56,10 @@ EXPLICIT_GREETING_PHRASES = {
         ("evening", r"शुभ\s*संध्या"),
     ],
     "hi-en": [
-        ("night", r"good\s*night|shubh\s*raatri"),
-        ("morning", r"good\s*morning"),
-        ("afternoon", r"good\s*afternoon"),
-        ("evening", r"good\s*evening"),
+        ("night", r"(good\s*)?night|shubh\s*raatri"),
+        ("morning", r"(good\s*)?morning|subah"),
+        ("afternoon", r"(good\s*)?afternoon|dopahar"),
+        ("evening", r"(good\s*)?evening|shaam"),
     ],
     "es": [
         ("night", r"buenas\s*noches"),
@@ -1512,8 +1512,12 @@ class IntentClassifier:
             result["detected_language"] = lang_result["language"]
             result["language_confidence"] = lang_result["confidence"]
             result["is_english"] = lang_result["english"]
-            # Ensure message field present
-            if "message" not in result or not result["message"]:
+            # Ensure message field present. Greeting ALWAYS goes through our own
+            # template logic (time-mismatch correction, portfolio tone, etc.) --
+            # the classification LLM sometimes hallucinates its own "message"
+            # field despite the prompt never asking for one, which would
+            # otherwise silently bypass all of that.
+            if result.get("intent") == "greeting" or "message" not in result or not result["message"]:
                 result["message"] = self._get_fast_response(result.get("intent", "unknown"), lang_result["language"], message, user_id, portfolio_value, portfolio_change_pct)
             return result
 
